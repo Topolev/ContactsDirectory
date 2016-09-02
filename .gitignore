@@ -1,5 +1,6 @@
 /target/
 /.settings/
+.classpath
 /.idea/compiler.xml
 /.idea/copyright
 /.idea/misc.xml
