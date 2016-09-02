@@ -29,8 +29,16 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		contact.setId(resultSet.getInt("id"));
 		contact.setFirstname(resultSet.getString("first_name"));
 		contact.setLastname(resultSet.getString("last_name"));
+		contact.setBirthday(resultSet.getDate("birthday"));
 		contact.setWorkplace(resultSet.getString("work_place"));
+		contact.setSex(resultSet.getString("sex"));
+		contact.setNationality(resultSet.getString("nationality"));
+		contact.setMaritalStatus(resultSet.getString("marital_status"));
+		contact.setWebsite(resultSet.getString("website"));
+		contact.setEmail(resultSet.getString("email"));
 		contact.setAddress(addressDao.getAddressByIdContact(contact.getId()));
+		
+	
 		return contact;
 	}
 	
@@ -40,18 +48,52 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		Connection connection = null;
 		try {
 			connection = getConnection();
-			PreparedStatement statmentContact = connection.prepareStatement("select id, first_name, last_name, work_place from contact");
+			PreparedStatement statmentContact = connection.prepareStatement("select * from contact");
 			ResultSet resultSet = statmentContact.executeQuery();
 			while (resultSet.next()){
 				contactList.add(createContactFromResultSetEntity(resultSet));
 			}
 		} catch (SQLException e) {
-			LOG.info("Problem with database connection");
-			LOG.debug("Problem with database connection");
+			LOG.info("Problem with database connection",e);
+			LOG.debug("Problem with database connection",e);
 		} finally {
 			closeConnection(connection);
 		}
 		return contactList;
+	}
+	
+	@Override
+	public Contact getContactById(int id){
+		Contact contact = null;
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			PreparedStatement statment = connection.prepareStatement("SELECT * FROM contact WHERE id=?");
+			statment.setInt(1, id);
+			ResultSet resultSet = statment.executeQuery();
+			resultSet.next();
+			contact = createContactFromResultSetEntity(resultSet);
+		} catch (SQLException e) {
+			LOG.info("Problem with database connection",e);
+			LOG.debug("Problem with database connection",e);
+		}
+		return contact;
+	}
+
+	@Override
+	public int getCountContacts() {
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			PreparedStatement statment = connection.prepareStatement("SELECT count(id) as count FROM contact");
+			ResultSet result = statment.executeQuery();
+			result.next();
+			return result.getInt("count");
+		} catch (SQLException e) {
+			LOG.info("Problem with database connection",e);
+			LOG.debug("Problem with database connection",e);
+		}
+		return 0;
 	}
 	
 	public static void main(String[] args){
@@ -59,7 +101,8 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		for (Contact contact : contactDao.getContactList()){
 			System.out.println(contact);
 		}
-		
-		
+		System.out.println(contactDao.getCountContacts());
 	}
+
+
 }

@@ -2,21 +2,16 @@ package by.topolev.contacts.entity;
 
 import java.util.Date;
 
-enum Sex{
-	MAIL, FEMAIL
-}
-enum MaritalStatus{
-	SINGLE, MARRIED
-}
+
 
 public class Contact {
 	private int id;
 	private String firstname;
 	private String lastname;
 	private String middlename;
-	private Sex sex;
+	private String sex;
 	private String nationality;
-	private MaritalStatus maritalStatus;
+	private String maritalStatus;
 	private String website;
 	private String email;
 	private String workplace;
@@ -55,11 +50,11 @@ public class Contact {
 		this.middlename = middlename;
 	}
 
-	public Sex getSex() {
+	public String getSex() {
 		return sex;
 	}
 
-	public void setSex(Sex sex) {
+	public void setSex(String sex) {
 		this.sex = sex;
 	}
 
@@ -71,11 +66,11 @@ public class Contact {
 		this.nationality = nationality;
 	}
 
-	public MaritalStatus getMaritalStatus() {
+	public String getMaritalStatus() {
 		return maritalStatus;
 	}
 
-	public void setMaritalStatus(MaritalStatus maritalStatus) {
+	public void setMaritalStatus(String maritalStatus) {
 		this.maritalStatus = maritalStatus;
 	}
 
@@ -123,6 +118,7 @@ public class Contact {
 		StringBuilder str = new StringBuilder();
 		str.append(" id: " + id);
 		str.append(" first name: " + firstname);
+		str.append(" sex: " + sex);
 		return str.toString();
 	}
 	
