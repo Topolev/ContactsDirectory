@@ -1,6 +1,5 @@
 package by.topolev.contacts.dao;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,54 +11,68 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 import static by.topolev.contacts.config.ConfigUtil.*;
 
 import by.topolev.contacts.entity.Address;
 import by.topolev.contacts.entity.Contact;
+import by.topolev.contacts.orm.tools.EntityManager;
 
 public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 	private static final Logger LOG = LoggerFactory.getLogger(ContactDaoJDBC.class);
-	
+
+	private EntityManager em = new EntityManager();
+
 	private AddressDao addressDao = new AddressDaoJdbc();
-	
-	private Contact createContactFromResultSetEntity(ResultSet resultSet) throws SQLException{
-		Contact contact = new Contact();
-		contact.setId(resultSet.getInt("id"));
-		contact.setFirstname(resultSet.getString("first_name"));
-		contact.setLastname(resultSet.getString("last_name"));
-		contact.setWorkplace(resultSet.getString("work_place"));
-		contact.setAddress(addressDao.getAddressByIdContact(contact.getId()));
-		return contact;
+
+	@Override
+	public List<Contact> getContactList() {
+		return em.getListEntity("SELECT * FROM contact", Contact.class);
+	}
+
+	@Override
+	public List<Contact> getLimitContactList(int beginRow, int countRow) {
+		return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class);
 	}
 	
 	@Override
-	public List<Contact> getContactList() {
-		List<Contact> contactList = new ArrayList<Contact>();
-		Connection connection = null;
-		try {
-			connection = getConnection();
-			PreparedStatement statmentContact = connection.prepareStatement("select id, first_name, last_name, work_place from contact");
-			ResultSet resultSet = statmentContact.executeQuery();
-			while (resultSet.next()){
-				contactList.add(createContactFromResultSetEntity(resultSet));
-			}
-		} catch (SQLException e) {
-			LOG.info("Problem with database connection");
-			LOG.debug("Problem with database connection");
-		} finally {
-			closeConnection(connection);
+	public List<Contact> getLimitContactList(int beginRow, int countRow, String sortField, String sortType) {
+		
+		String query;
+		if ("address".equals(sortField)){
+			query = String.format("SELECT contact.* FROM contact, address addr "
+					            + "WHERE contact.id=addr.contact_id "
+					            + "ORDER BY country %s,city %s,street %s LIMIT %d,%d", sortType,sortType, sortType, beginRow, countRow); 
+		} else{
+			query = String.format("SELECT * FROM contact ORDER BY %s %s LIMIT %d, %d", sortField, sortType, beginRow, countRow);
 		}
-		return contactList;
+		System.out.println(query);
+		return em.getListEntity(query, Contact.class);
+	}
+
+	@Override
+	public Contact getContactById(int id) {
+		return em.getEntity(String.format("SELECT * FROM contact WHERE id=%d", id), Contact.class);
+	}
+
+	@Override
+	public int getCountContacts() {
+		return em.getCountAllEntity(Contact.class);
 	}
 	
-	public static void main(String[] args){
-		ContactDao contactDao = new ContactDaoJDBC();
-		for (Contact contact : contactDao.getContactList()){
-			System.out.println(contact);
-		}
-		
+	@Override
+	public void deleteContacts(int... idList) {
+		em.deleteEntity(Contact.class, idList);
 		
 	}
+
+	public static void main(String[] args) {
+		ContactDao contactDao = new ContactDaoJDBC();
+		for (Contact contact : contactDao.getContactList()) {
+			System.out.println(contact);
+		}
+		System.out.println(contactDao.getCountContacts());
+	}
+
+
+
 }

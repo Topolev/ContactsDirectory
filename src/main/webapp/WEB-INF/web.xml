@@ -3,5 +3,34 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+	<display-name>Archetype Created Web Application</display-name>
+	<servlet>
+		<servlet-name>ContactList</servlet-name>
+		<servlet-class>by.topolev.contacts.servlets.ContactListServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>ContactDelete</servlet-name>
+		<servlet-class>by.topolev.contacts.servlets.ContactDeleteServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>Contact</servlet-name>
+		<servlet-class>by.topolev.contacts.servlets.ContactServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ContactList</servlet-name>
+		<url-pattern>/contactlist</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>ContactDelete</servlet-name>
+		<url-pattern>/contactdelete</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>Contact</servlet-name>
+		<url-pattern>/contact</url-pattern>
+	</servlet-mapping>
 </web-app>

@@ -1,0 +1,177 @@
+table {
+  background: #fff;
+}
+.table > thead > tr > th {
+  vertical-align: middle;
+}
+.table > tbody > tr.checked {
+  background: #fde0e1;
+}
+table th i {
+  padding: 0 5px;
+}
+.wrap-pagination {
+  text-align: center;
+}
+.pagination {
+  margin: 0px;
+}
+.pagination > li.not-link > span {
+  background: none;
+  border: none;
+}
+.pagination > li.not-link > span:hover {
+  color: #383838;
+}
+.control-panel {
+  margin: 20px 0 15px 0;
+}
+select {
+  height: 34px;
+  border: none;
+}
+.select-show {
+  float: right;
+}
+.select-show:after,
+select-show:before {
+  content: "";
+  clear: both;
+}
+/*style for checkbox*/
+.wrap-checkbox {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+.wrap-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  position: absolute;
+  z-index: 5;
+  opacity: 0;
+}
+.wrap-checkbox input[type="checkbox"] + label {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 0;
+  left: 0;
+  display: block;
+  background-image: url("../img/checkbox-uncheked.png");
+  z-index: 4;
+}
+.wrap-checkbox input[type="checkbox"]:checked + label {
+  background-image: url("../img/checkbox-cheked.png");
+}
+/*end style for checkbox*/
+/*modal window*/
+.popup-overlay {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+.popup-overlay:after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 100%;
+  vertical-align: middle;
+}
+.modal-window {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100px;
+  background: #fff;
+  width: 300px;
+}
+.modal-window h5 {
+  background: #ec1c24;
+  margin: 0 0 10px 0;
+  padding: 10px;
+  color: #fff;
+}
+.modal-buttons {
+  padding: 10px;
+}
+@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px) {
+  /* Force table to not be like tables anymore */
+  table {
+    background: #f0f0f0;
+  }
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+  thead tr {
+    display: none;
+  }
+  tbody tr {
+    margin: 10px 0;
+    background: #fff;
+    border: 1px solid #dddddd;
+  }
+  .table > tbody > tr > td {
+    border-top: 1px dashed #dddddd;
+    position: relative;
+    overflow: visible;
+    padding-left: 50%;
+  }
+  .table > tbody > tr > td:nth-of-type(1) {
+    border: none;
+  }
+  td:before {
+    /* Now like a table header */
+    position: absolute;
+    display: block;
+    top: 8px;
+    left: 12px;
+    width: 45%;
+    padding-right: 10px;
+    font-weight: bold;
+  }
+  /*
+	Label the data
+	*/
+  td:nth-of-type(1):before {
+    content: "Action";
+  }
+  td:nth-of-type(2):before {
+    content: "First name, Last name";
+  }
+  td:nth-of-type(3):before {
+    content: "Birthday";
+  }
+  td:nth-of-type(4):before {
+    content: "Address";
+  }
+  td:nth-of-type(5):before {
+    content: "Work place";
+  }
+}
+@media only screen and (max-width: 500px) {
+  .control-panel a {
+    display: block;
+    margin: 5px 0;
+  }
+  .select-show {
+    float: none;
+  }
+  td:before {
+    position: static;
+  }
+  .table > tbody > tr > td {
+    padding: 10px;
+  }
+}
