@@ -1,13 +1,30 @@
 package by.topolev.contacts.entity;
 
+import by.topolev.contacts.orm.annotation.Column;
+import by.topolev.contacts.orm.annotation.Id;
+
 public class Address {
+	@Id
 	private int id;
+	
+	@Column(name="country")
 	private String country;
+	
+	@Column(name="city")
 	private String city;
+	
+	@Column(name="street")
 	private String street;
+	
+	@Column(name="build")
 	private int build;
+	
+	@Column(name="flat")
 	private int flat;
+	
+	@Column(name="index")
 	private int index;
+	
 	public int getId() {
 		return id;
 	}

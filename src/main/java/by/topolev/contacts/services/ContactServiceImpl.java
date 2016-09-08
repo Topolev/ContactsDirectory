@@ -14,10 +14,29 @@ public class ContactServiceImpl implements ContactService{
 	public List<Contact> getContactList() {
 		return contactDao.getContactList();
 	}
-
+	
+	public int getCountContacts(){
+		return contactDao.getCountContacts();
+	}
+	
 	@Override
 	public Contact getContactById(int id) {
 		return contactDao.getContactById(id);
+	}
+
+	@Override
+	public List<Contact> getLimitContactList(int page, int countRow) {
+		return contactDao.getLimitContactList(page*countRow, countRow);
+	}
+	
+	@Override
+	public List<Contact> getLimitContactList(int page, int countRow, String sortField, String sortType){
+		return contactDao.getLimitContactList(page*countRow, countRow, sortField, sortType);
+	}
+
+	@Override
+	public void deleteContact(int... idList) {
+		contactDao.deleteContacts(idList);
 	}
 
 }
