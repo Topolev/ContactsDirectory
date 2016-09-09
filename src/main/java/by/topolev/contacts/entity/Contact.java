@@ -18,6 +18,7 @@ public class Contact {
 	@Column(name = "last_name")
 	private String lastname;
 
+	@Column(name = "middle_name")
 	private String middlename;
 
 	@Column(name = "sex")
@@ -40,6 +41,9 @@ public class Contact {
 
 	@Column(name = "birthday")
 	private Date birthday;
+	
+	@Column(name="photo")
+	private String photo;
 
 	@OneToOne(clazz = "by.topolev.contacts.entity.Address", table = "address")
 	private Address address;
@@ -138,6 +142,15 @@ public class Contact {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+	
+
+	public String getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
 	}
 
 	public String toString() {
