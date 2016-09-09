@@ -2,77 +2,234 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link href="<c:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet" />
-	<link href="<c:url value="/resources/css/contact-edit.css" />"
-	rel="stylesheet" />
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bootstrap Template</title>
+
+<c:url value="/resources/css" var="root_for_css"/>
+<c:url value="/resources/img" var="root_for_img"/>
+<c:url value="resources/js" var = "root_for_js"/>
+<c:url value="/" var="root_directory"/>
+
+
+<link href="${root_for_css}/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<link href="${root_for_css}/font-raphaelicons/raphaelicons.css" rel="stylesheet">
+
+<!-- Bootstrap -->
+<link href="${root_for_css}/style-common.css" rel="stylesheet">
+<link href="${root_for_css}/style-contact.css" rel="stylesheet">
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
+<script src="${root_for_js}/jquery-1.12.3.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="${root_for_js}/bootstrap.js"></script>
 </head>
 <body>
-<span class="icon">Ù</span>
-<div class="container">
-	<c:if test="${contact != null}">
-		<form>
-			<div class="form-group">
-				<label for="firstname">First name:</label>
-				<input type="text" name="firstname" id="firstname" class="form-control" value="<c:out value="${contact.firstname}" />">
-			</div>
-			<div class="form-group">
-				<label for="lastname">Last name:</label>
-				<input type="text" name="lastname" id="lastname" class="form-control" value="<c:out value="${contact.lastname}" />">
-			</div>
-			<div class="form-group">
-				<label for="middlename">Middle name:</label>
-				<input type="text" name="middlename" id="middlename" class="form-control" value="<c:out value="${contact.middlename}" />">
-			</div>
-			
-			
-			<div class="radio-group">	
-				<label for="male" class="main">Sex</label>
-					<div class="radio-wrap">
-						<input type="radio" id="male" class="radio" name="sex" value="Mail" <c:if test="${contact.sex == 'Male'}">checked</c:if>>
-						<label for="male" >
-							<span class="icon">Ù</span> Male
-						</label>
+	
+	
+<jsp:include page="header.jsp"/>
+
+<div id="wrap-content" class="user-container">
+	<section>
+		<h3>Contact Details</h3>
+		
+		<div class="row">
+			<div class="col-md-3 col-md-push-9 col-sm-4 col-sm-push-8" id="wrap-photo">
+				<div id="wrap-profile">
+					
+					<c:if test="${contact.photo == null}">
+						<img src = "${root_for_img}/no-profile-photo.png" alt="Profile photo" id="profile-photo"/>
+					</c:if>
+					<c:if test="${contact.photo != null}">
+						PHOTO
+					</c:if>
+					
+					
+					<div id="choose-photo">	
+						<input type="file" />
+						<button class="btn btn-default">Choose new image</button>
 					</div>
+				</div>
+			</div>
 			
-					<div class="radio-wrap">
-						<input type="radio" id="female" class="radio" name="sex" value="Mail" <c:if test="${contact.sex == 'Female'}">checked</c:if>>
-						<label for="female">
-							<span class="icon">Ú</span> Female
-						</label>
+			<div class="col-md-9 col-md-pull-3 col-sm-8 col-sm-pull-4">
+				<div class="block-input">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="firstname">First name</label>
+							<input type="text" class="form-control" id="firstname" placeholder="Enter your first name" value="<c:out value="${contact.firstname}" />">
+						</div>
 					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="lastname">Last name</label>
+							<input type="text" class="form-control" id="lastname" placeholder="Enter last name" value="<c:out value="${contact.lastname}"/>" >
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="middlename">Middle name</label>
+							<input type="text" class="form-control" id="middlename" placeholder="Enter middle name" value="<c:out value="${contact.middlename}"/>" >
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="birthday">Birthday</label>
+							<input type="text" class="form-control" id="birthday" placeholder="Choose birthday" value="<c:out value="${contact.birthday}"/>">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="nationality">Nationality</label>
+							<input type="text" class="form-control" id="nationality" placeholder="Enter nationality" value="<c:out value="${contact.nationality}"/>">
+						</div>
+					</div>
+				</div>
+				</div>
+				
+				<div class="block-input">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="male" class="block">Sex:</label>
+							
+							<input type="radio" name="sex" class="radio" id="male" <c:if test="${contact.sex eq 'Male'}">checked</c:if> />
+							<label for="male" class="sex"><span class="icon">Ù</span>Male</label>
+							
+							<input type="radio" name="sex" class="radio" id="female" <c:if test="${contact.sex eq 'Female'}">checked</c:if> />
+							<label for="female" class="sex"><span class="icon">Ú</span>Female</label>
+							<div class="clear"></div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="single" class="block">Marital status:</label>
+							
+							<input type="radio" name="maritalstatus" class="radio" id="single" <c:if test="${contact.maritalStatus eq 'Single'}">checked</c:if> />
+							<label for="single" class="sex"><span class="icon">Ù</span>Single</label>
+							
+							<input type="radio" name="maritalstatus" class="radio" id="married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
+							<label for="married" class="sex"><span class="icon">ÙÙ</span>Married</label>
+							<div class="clear"></div>
+						</div>
+					</div>
+				</div>
+				</div>
+					
+				<div class="block-input">	
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="website">Website</label>
+							<input type="text" class="form-control" id="website" placeholder="Enter website" value="${contact.website}">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="email">Email</label>
+							<input type="text" class="form-control" id="email" placeholder="Enter your email" value="${contact.email}">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="workplace">Current work place</label>
+							<input type="text" class="form-control" id="workplace" placeholder="Enter your current work place" value="${contact.workplace}">
+						</div>
+					</div>
+				</div>
+				</div>
+			
 			</div>
 			
-			<div class="form-group">
-				<label for="natinality">Nationality</label>
-				<input type="text" name="nationality" id="nationality" class="form-control" value="<c:out value="${contact.nationality}"/>" />
-			</div>
-			
-			<div class="radio-group">
-				<label for="maritalstatus">Marital status</label>
-			</div>
-			<label for="maritalstatus">Marital status</label>
-			<input type="radio" name="maritalstatus" value="Mail" <c:if test="${contact.maritalStatus == 'Single'}">checked</c:if>>
-			<input type="radio" name="maritalstatus" value="Femail" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>>
-			
-			<div class="form-group">
-				<label for="website">Website:</label>
-				<input type="text" name="website" id="website" class="form-control" value="<c:out value="${contact.website}"/>" />
-			</div>
-			
-			<div class="form-group">
-				<label for="email">Email:</label>
-				<input type="text" name="email" id="email" class="form-control" value="<c:out value="${contact.email}"/>" />
-			</div>
-			
-			<div class="form-group">
-				<label for="workplace">Workplace:</label>
-				<input type="text" name="workplace" id="workplace" class="form-control" value="<c:out value="${contact.workplace}"/>" />
-			</div>
-		</form>
-	</c:if>
+		</div><!-- end the 1st main row--->
+		
+		
+		
+		
+		
+		<div class="row">
+			<div class="big-block">
+				<h2>Address</h2>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="index">Index</label>
+							<input type="text" class="form-control" id="index" placeholder="Index" value="${contact.address.index}">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="country">Country</label>
+							<input type="text" class="form-control" id="country" placeholder="Country" value="${contact.address.country}">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="city">City</label>
+							<input type="text" class="form-control" id="city" placeholder="City" value="${contact.address.city}">
+						</div>
+					</div>
+				</div>
+				
+				
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="street">Street</label>
+							<input type="text" class="form-control" id="street" placeholder="Street" value="${contact.address.street}">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="build">Build</label>
+							<input type="text" class="form-control" id="build" placeholder="Build" value="${contact.address.build}">
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="flat">Flat</label>
+							<input type="text" class="form-control" id="flat" placeholder="Flat" value="${contact.address.flat}">
+						</div>
+					</div>
+				</div>
+				</div>
+		</div>
+		
+	</section>
 </div>
+
+
 </body>
 </html>
+<script>
+	
+	
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
