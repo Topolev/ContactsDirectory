@@ -8,10 +8,15 @@
 		<servlet-name>ContactList</servlet-name>
 		<servlet-class>by.topolev.contacts.servlets.ContactListServlet</servlet-class>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>ContactDelete</servlet-name>
 		<servlet-class>by.topolev.contacts.servlets.ContactDeleteServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>ContactNew</servlet-name>
+		<servlet-class>by.topolev.contacts.servlets.ContactNewServlet</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -23,12 +28,17 @@
 		<servlet-name>ContactList</servlet-name>
 		<url-pattern>/contactlist</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>ContactDelete</servlet-name>
 		<url-pattern>/contactdelete</url-pattern>
 	</servlet-mapping>
-	
+
+	<servlet-mapping>
+		<servlet-name>ContactNew</servlet-name>
+		<url-pattern>/contactnew</url-pattern>
+	</servlet-mapping>
+
 	<servlet-mapping>
 		<servlet-name>Contact</servlet-name>
 		<url-pattern>/contact</url-pattern>

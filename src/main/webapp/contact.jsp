@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,6 +38,7 @@
 <jsp:include page="header.jsp"/>
 
 <div id="wrap-content" class="user-container">
+	<form method="post"  enctype="multipart/form-data">
 	<section>
 		<h3>Contact Details</h3>
 		
@@ -65,19 +67,19 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="firstname">First name</label>
-							<input type="text" class="form-control" id="firstname" placeholder="Enter your first name" value="<c:out value="${contact.firstname}" />">
+							<input type="text" class="form-control" id="firstname" placeholder="Enter your first name" name="firstname" value="<c:out value="${contact.firstname}" />">
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="lastname">Last name</label>
-							<input type="text" class="form-control" id="lastname" placeholder="Enter last name" value="<c:out value="${contact.lastname}"/>" >
+							<input type="text" class="form-control" id="lastname" placeholder="Enter last name" name="lastname" value="<c:out value="${contact.lastname}"/>" >
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="middlename">Middle name</label>
-							<input type="text" class="form-control" id="middlename" placeholder="Enter middle name" value="<c:out value="${contact.middlename}"/>" >
+							<input type="text" class="form-control" id="middlename" placeholder="Enter middle name" name="middlename" value="<c:out value="${contact.middlename}"/>" >
 						</div>
 					</div>
 				</div>
@@ -86,13 +88,13 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="birthday">Birthday</label>
-							<input type="text" class="form-control" id="birthday" placeholder="Choose birthday" value="<c:out value="${contact.birthday}"/>">
+							<input type="text" class="form-control" id="birthday" placeholder="Choose birthday" name="birthday" value="<c:out value="${contact.birthday}"/>">
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="nationality">Nationality</label>
-							<input type="text" class="form-control" id="nationality" placeholder="Enter nationality" value="<c:out value="${contact.nationality}"/>">
+							<input type="text" class="form-control" id="nationality" placeholder="Enter nationality" name="nationality" value="<c:out value="${contact.nationality}"/>">
 						</div>
 					</div>
 				</div>
@@ -104,10 +106,10 @@
 						<div class="form-group">
 							<label for="male" class="block">Sex:</label>
 							
-							<input type="radio" name="sex" class="radio" id="male" <c:if test="${contact.sex eq 'Male'}">checked</c:if> />
+							<input type="radio" name="sex" class="radio" id="male" value="Male" <c:if test="${contact.sex eq 'Male'}">checked</c:if> />
 							<label for="male" class="sex"><span class="icon">Ù</span>Male</label>
 							
-							<input type="radio" name="sex" class="radio" id="female" <c:if test="${contact.sex eq 'Female'}">checked</c:if> />
+							<input type="radio" name="sex" class="radio" id="female" value="Female" <c:if test="${contact.sex eq 'Female'}">checked</c:if> />
 							<label for="female" class="sex"><span class="icon">Ú</span>Female</label>
 							<div class="clear"></div>
 						</div>
@@ -116,10 +118,10 @@
 						<div class="form-group">
 							<label for="single" class="block">Marital status:</label>
 							
-							<input type="radio" name="maritalstatus" class="radio" id="single" <c:if test="${contact.maritalStatus eq 'Single'}">checked</c:if> />
+							<input type="radio" name="maritalStatus" class="radio" id="single" value="Single" <c:if test="${contact.maritalStatus eq 'Single'}">checked</c:if> />
 							<label for="single" class="sex"><span class="icon">Ù</span>Single</label>
 							
-							<input type="radio" name="maritalstatus" class="radio" id="married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
+							<input type="radio" name="maritalstatus" class="radio" id="married" value="Married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
 							<label for="married" class="sex"><span class="icon">ÙÙ</span>Married</label>
 							<div class="clear"></div>
 						</div>
@@ -205,8 +207,9 @@
 				</div>
 				</div>
 		</div>
-		
+		<input type="submit" class="btn btn-default" />
 	</section>
+	</form>
 </div>
 
 

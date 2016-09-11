@@ -5,12 +5,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import by.topolev.contacts.entity.Address;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.orm.annotation.Column;
 import by.topolev.contacts.orm.annotation.Id;
@@ -23,9 +27,78 @@ public class EntityManager {
 
 	DataSource dataSource = DataSourceFactory.getDataSource();
 
-	public EntityManager(){
+	private Map<Class<?>, MetaEntity> metaEntityList = new HashMap<>();
+	private List<Class<?>> classEntity = new ArrayList<>();
+
+	public EntityManager() {
 		System.out.println("Entity manager");
+
+		classEntity.add(Contact.class);
+		classEntity.add(Address.class);
+
+		for (Class<?> clazz : classEntity) {
+			metaEntityList.put(clazz, createMetaEntity(clazz));
+		}
 	}
+
+	private MetaEntity createMetaEntity(Class<?> clazz) {
+		MetaEntity metaEntity = new MetaEntity();
+		metaEntity.setTable(clazz.getAnnotation(Table.class));
+
+		Field[] fields = clazz.getDeclaredFields();
+		for (Field field : fields) {
+			Column column = field.getAnnotation(Column.class);
+			OneToOne oneToOne = field.getAnnotation(OneToOne.class);
+			Id id = field.getAnnotation(Id.class);
+			if (column != null)
+				metaEntity.getFieldsColumn().put(field, column);
+			if (oneToOne != null)
+				metaEntity.getFieldsOneToOne().put(field, oneToOne);
+			if (id != null)
+				metaEntity.setIdField(field);
+		}
+		return metaEntity;
+	}
+
+	private String getStringValue(Object obj, Field field) {
+		field.setAccessible(true);
+		Object value;
+		try {
+			value = field.get(obj);
+			field.setAccessible(false);
+			if (value == null)
+				return "null";
+			if (field.getType() == String.class)
+				return "'" + value.toString() + "'";
+			return value.toString();
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			return "null";
+		}
+	}
+
+	public <T> void insertNewEntity(T entity) {
+		MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+		StringBuilder query = new StringBuilder();
+		query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()));
+
+		for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
+			query.append(String.format(" %s = %s ,", entry.getValue().name(), getStringValue(entity, entry.getKey())));
+		}
+
+		query.delete(query.length() - 1, query.length()); // delete the last comma
+
+		Connection connection = null;
+		int id;
+		try{
+			connection = dataSource.getConnection();
+			PreparedStatement statement = connection.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
+			statement.executeUpdate();
+		} catch (SQLException e){
+			LOG.debug("Problem with insert row in table", e);
+		}
+	}
+	
+	
 	
 	public <T> List<T> getListEntity(String query, Class<T> clazz) {
 		List<T> entityList = new ArrayList<T>();
@@ -74,46 +147,46 @@ public class EntityManager {
 
 		return entity;
 	}
-	
-	public <T> void deleteEntity(Class<T> clazz, int... idList){
+
+	public <T> void deleteEntity(Class<T> clazz, int... idList) {
 		StringBuilder query = new StringBuilder();
 		Table table = clazz.getAnnotation(Table.class);
 		query.append("DELETE FROM " + table.name() + " WHERE");
-		for (int id : idList){
+		for (int id : idList) {
 			query.append(" id = " + id + " OR");
 		}
-		query.delete(query.length()-3, query.length());
-		
+		query.delete(query.length() - 3, query.length());
+
 		Connection connection = null;
-		try{
+		try {
 			connection = dataSource.getConnection();
 			connection.createStatement().executeUpdate(query.toString());
-		} catch(SQLException e){
+		} catch (SQLException e) {
 			LOG.debug("Problem with delete", e);
-		} finally{
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
 				LOG.debug("Can not close connection", e);
 			}
 		}
-		
+
 		System.out.println(query);
 	}
-	
-	public int getCountAllEntity(Class<?> clazz){
+
+	public int getCountAllEntity(Class<?> clazz) {
 		Connection connection = null;
 		Table table = clazz.getAnnotation(Table.class);
 		System.out.println(table.name());
-		try{
+		try {
 			connection = dataSource.getConnection();
 			PreparedStatement statment = connection.prepareStatement("SELECT COUNT(*) AS count FROM " + table.name());
 			ResultSet result = statment.executeQuery();
 			result.next();
 			return result.getInt("count");
-		} catch(SQLException e){
+		} catch (SQLException e) {
 			LOG.debug("Problem with getting number of row", e);
-		} finally{
+		} finally {
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -122,15 +195,14 @@ public class EntityManager {
 		}
 		return 0;
 	}
-	
+
 	private <T> T getEntityFromResultSet(ResultSet result, Class<T> clazz) {
 		try {
 			T entity = clazz.newInstance();
 			Table table = clazz.getAnnotation(Table.class);
 			long entity_id = -1;
-			
+
 			Field[] classFields = clazz.getDeclaredFields();
-			
 
 			for (Field field : classFields) {
 				Column column = field.getAnnotation(Column.class);
@@ -150,9 +222,8 @@ public class EntityManager {
 					try {
 						Class clazzOneToOne = Class.forName(oneToOne.clazz());
 						if (entity_id != -1) {
-							Object connectedObject = getEntity(
-									String.format("SELECT * FROM %s WHERE %s=%d", oneToOne.table(), table.name() + "_id", entity_id),
-									clazzOneToOne);
+							Object connectedObject = getEntity(String.format("SELECT * FROM %s WHERE %s=%d",
+									oneToOne.table(), table.name() + "_id", entity_id), clazzOneToOne);
 							setValueField(entity, field, connectedObject);
 						}
 					} catch (ClassNotFoundException e) {
@@ -181,8 +252,8 @@ public class EntityManager {
 
 	public static void main(String[] arg) {
 		EntityManager em = new EntityManager();
-		em.deleteEntity(Contact.class, 1,2);
-		
+		em.deleteEntity(Contact.class, 1, 2);
+
 		Contact contact = em.getEntity("SELECT * FROM contact", Contact.class);
 		List<Contact> contacts = em.getListEntity("SELECT * FROM contact", Contact.class);
 		System.out.println(contacts);
@@ -190,6 +261,46 @@ public class EntityManager {
 			System.out.println(c.getAddress());
 		}
 
+	}
+
+}
+
+class MetaEntity {
+	private Table table;
+	private Field idField;
+	private Map<Field, Column> fieldsColumn = new HashMap<>();
+	private Map<Field, OneToOne> fieldsOneToOne = new HashMap<>();
+
+	public Table getTable() {
+		return table;
+	}
+
+	public void setTable(Table table) {
+		this.table = table;
+	}
+
+	public Field getIdField() {
+		return idField;
+	}
+
+	public void setIdField(Field idField) {
+		this.idField = idField;
+	}
+
+	public Map<Field, Column> getFieldsColumn() {
+		return fieldsColumn;
+	}
+
+	public void setFieldsColumn(Map<Field, Column> fieldsColumn) {
+		this.fieldsColumn = fieldsColumn;
+	}
+
+	public Map<Field, OneToOne> getFieldsOneToOne() {
+		return fieldsOneToOne;
+	}
+
+	public void setFieldsOneToOne(Map<Field, OneToOne> fieldsOneToOne) {
+		this.fieldsOneToOne = fieldsOneToOne;
 	}
 
 }

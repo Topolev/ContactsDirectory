@@ -39,4 +39,11 @@ public class ContactServiceImpl implements ContactService{
 		contactDao.deleteContacts(idList);
 	}
 
+	@Override
+	public void createContact(Contact contact) {
+		contactDao.createContact(contact);
+		
+	}
+	
+	
 }

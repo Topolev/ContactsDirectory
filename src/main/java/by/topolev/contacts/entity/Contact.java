@@ -157,6 +157,7 @@ public class Contact {
 		StringBuilder str = new StringBuilder();
 		str.append(" id: " + id);
 		str.append(" first name: " + firstname);
+		str.append(" last name: " + lastname);
 		str.append(" sex: " + sex);
 		return str.toString();
 	}

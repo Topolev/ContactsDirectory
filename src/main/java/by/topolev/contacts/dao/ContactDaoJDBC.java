@@ -65,6 +65,11 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		
 	}
 
+	@Override
+	public void createContact(Contact contact) {
+		em.insertNewEntity(contact);
+		
+	}
 	public static void main(String[] args) {
 		ContactDao contactDao = new ContactDaoJDBC();
 		for (Contact contact : contactDao.getContactList()) {
@@ -72,6 +77,8 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		}
 		System.out.println(contactDao.getCountContacts());
 	}
+
+
 
 
 

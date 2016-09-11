@@ -11,4 +11,5 @@ public interface ContactService {
 	List<Contact> getLimitContactList(int page, int countRow, String sortField, String sortType);
 	Contact getContactById(int id);
 	void deleteContact(int...idList);
+	void createContact(Contact contact);
 }
