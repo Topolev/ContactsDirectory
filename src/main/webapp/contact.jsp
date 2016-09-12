@@ -167,7 +167,7 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="index">Index</label>
-							<input type="text" class="form-control" id="index" placeholder="Index" name="address.index" value="${contact.address.index}">
+							<input type="text" class="form-control" id="index" placeholder="Index" name="address.index" value="${contact.address.ind}">
 						</div>
 					</div>
 					<div class="col-md-4">
@@ -233,7 +233,7 @@
         				</tr>
         			</thead>
         			<tbody id="body-table-phone">
-
+                        <c:forEach items="${contact.phoneList}" var="item" >
         				<tr>
         					<td>
         						<div class="wrap-checkbox">
@@ -241,10 +241,11 @@
         							<label></label>
         						</div>
         					</td>
-        					<td>+375-29-8995270<input type="hidden" name="phone1.countryCode" value="375"/></td>
-        					<td>home</td>
-        					<td>description</td>
+        					<td>+${item.countryCode}-${item.operatorCode}-${item.phoneNumber}</td>
+        					<td>${item.typePhone}</td>
+        					<td>${item.description}</td>
         				</tr>
+        				</c:forEach>
         			</tbody>
         		</table>
         	</div>
@@ -253,7 +254,8 @@
         <input type="submit" class="btn btn-default" value="Save contact"/>
 
     </section>
-        </div>
+</div>
+</form>
 
         <!--Popup for creating new phone-->
         <div class="popup-overlay" id="phone-modal">
@@ -297,12 +299,6 @@
         </div>
 
 
-
-
-
-		<input type="submit" class="btn btn-default" />
-	</section>
-	</form>
 </div>
 
 

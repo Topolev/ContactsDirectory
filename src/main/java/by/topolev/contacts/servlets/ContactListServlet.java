@@ -83,7 +83,7 @@ public class ContactListServlet extends HttpServlet {
 			} 
 			return map.readValue(req.getParameter(nameParametr), clazz);
 		} catch (IOException | NullPointerException e) {
-			LOG.debug("Set default value for request parametr {}",nameParametr, e);
+			LOG.debug("Set default value for request parametr {}",nameParametr);
 			return defaultValue;
 		}
 	}

@@ -78,6 +78,17 @@ public class EntityManager {
             return "null";
         }
     }
+    /*
+    public <T> void insertInnerEntity(T entity, String extraEneQuery){
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        StringBuilder query = new StringBuilder();
+        query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()));
+
+        for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
+            query.append(String.format(" %s = %s ,", entry.getValue().name(), getStringValue(entity, entry.getKey())));
+        }
+
+    }*/
 
     public <T> void insertNewEntity(T entity) {
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
@@ -90,17 +101,45 @@ public class EntityManager {
 
         query.delete(query.length() - 1, query.length()); // delete the last comma
 
+        LOG.debug(query.toString());
+
         Connection connection = null;
-        int id;
+        Integer id;
         try {
             connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
-            statement.executeUpdate();
+            int colInserRow = statement.executeUpdate();
+            if (colInserRow ==0 ) {
+                throw new SQLException();
+            }
+
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if(generatedKeys.next()){
+                id = generatedKeys.getInt(1);
+                LOG.debug(String.valueOf(generatedKeys.getInt(1)));
+            } else{
+                throw new SQLException();
+            }
+
+            for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()){
+                Object currentObject = getValueField(entity, entry.getKey());
+                Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+                setValueField(currentObject, foreignkey, id);
+                insertNewEntity(currentObject);
+            }
+
         } catch (SQLException e) {
             LOG.debug("Problem with insert row in table", e);
         }
     }
 
+    private Field getFieldByName(Object obj, String fieldName){
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields){
+            if (field.getName().equals(fieldName)) return field;
+        }
+        return null;
+    }
 
     public <T> List<T> getListEntity(String query, Class<T> clazz) {
         List<T> entityList = new ArrayList<T>();
@@ -213,12 +252,12 @@ public class EntityManager {
 
             if (id != null){
                 for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()){
-                    String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), metaEntity.getTable().name() +"_id", id );
+                    String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), entry.getValue().foreignkey(), id );
                     setValueField(entity, entry.getKey(),getEntity(query,entry.getKey().getType()));
                 }
 
                 for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()){
-                    String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), metaEntity.getTable().name()+"_id", id );
+                    String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), entry.getValue().foreignkey(), id );
                     setValueField(entity, entry.getKey(), getListEntity(query, getGenericTypeOfField(entry.getKey())));
                 }
             }
@@ -243,6 +282,17 @@ public class EntityManager {
                     object.getClass().getName(), e);
         }
         field.setAccessible(false);
+    }
+
+    private Object getValueField(Object object, Field field){
+        field.setAccessible(true);
+        try {
+            return field.get(object);
+        } catch (IllegalAccessException e) {
+            return null;
+        } finally{
+            field.setAccessible(false);
+        }
     }
 
     public static void main(String[] arg) {

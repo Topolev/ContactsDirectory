@@ -43,10 +43,10 @@ public class Contact {
 	@Column(name="photo")
 	private String photo;
 
-	@OneToOne(clazz = "by.topolev.contacts.entity.Address", table = "address")
+	@OneToOne(foreignkey = "contact_id", table = "address")
 	private Address address;
 
-	@OneToMany(clazz = "by.topolev.contacts.entity.Phone", table = "phone")
+	@OneToMany(foreignkey = "contact_id", table = "phone")
 	private List<Phone> phoneList;
 
 
