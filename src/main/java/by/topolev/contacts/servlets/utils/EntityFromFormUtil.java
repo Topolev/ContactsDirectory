@@ -95,7 +95,7 @@ public class EntityFromFormUtil<T> {
             }
             if (field.getType() == int.class || field.getType() == Integer.class) {
                 return Integer.valueOf(valueStr);
-            }
+            } 
             if (field.getType() == long.class || field.getType() == Long.class) {
                 return Long.valueOf(valueStr);
             }
