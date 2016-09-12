@@ -1,6 +1,7 @@
 package by.topolev.contacts.servlets.utils;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class EntityFromFormUtil<T> {
     private static final Logger LOG = LoggerFactory.getLogger(EntityFromFormUtil.class);
@@ -65,7 +69,7 @@ public class EntityFromFormUtil<T> {
     private FileItem getFileItem(List<FileItem> list, Field field, String rootClass) {
         List<FileItem> collect = list.stream()
                 .filter(byFieldName(rootClass + field.getName()).and(isFormField(field)))
-                .collect(Collectors.toList());
+                .collect(toList());
         return collect.isEmpty() ? null : collect.get(0);
     }
 
@@ -78,16 +82,14 @@ public class EntityFromFormUtil<T> {
         return item -> item.isFormField();
     }
 
-    private Predicate<FileItem> byFieldName(Field field) {
-        return byFieldName(field.getName());
-    }
-
-
     private Object getValueFromForm(List<FileItem> list, Field field, String rootClass) {
         FileItem item = getFileItem(list, field, rootClass);
         if (item != null) {
             String valueStr = new String(item.get(), StandardCharsets.UTF_8);
 
+            if(isEmpty(valueStr)) {
+                return null;
+            }
             if (field.getType() == String.class) {
                 return valueStr;
             }
