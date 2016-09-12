@@ -167,19 +167,19 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="index">Index</label>
-							<input type="text" class="form-control" id="index" placeholder="Index" value="${contact.address.index}">
+							<input type="text" class="form-control" id="index" placeholder="Index" name="address.index" value="${contact.address.index}">
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="country">Country</label>
-							<input type="text" class="form-control" id="country" placeholder="Country" value="${contact.address.country}">
+							<input type="text" class="form-control" id="country" placeholder="Country" name="address.country" value="${contact.address.country}">
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="city">City</label>
-							<input type="text" class="form-control" id="city" placeholder="City" value="${contact.address.city}">
+							<input type="text" class="form-control" id="city" placeholder="City" name="address.city" value="${contact.address.city}">
 						</div>
 					</div>
 				</div>
@@ -189,24 +189,117 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="street">Street</label>
-							<input type="text" class="form-control" id="street" placeholder="Street" value="${contact.address.street}">
+							<input type="text" class="form-control" id="street" placeholder="Street" name="address.street" value="${contact.address.street}">
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="build">Build</label>
-							<input type="text" class="form-control" id="build" placeholder="Build" value="${contact.address.build}">
+							<input type="text" class="form-control" id="build" placeholder="Build" name="address.build" value="${contact.address.build}">
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
 							<label for="flat">Flat</label>
-							<input type="text" class="form-control" id="flat" placeholder="Flat" value="${contact.address.flat}">
+							<input type="text" class="form-control" id="flat" placeholder="Flat" name="address.flat" value="${contact.address.flat}">
 						</div>
 					</div>
 				</div>
 				</div>
 		</div>
+
+        <div class="row">
+        	<div class="big-block">
+        		<input type="hidden" value="1">
+        		<h2>Phones
+        			<div class="control-panel">
+        				<a href="" class="btn btn-default" id="create-phone">Create</a>
+        				<a href="" class="btn btn-default" id="edit-phone">Edit</a>
+        				<a href="" class="btn btn-default" id="delete-phone">Delete</a>
+        			</div>
+        		</h2>
+        		<table class="table">
+        			<thead>
+        				<tr>
+        					<th>
+        						<div class="wrap-checkbox">
+        							<input type="checkbox" class="checkbox" id="delete-all">
+        							<label></label>
+        						</div>
+        					</th>
+        					<th>Phone</th>
+        					<th>Type</th>
+        					<th>Description</th>
+        				</tr>
+        			</thead>
+        			<tbody id="body-table-phone">
+
+        				<tr>
+        					<td>
+        						<div class="wrap-checkbox">
+        							<input type="checkbox" class="checkbox checkbox-phone" onchange="change_check_phone(event)">
+        							<label></label>
+        						</div>
+        					</td>
+        					<td>+375-29-8995270<input type="hidden" name="phone1.countryCode" value="375"/></td>
+        					<td>home</td>
+        					<td>description</td>
+        				</tr>
+        			</tbody>
+        		</table>
+        	</div>
+        </div><!--end row-->
+
+        <input type="submit" class="btn btn-default" value="Save contact"/>
+
+    </section>
+        </div>
+
+        <!--Popup for creating new phone-->
+        <div class="popup-overlay" id="phone-modal">
+        	<div class = "modal-window">
+        		<h5>Create/edit phone</h5>
+        		<div class="container-fluid">
+        			<div class="form-group">
+        				<label for="country-code">Country code</label>
+        				<input type="text" class="form-control" id="country-code" name="countryCode" placeholder="Country code">
+        			</div>
+        			<div class="form-group">
+        				<label for="operator-code">Operator code</label>
+        				<input type="text" class="form-control" id="operator-code" name="operatorCode" placeholder="Operator code">
+        			</div>
+        			<div class="form-group">
+        				<label for="phone-number">Number</label>
+        				<input type="text" class="form-control" id="phone-number" name="phoneNumber" placeholder="Phone number">
+        			</div>
+        			<div class="form-group">
+        				<label for="home">Type phone</label>
+
+        				<div class="wrap-phone">
+        				<input type="radio" name="typePhone" value="Home" class="radio phone-radio" id="home"/>
+        				<label for="home" class="phone"><i class="fa fa-phone" aria-hidden="true"></i><span>Home</span></label>
+
+        				<input type="radio" name="typePhone" value="Mobile" class="radio phone-radio" id="mobile"/>
+        				<label for="mobile" class="phone"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile</label>
+        				</div>
+
+        			</div>
+        			<div class="form-group">
+        				<label for="description">Description</label>
+        				<input type="text" class="form-control" id="description" placeholder="Enter email">
+        			</div>
+        		</div>
+        		<div class="modal-buttons">
+        			<a href="#" class="btn btn-default" id="add-edit-phone">Save</a>
+        			<a href="#" class="btn btn-default" id="close-phone-modal">Cancel</a>
+        		</div>
+        	</div>
+        </div>
+
+
+
+
+
 		<input type="submit" class="btn btn-default" />
 	</section>
 	</form>
@@ -215,10 +308,214 @@
 
 </body>
 </html>
+
 <script>
-	
-	
-	
+	/*Contact phone*/
+	var create_phone = document.getElementById("create-phone");
+	var delete_phone = document.getElementById("delete-phone");
+	var edit_phone = document.getElementById("edit-phone");
+	var popup_phone_modal = document.getElementById("phone-modal");
+	var but_close_phone_modal = document.getElementById("close-phone-modal");
+	var but_close_edit_modal = document.getElementById("close-edit-phone-modal");
+	var but_add_or_edit_phone = document.getElementById("add-edit-phone");
+	var placeToInsertPhoneRow = document.getElementById("body-table-phone");
+	var autoincrement = 0;
+
+	var click_button = undefined;
+	var choose_edit_phone = undefined;
+
+	document.getElementById("delete-all").onclick = function(){
+		var position = this.checked;
+		var listCheckbox = document.getElementsByClassName("checkbox-phone");
+		for (var i = 0; i < listCheckbox.length; i++) {
+			listCheckbox[i].checked = position;
+		}
+		for(var i = 0; i < listCheckbox.length; i++){
+			if (listCheckbox[i].checked == true){
+				listCheckbox[i].parentNode.parentNode.parentNode.setAttribute("class", "checked");
+			} else{
+				listCheckbox[i].parentNode.parentNode.parentNode.removeAttribute("class");
+			}
+		}
+		change_check_phone();
+	}
+
+	create_phone.onclick = function(){
+		clear_phone_form();
+		popup_phone_modal.style.display = "block";
+		click_button = "create";
+		return false;
+	}
+
+	edit_phone.onclick = function(){
+		changeEditRowForPhone();
+		click_button = "edit";
+		return false;
+	}
+
+	delete_phone.onclick = function(){
+		var checkbox = document.getElementsByClassName("checkbox-phone");
+		var checked_checkbox = [];
+		for (var i = 0; i< checkbox.length; i++){
+			if (checkbox[i].checked) {
+				checked_checkbox.push(checkbox[i].parentNode.parentNode.parentNode);
+			}
+		}
+		while(checked_checkbox.length != 0){
+			placeToInsertPhoneRow.removeChild(checked_checkbox.pop());
+		}
+		return false;
+	}
+
+	but_close_phone_modal.onclick = function(){
+		popup_phone_modal.style.display = "none";
+		return false;
+	}
+
+	but_add_or_edit_phone.onclick = function(){
+		if (click_button == "create") createRowForPhone();
+		if (click_button == "edit") editRowForPhone();
+		return false;
+	}
+
+	function getValueInputById(id){
+		var value = document.getElementById(id).value;
+		document.getElementById(id).value = "";
+		return value;
+	}
+
+	function setValueInputById(id, value){
+		document.getElementById(id).value = value;
+	}
+
+	function getValueRadioByClass(nameClass){
+		var radio = document.getElementsByClassName(nameClass);
+		for (var i = 0; i < radio.length; i++){
+			if (radio[i].checked) return radio[i].value;
+		}
+	}
+
+	function setValueRadioByClass(nameClass, value){
+		var radio = document.getElementsByClassName(nameClass);
+		for (var i = 0; i < radio.length; i++){
+			if (radio[i].value == value) radio[i].checked = true;
+		}
+	}
+
+	function createHiddenInput(name, value){
+		var input = document.createElement("input");
+		input.setAttribute('type','hidden');
+		input.setAttribute('name',name);
+		input.setAttribute('value',value);
+		return input;
+	}
+
+	/*Block button Edit if choose more that 1 phone*/
+	function change_check_phone(event){
+		if (event != undefined){
+			if (event.target.checked) event.target.parentNode.parentNode.parentNode.setAttribute("class", "checked");
+			else event.target.parentNode.parentNode.parentNode.removeAttribute("class");
+		}
+		var checkbox = document.getElementsByClassName("checkbox-phone");
+		var countChecked = 0;
+		for (var i = 0; i< checkbox.length; i++){
+			if (checkbox[i].checked) countChecked++;
+		}
+		if (countChecked > 1) edit_phone.setAttribute("disabled","disabled");
+		else edit_phone.removeAttribute("disabled");
+	}
+
+	function fullTdForTr(tr, increment){
+		var countrycode = getValueInputById("country-code");
+		var operatorcode = getValueInputById("operator-code");
+		var phonenumber = getValueInputById("phone-number");
+		var typephone = getValueRadioByClass("phone-radio");
+		var description = getValueInputById("description");
+
+		tr.innerHTML = "";
+		tr.innerHTML += "<td><div class='wrap-checkbox'>"+
+		                      "<input type='checkbox' class='checkbox checkbox-phone'" +
+							  " onchange='change_check_phone(event)' value='" + increment + "'>" +
+							  "<label></label></div>"+
+					    "</td>";
+		tr.innerHTML += "<td>+" + countrycode + "-" + operatorcode + "-" + phonenumber + "</td>";
+		tr.innerHTML += "<td>" + typephone + "</td>";
+		tr.innerHTML += "<td>" + description +"</td>";
+
+		tr.appendChild(createHiddenInput("outerid" + increment , increment));
+		tr.appendChild(createHiddenInput("countrycode" + increment , countrycode));
+		tr.appendChild(createHiddenInput("operatorcode" + increment, operatorcode));
+		tr.appendChild(createHiddenInput("phonenumber" + increment, phonenumber));
+		tr.appendChild(createHiddenInput("typephone" + increment, typephone));
+		tr.appendChild(createHiddenInput("description" + increment, description));
+
+	}
+
+	function createRowForPhone(){
+		var tr = document.createElement("tr");
+		autoincrement++;
+
+		fullTdForTr(tr, autoincrement);
+
+		placeToInsertPhoneRow.appendChild(tr);
+		popup_phone_modal.style.display = "none";
+		change_check_phone();
+	}
+
+	function getChooseCheckbox(){
+		var listCheckbox = document.getElementsByClassName("checkbox-phone");
+		for (var i = 0; i < listCheckbox.length; i++) {
+			if (listCheckbox[i].checked) return listCheckbox[i];
+		}
+	}
+
+	function changeEditRowForPhone(){
+		var choose_checkbox = getChooseCheckbox();
+		if (choose_checkbox != undefined){
+			popup_phone_modal.style.display = "block";
+			var parent = choose_checkbox.parentNode.parentNode.parentNode;
+			choose_edit_phone = getValueHiddenInputInParent(parent,"outerid");
+			var countrycode = getValueHiddenInputInParent(parent, "countrycode");
+			var operatorcode = getValueHiddenInputInParent(parent, "operatorcode");
+			var phonenumber = getValueHiddenInputInParent(parent, "phonenumber");
+			var description = getValueHiddenInputInParent(parent, "description");
+
+			setValueInputById("country-code",countrycode);
+			setValueInputById("operator-code",operatorcode);
+			setValueInputById("phone-number",phonenumber);
+			setValueInputById("description",description);
+		}
+	}
+
+	function clear_phone_form(){
+		setValueInputById("country-code","");
+		setValueInputById("operator-code","");
+		setValueInputById("phone-number","");
+		setValueInputById("description","");
+		setValueRadioByClass("phone-radio", "Home")
+	}
+
+	function editRowForPhone(){
+		var choose_checkbox = getChooseCheckbox();
+		if (choose_checkbox != undefined){
+			var tr = choose_checkbox.parentNode.parentNode.parentNode;
+			tr.removeAttribute("class");
+			fullTdForTr(tr, choose_edit_phone);
+		}
+		popup_phone_modal.style.display = "none";
+	}
+
+	function getValueHiddenInputInParent(parent, name){
+		var input = parent.getElementsByTagName("input");
+		var regexp = new RegExp(name);
+		for (var i = 0; i<input.length; i++){
+			if ((input[i].getAttribute("type") == "hidden")
+			    && (input[i].getAttribute("name").search(regexp) != -1)){
+					return input[i].value;
+				}
+		}
+	}
+
 </script>
 
 

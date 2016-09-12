@@ -20,7 +20,7 @@ public class ContactDeleteServlet extends HttpServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		int[] idList = map.readValue(req.getParameter("delete"), int[].class);
+		Integer[] idList = map.readValue(req.getParameter("delete"), Integer[].class);
 		contactService.deleteContact(idList);
 		
 		resp.sendRedirect(req.getContextPath() + "/contactlist?page=" + req.getParameter("page") + "&countRow=" + req.getParameter("countRow"));

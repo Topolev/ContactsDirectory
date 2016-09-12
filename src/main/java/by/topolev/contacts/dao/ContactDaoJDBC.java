@@ -60,7 +60,7 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 	}
 	
 	@Override
-	public void deleteContacts(int... idList) {
+	public void deleteContacts(Integer... idList) {
 		em.deleteEntity(Contact.class, idList);
 		
 	}

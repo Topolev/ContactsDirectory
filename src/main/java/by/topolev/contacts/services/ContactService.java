@@ -10,6 +10,6 @@ public interface ContactService {
 	List<Contact> getLimitContactList(int beginRow, int countRow);
 	List<Contact> getLimitContactList(int page, int countRow, String sortField, String sortType);
 	Contact getContactById(int id);
-	void deleteContact(int...idList);
+	void deleteContact(Integer...idList);
 	void createContact(Contact contact);
 }

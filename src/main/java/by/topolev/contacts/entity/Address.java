@@ -5,7 +5,7 @@ import by.topolev.contacts.orm.annotation.Id;
 
 public class Address {
 	@Id
-	private int id;
+	private Integer id;
 	
 	@Column(name="country")
 	private String country;

@@ -11,5 +11,5 @@ public interface ContactDao {
 	void createContact(Contact contact);
 	Contact getContactById(int id);
 	int getCountContacts();
-	void deleteContacts(int...id);
+	void deleteContacts(Integer...id);
 }
