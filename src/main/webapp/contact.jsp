@@ -38,224 +38,226 @@
 <jsp:include page="header.jsp"/>
 
 <div id="wrap-content" class="user-container">
-	<form method="post"  enctype="multipart/form-data">
-	<section>
-		<h3>Contact Details</h3>
-		
-		<div class="row">
-			<div class="col-md-3 col-md-push-9 col-sm-4 col-sm-push-8" id="wrap-photo">
-				<div id="wrap-profile">
-					
-					<c:if test="${contact.photo == null}">
-						<img src = "${root_for_img}/no-profile-photo.png" alt="Profile photo" id="profile-photo"/>
-					</c:if>
-					<c:if test="${contact.photo != null}">
-						PHOTO
-					</c:if>
-					
-					
-					<div id="choose-photo">	
-						<input type="file" />
-						<button class="btn btn-default">Choose new image</button>
+	<form method="post"  action="/contactnew" enctype="multipart/form-data">
+		<input type="hidden" name="id" value="<c:out value="${contact.id}"/>">
+		<section>
+			<h3>Contact Details</h3>
+
+			<div class="row">
+				<div class="col-md-3 col-md-push-9 col-sm-4 col-sm-push-8" id="wrap-photo">
+					<div id="wrap-profile">
+
+						<c:if test="${contact.photo == null}">
+							<img src = "${root_for_img}/no-profile-photo.png" alt="Profile photo" id="profile-photo"/>
+						</c:if>
+						<c:if test="${contact.photo != null}">
+							PHOTO
+						</c:if>
+
+
+						<div id="choose-photo">
+							<input type="file" />
+							<button class="btn btn-default">Choose new image</button>
+						</div>
 					</div>
 				</div>
+
+				<div class="col-md-9 col-md-pull-3 col-sm-8 col-sm-pull-4">
+					<div class="block-input">
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="firstname">First name</label>
+								<input type="text" class="form-control" id="firstname" placeholder="Enter your first name" name="firstname" value="<c:out value="${contact.firstname}" />">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="lastname">Last name</label>
+								<input type="text" class="form-control" id="lastname" placeholder="Enter last name" name="lastname" value="<c:out value="${contact.lastname}"/>" >
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="middlename">Middle name</label>
+								<input type="text" class="form-control" id="middlename" placeholder="Enter middle name" name="middlename" value="<c:out value="${contact.middlename}"/>" >
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="birthday">Birthday</label>
+								<input type="text" class="form-control" id="birthday" placeholder="Choose birthday" name="birthday" value="<c:out value="${contact.birthday}"/>">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="nationality">Nationality</label>
+								<input type="text" class="form-control" id="nationality" placeholder="Enter nationality" name="nationality" value="<c:out value="${contact.nationality}"/>">
+							</div>
+						</div>
+					</div>
+					</div>
+
+					<div class="block-input">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="male" class="block">Sex:</label>
+
+								<input type="radio" name="sex" class="radio" id="male" value="Male" <c:if test="${contact.sex eq 'Male'}">checked</c:if> />
+								<label for="male" class="sex"><span class="icon">Ù</span>Male</label>
+
+								<input type="radio" name="sex" class="radio" id="female" value="Female" <c:if test="${contact.sex eq 'Female'}">checked</c:if> />
+								<label for="female" class="sex"><span class="icon">Ú</span>Female</label>
+								<div class="clear"></div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="single" class="block">Marital status:</label>
+
+								<input type="radio" name="maritalStatus" class="radio" id="single" value="Single" <c:if test="${contact.maritalStatus eq 'Single'}">checked</c:if> />
+								<label for="single" class="sex"><span class="icon">Ù</span>Single</label>
+
+								<input type="radio" name="maritalstatus" class="radio" id="married" value="Married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
+								<label for="married" class="sex"><span class="icon">ÙÙ</span>Married</label>
+								<div class="clear"></div>
+							</div>
+						</div>
+					</div>
+					</div>
+
+					<div class="block-input">
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="website">Website</label>
+								<input type="text" class="form-control" id="website" name="website" placeholder="Enter website" value="${contact.website}">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="email">Email</label>
+								<input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" value="${contact.email}">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="workplace">Current work place</label>
+								<input type="text" class="form-control" id="workplace" name="workplace" placeholder="Enter your current work place" value="${contact.workplace}">
+							</div>
+						</div>
+					</div>
+					</div>
+
+				</div>
+
+			</div><!-- end the 1st main row--->
+
+
+
+
+
+			<div class="row">
+				<div class="big-block">
+					<h2>Address</h2>
+					<input type="hidden" name="address.id" value="<c:out value="${contact.address.id}"/>">
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="index">Index</label>
+								<input type="text" class="form-control" id="index" placeholder="Index" name="address.ind" value="${contact.address.ind}">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="country">Country</label>
+								<input type="text" class="form-control" id="country" placeholder="Country" name="address.country" value="${contact.address.country}">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="city">City</label>
+								<input type="text" class="form-control" id="city" placeholder="City" name="address.city" value="${contact.address.city}">
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="street">Street</label>
+								<input type="text" class="form-control" id="street" placeholder="Street" name="address.street" value="${contact.address.street}">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="build">Build</label>
+								<input type="text" class="form-control" id="build" placeholder="Build" name="address.build" value="${contact.address.build}">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="flat">Flat</label>
+								<input type="text" class="form-control" id="flat" placeholder="Flat" name="address.flat" value="${contact.address.flat}">
+							</div>
+						</div>
+					</div>
+					</div>
 			</div>
-			
-			<div class="col-md-9 col-md-pull-3 col-sm-8 col-sm-pull-4">
-				<div class="block-input">
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="firstname">First name</label>
-							<input type="text" class="form-control" id="firstname" placeholder="Enter your first name" name="firstname" value="<c:out value="${contact.firstname}" />">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="lastname">Last name</label>
-							<input type="text" class="form-control" id="lastname" placeholder="Enter last name" name="lastname" value="<c:out value="${contact.lastname}"/>" >
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="middlename">Middle name</label>
-							<input type="text" class="form-control" id="middlename" placeholder="Enter middle name" name="middlename" value="<c:out value="${contact.middlename}"/>" >
-						</div>
-					</div>
-				</div>
-				
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="birthday">Birthday</label>
-							<input type="text" class="form-control" id="birthday" placeholder="Choose birthday" name="birthday" value="<c:out value="${contact.birthday}"/>">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="nationality">Nationality</label>
-							<input type="text" class="form-control" id="nationality" placeholder="Enter nationality" name="nationality" value="<c:out value="${contact.nationality}"/>">
-						</div>
-					</div>
-				</div>
-				</div>
-				
-				<div class="block-input">
-				<div class="row">
-					<div class="col-md-6">
-						<div class="form-group">
-							<label for="male" class="block">Sex:</label>
-							
-							<input type="radio" name="sex" class="radio" id="male" value="Male" <c:if test="${contact.sex eq 'Male'}">checked</c:if> />
-							<label for="male" class="sex"><span class="icon">Ù</span>Male</label>
-							
-							<input type="radio" name="sex" class="radio" id="female" value="Female" <c:if test="${contact.sex eq 'Female'}">checked</c:if> />
-							<label for="female" class="sex"><span class="icon">Ú</span>Female</label>
-							<div class="clear"></div>
-						</div>
-					</div>
-					<div class="col-md-6">
-						<div class="form-group">
-							<label for="single" class="block">Marital status:</label>
-							
-							<input type="radio" name="maritalStatus" class="radio" id="single" value="Single" <c:if test="${contact.maritalStatus eq 'Single'}">checked</c:if> />
-							<label for="single" class="sex"><span class="icon">Ù</span>Single</label>
-							
-							<input type="radio" name="maritalstatus" class="radio" id="married" value="Married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
-							<label for="married" class="sex"><span class="icon">ÙÙ</span>Married</label>
-							<div class="clear"></div>
-						</div>
-					</div>
-				</div>
-				</div>
-					
-				<div class="block-input">	
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="website">Website</label>
-							<input type="text" class="form-control" id="website" placeholder="Enter website" value="${contact.website}">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="email">Email</label>
-							<input type="text" class="form-control" id="email" placeholder="Enter your email" value="${contact.email}">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="workplace">Current work place</label>
-							<input type="text" class="form-control" id="workplace" placeholder="Enter your current work place" value="${contact.workplace}">
-						</div>
-					</div>
-				</div>
-				</div>
-			
-			</div>
-			
-		</div><!-- end the 1st main row--->
-		
-		
-		
-		
-		
-		<div class="row">
-			<div class="big-block">
-				<h2>Address</h2>
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="index">Index</label>
-							<input type="text" class="form-control" id="index" placeholder="Index" name="address.index" value="${contact.address.ind}">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="country">Country</label>
-							<input type="text" class="form-control" id="country" placeholder="Country" name="address.country" value="${contact.address.country}">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="city">City</label>
-							<input type="text" class="form-control" id="city" placeholder="City" name="address.city" value="${contact.address.city}">
-						</div>
-					</div>
-				</div>
-				
-				
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="street">Street</label>
-							<input type="text" class="form-control" id="street" placeholder="Street" name="address.street" value="${contact.address.street}">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="build">Build</label>
-							<input type="text" class="form-control" id="build" placeholder="Build" name="address.build" value="${contact.address.build}">
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="form-group">
-							<label for="flat">Flat</label>
-							<input type="text" class="form-control" id="flat" placeholder="Flat" name="address.flat" value="${contact.address.flat}">
-						</div>
-					</div>
-				</div>
-				</div>
-		</div>
 
-        <div class="row">
-        	<div class="big-block">
-        		<input type="hidden" value="1">
-        		<h2>Phones
-        			<div class="control-panel">
-        				<a href="" class="btn btn-default" id="create-phone">Create</a>
-        				<a href="" class="btn btn-default" id="edit-phone">Edit</a>
-        				<a href="" class="btn btn-default" id="delete-phone">Delete</a>
-        			</div>
-        		</h2>
-        		<table class="table">
-        			<thead>
-        				<tr>
-        					<th>
-        						<div class="wrap-checkbox">
-        							<input type="checkbox" class="checkbox" id="delete-all">
-        							<label></label>
-        						</div>
-        					</th>
-        					<th>Phone</th>
-        					<th>Type</th>
-        					<th>Description</th>
-        				</tr>
-        			</thead>
-        			<tbody id="body-table-phone">
-                        <c:forEach items="${contact.phoneList}" var="item" >
-        				<tr>
-        					<td>
-        						<div class="wrap-checkbox">
-        							<input type="checkbox" class="checkbox checkbox-phone" onchange="change_check_phone(event)">
-        							<label></label>
-        						</div>
-        					</td>
-        					<td>+${item.countryCode}-${item.operatorCode}-${item.phoneNumber}</td>
-        					<td>${item.typePhone}</td>
-        					<td>${item.description}</td>
-        				</tr>
-        				</c:forEach>
-        			</tbody>
-        		</table>
-        	</div>
-        </div><!--end row-->
+			<div class="row">
+				<div class="big-block">
+					<input type="hidden" value="1">
+					<h2>Phones
+						<div class="control-panel">
+							<a href="" class="btn btn-default" id="create-phone">Create</a>
+							<a href="" class="btn btn-default" id="edit-phone">Edit</a>
+							<a href="" class="btn btn-default" id="delete-phone">Delete</a>
+						</div>
+					</h2>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>
+									<div class="wrap-checkbox">
+										<input type="checkbox" class="checkbox" id="delete-all">
+										<label></label>
+									</div>
+								</th>
+								<th>Phone</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody id="body-table-phone">
+							<c:forEach items="${contact.phoneList}" var="item" >
+							<tr>
+								<td>
+									<div class="wrap-checkbox">
+										<input type="checkbox" class="checkbox checkbox-phone" onchange="change_check_phone(event)">
+										<label></label>
+									</div>
+								</td>
+								<td>+${item.countryCode}-${item.operatorCode}-${item.phoneNumber}</td>
+								<td>${item.typePhone}</td>
+								<td>${item.description}</td>
+							</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</div><!--end row-->
 
-        <input type="submit" class="btn btn-default" value="Save contact"/>
-
-    </section>
+			<input type="submit" class="btn btn-default" value="Save contact"/>
+		</section>
+	</form>
 </div>
-</form>
+
 
         <!--Popup for creating new phone-->
         <div class="popup-overlay" id="phone-modal">

@@ -90,46 +90,95 @@ public class EntityManager {
 
     }*/
 
-    public <T> void insertNewEntity(T entity) {
+    private <T> Integer getIdEntity(T entity){
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        Field idField = metaEntity.getIdField();
+        return (Integer) getValueField(entity,idField);
+    }
+
+    public <T> void updateEntity(T entity){
+        Integer id = getIdEntity(entity);
+        if (id== null){
+            insertNewEntity(entity);
+        } else{
+            updateCurrentEntity(entity);
+        }
+    }
+
+
+    private <T> String getSetSectionQuery(T entity){
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
         StringBuilder query = new StringBuilder();
-        query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()));
-
         for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
             query.append(String.format(" %s = %s ,", entry.getValue().name(), getStringValue(entity, entry.getKey())));
         }
-
         query.delete(query.length() - 1, query.length()); // delete the last comma
+        return query.toString();
+    }
+
+    private Integer excecuteQueryInsertNewRow(String query){
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement.executeUpdate();
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()){
+                return generatedKeys.getInt(1);
+            }
+        } catch(SQLException e){
+            LOG.debug("Can not insert new row. Query: {}", query);
+        }
+        return null;
+    }
+
+    private void excuteQueryUpdateCurrentRow(String query){
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.executeUpdate();
+        } catch(SQLException e){
+            LOG.debug("Can not update current row. Query: {}", query);
+        }
+    }
+
+    public <T> void insertNewEntity(T entity) {
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        StringBuilder query = new StringBuilder();
+        query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()))
+                .append(getSetSectionQuery(entity));
 
         LOG.debug(query.toString());
 
-        Connection connection = null;
-        Integer id;
-        try {
-            connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
-            int colInserRow = statement.executeUpdate();
-            if (colInserRow ==0 ) {
-                throw new SQLException();
-            }
-
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if(generatedKeys.next()){
-                id = generatedKeys.getInt(1);
-                LOG.debug(String.valueOf(generatedKeys.getInt(1)));
-            } else{
-                throw new SQLException();
-            }
-
-            for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()){
+        Integer id = excecuteQueryInsertNewRow(query.toString());
+        if (id != null) {
+            for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
                 Object currentObject = getValueField(entity, entry.getKey());
                 Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
                 setValueField(currentObject, foreignkey, id);
-                insertNewEntity(currentObject);
+                updateEntity(currentObject);
             }
+        }
+    }
 
-        } catch (SQLException e) {
-            LOG.debug("Problem with insert row in table", e);
+    public <T> void updateCurrentEntity(T entity){
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        Integer id = getIdEntity(entity);
+        StringBuilder query = new StringBuilder();
+        query.append(String.format("UPDATE %s SET ", metaEntity.getTable().name()))
+                .append(getSetSectionQuery(entity))
+                .append(" WHERE id=")
+                .append(id);
+        LOG.debug(query.toString());
+
+        excuteQueryUpdateCurrentRow(query.toString());
+
+        for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
+            Object currentObject = getValueField(entity, entry.getKey());
+            Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+            setValueField(currentObject, foreignkey, id);
+            updateEntity(currentObject);
         }
     }
 

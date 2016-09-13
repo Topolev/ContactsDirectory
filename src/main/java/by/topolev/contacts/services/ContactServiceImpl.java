@@ -40,8 +40,8 @@ public class ContactServiceImpl implements ContactService{
 	}
 
 	@Override
-	public void createContact(Contact contact) {
-		contactDao.createContact(contact);
+	public void updateContact(Contact contact) {
+		contactDao.updateContact(contact);
 		
 	}
 	

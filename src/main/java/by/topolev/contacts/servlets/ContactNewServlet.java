@@ -67,7 +67,7 @@ public class ContactNewServlet extends HttpServlet {
 		List<FileItem> items = getFileItemList(req);
 		if (items != null) {
 			Contact contact = entityFromFormUtil.createEntityFromRequest(items,Contact.class);
-			contactService.createContact(contact);
+			contactService.updateContact(contact);
 			int count = contactService.getCountContacts();
 			resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double)count/10)-1));
 		}

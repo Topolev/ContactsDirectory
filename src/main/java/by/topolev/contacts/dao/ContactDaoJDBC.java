@@ -66,8 +66,8 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 	}
 
 	@Override
-	public void createContact(Contact contact) {
-		em.insertNewEntity(contact);
+	public void updateContact(Contact contact) {
+		em.updateEntity(contact);
 		
 	}
 	public static void main(String[] args) {
