@@ -115,15 +115,12 @@ public class EntityManager {
 
            for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()){
                List listOfEntity = (List) getValueField(entity, entry.getKey());
-               /*
-               Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());*/
 
                for (Object currentObject : listOfEntity){
                    Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
                    setValueField(currentObject, foreignkey, id);
                    updateEntity(currentObject);
                }
-
            }
 
        }

@@ -71,10 +71,13 @@ public class ContactNewServlet extends HttpServlet {
 		if (items != null) {
 
 			/*Save profile image*/
-			
+			FileItem photoItem = getFileItemByName("photo", items);
+			String urlPhoto = uploadImageService.saveImage(photoItem);
+
 
 			/*Save entity in DB*/
 			Contact contact = entityFromFormUtil.createEntityFromRequest(items,Contact.class);
+			contact.setPhoto(urlPhoto);
 			contactService.updateContact(contact);
 			int count = contactService.getCountContacts();
 			resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double)count/10)-1));
@@ -99,6 +102,13 @@ public class ContactNewServlet extends HttpServlet {
 			}
 		}
 		return items;
+	}
+
+	private FileItem getFileItemByName(String nameField, List<FileItem> items){
+		for (FileItem item : items){
+			if (item.getFieldName().equals(nameField)) return item;
+		}
+		return null;
 	}
 
 }

@@ -52,12 +52,12 @@
 							<img src = "${root_for_img}/no-profile-photo.png" alt="Profile photo" id="profile-photo"/>
 						</c:if>
 						<c:if test="${contact.photo != null}">
-							PHOTO
+							<img src = "${root_directory}showimage?file=${contact.photo}" alt="Profile photo" id="profile-photo"/>
 						</c:if>
 
 
 						<div id="choose-photo">
-							<input type="file" />
+							<input type="file" name="photo" />
 							<button class="btn btn-default">Choose new image</button>
 						</div>
 					</div>
