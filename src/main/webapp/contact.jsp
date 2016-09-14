@@ -53,11 +53,12 @@
 						</c:if>
 						<c:if test="${contact.photo != null}">
 							<img src = "${root_directory}showimage?file=${contact.photo}" alt="Profile photo" id="profile-photo"/>
+							<input type="hidden" name="photo" value="${contact.photo}">
 						</c:if>
 
 
 						<div id="choose-photo">
-							<input type="file" name="photo" />
+							<input type="file" name="uploadphoto" />
 							<button class="btn btn-default">Choose new image</button>
 						</div>
 					</div>

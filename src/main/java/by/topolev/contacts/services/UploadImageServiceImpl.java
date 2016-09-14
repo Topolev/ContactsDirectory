@@ -21,6 +21,8 @@ public class UploadImageServiceImpl implements UploadImageService {
     public String saveImage(FileItem item) {
         LOG.debug("Save profile image");
         createUploadDirIfNotExist();
+        if (item == null || item.getName() == null) return null;
+
         String fileName = getUniqueFileName(item.getName());
         File file = new File(PATH_UPLOAD_PROFILE_IMAGE + fileName);
         try {
@@ -44,8 +46,9 @@ public class UploadImageServiceImpl implements UploadImageService {
     }
 
     private String getExpansionFile(String fileName) {
-        String ext = fileName.split("\\.")[1];
-        return ext;
+        String[] spliteFileName = fileName.split("\\.");
+        if (spliteFileName.length == 2) return spliteFileName[1];
+        return "";
     }
 
     private String getUniqueFileName(String fileName) {
