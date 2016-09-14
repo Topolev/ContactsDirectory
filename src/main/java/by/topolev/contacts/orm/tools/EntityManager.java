@@ -78,17 +78,6 @@ public class EntityManager {
             return "null";
         }
     }
-    /*
-    public <T> void insertInnerEntity(T entity, String extraEneQuery){
-        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
-        StringBuilder query = new StringBuilder();
-        query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()));
-
-        for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
-            query.append(String.format(" %s = %s ,", entry.getValue().name(), getStringValue(entity, entry.getKey())));
-        }
-
-    }*/
 
     private <T> Integer getIdEntity(T entity){
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
@@ -96,15 +85,50 @@ public class EntityManager {
         return (Integer) getValueField(entity,idField);
     }
 
-    public <T> void updateEntity(T entity){
-        Integer id = getIdEntity(entity);
-        if (id== null){
-            insertNewEntity(entity);
-        } else{
-            updateCurrentEntity(entity);
-        }
-    }
+   public <T> void updateEntity(T entity){
+       MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+       Integer id = getIdEntity(entity);
+       StringBuilder query = new StringBuilder();
 
+       if (id == null){
+           query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()))
+                   .append(getSetSectionQuery(entity));
+           id = executeQueryInsertUpdateRow(query.toString());
+       } else{
+           query.append(String.format("UPDATE %s SET ", metaEntity.getTable().name()))
+                   .append(getSetSectionQuery(entity))
+                   .append(" WHERE id=")
+                   .append(id);
+           executeQueryInsertUpdateRow(query.toString());
+       }
+
+       LOG.debug(query.toString());
+
+       if (id != null) {
+
+           for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
+               Object currentObject = getValueField(entity, entry.getKey());
+               Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+               setValueField(currentObject, foreignkey, id);
+               updateEntity(currentObject);
+           }
+
+           for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()){
+               List listOfEntity = (List) getValueField(entity, entry.getKey());
+               /*
+               Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());*/
+
+               for (Object currentObject : listOfEntity){
+                   Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+                   setValueField(currentObject, foreignkey, id);
+                   updateEntity(currentObject);
+               }
+
+           }
+
+       }
+
+   }
 
     private <T> String getSetSectionQuery(T entity){
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
@@ -116,7 +140,7 @@ public class EntityManager {
         return query.toString();
     }
 
-    private Integer excecuteQueryInsertNewRow(String query){
+    private Integer executeQueryInsertUpdateRow(String query){
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
@@ -127,59 +151,9 @@ public class EntityManager {
                 return generatedKeys.getInt(1);
             }
         } catch(SQLException e){
-            LOG.debug("Can not insert new row. Query: {}", query);
+            LOG.debug("Can not insert or update row. Query: {}", query);
         }
         return null;
-    }
-
-    private void excuteQueryUpdateCurrentRow(String query){
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.executeUpdate();
-        } catch(SQLException e){
-            LOG.debug("Can not update current row. Query: {}", query);
-        }
-    }
-
-    public <T> void insertNewEntity(T entity) {
-        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
-        StringBuilder query = new StringBuilder();
-        query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()))
-                .append(getSetSectionQuery(entity));
-
-        LOG.debug(query.toString());
-
-        Integer id = excecuteQueryInsertNewRow(query.toString());
-        if (id != null) {
-            for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
-                Object currentObject = getValueField(entity, entry.getKey());
-                Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
-                setValueField(currentObject, foreignkey, id);
-                updateEntity(currentObject);
-            }
-        }
-    }
-
-    public <T> void updateCurrentEntity(T entity){
-        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
-        Integer id = getIdEntity(entity);
-        StringBuilder query = new StringBuilder();
-        query.append(String.format("UPDATE %s SET ", metaEntity.getTable().name()))
-                .append(getSetSectionQuery(entity))
-                .append(" WHERE id=")
-                .append(id);
-        LOG.debug(query.toString());
-
-        excuteQueryUpdateCurrentRow(query.toString());
-
-        for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
-            Object currentObject = getValueField(entity, entry.getKey());
-            Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
-            setValueField(currentObject, foreignkey, id);
-            updateEntity(currentObject);
-        }
     }
 
     private Field getFieldByName(Object obj, String fieldName){
@@ -265,19 +239,19 @@ public class EntityManager {
         System.out.println(query);
     }
 
-    public int getCountAllEntity(Class<?> clazz) {
-        Connection connection = null;
+    public int getCountAllEntity(Class<?> clazz){
         Table table = clazz.getAnnotation(Table.class);
-        System.out.println(table.name());
-        try {
+        Connection connection = null;
+        PreparedStatement statement;
+        try{
             connection = dataSource.getConnection();
-            PreparedStatement statment = connection.prepareStatement("SELECT COUNT(*) AS count FROM " + table.name());
-            ResultSet result = statment.executeQuery();
+            statement = connection.prepareStatement("SELECT COUNT(*) AS count FROM " + table.name());
+            ResultSet result = statement.executeQuery();
             result.next();
-            return result.getInt("count");
-        } catch (SQLException e) {
-            LOG.debug("Problem with getting number of row", e);
-        } finally {
+            return result.getInt(1);
+        } catch(SQLException e){
+            LOG.debug("Can get numbers of rows with query {}","SELECT COUNT(*) AS count FROM " + table.name(), e);
+        } finally{
             try {
                 connection.close();
             } catch (SQLException e) {
@@ -354,55 +328,6 @@ public class EntityManager {
         for (Contact c : contacts) {
             System.out.println(c.getAddress());
         }
-
     }
 
-}
-
-class MetaEntity {
-    private Table table;
-    private Field idField;
-    private Map<Field, Column> fieldsColumn = new HashMap<>();
-    private Map<Field, OneToOne> fieldsOneToOne = new HashMap<>();
-    private Map<Field, OneToMany> fieldsOneToMany = new HashMap<>();
-
-    public Table getTable() {
-        return table;
-    }
-
-    public void setTable(Table table) {
-        this.table = table;
-    }
-
-    public Field getIdField() {
-        return idField;
-    }
-
-    public void setIdField(Field idField) {
-        this.idField = idField;
-    }
-
-    public Map<Field, Column> getFieldsColumn() {
-        return fieldsColumn;
-    }
-
-    public void setFieldsColumn(Map<Field, Column> fieldsColumn) {
-        this.fieldsColumn = fieldsColumn;
-    }
-
-    public Map<Field, OneToOne> getFieldsOneToOne() {
-        return fieldsOneToOne;
-    }
-
-    public void setFieldsOneToOne(Map<Field, OneToOne> fieldsOneToOne) {
-        this.fieldsOneToOne = fieldsOneToOne;
-    }
-
-    public Map<Field, OneToMany> getFieldsOneToMany() {
-        return fieldsOneToMany;
-    }
-
-    public void setFieldsOneToMany(Map<Field, OneToMany> fieldsOneToMany) {
-        this.fieldsOneToMany = fieldsOneToMany;
-    }
 }

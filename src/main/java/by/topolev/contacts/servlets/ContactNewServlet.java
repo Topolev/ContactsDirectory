@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.topolev.contacts.services.UploadImageService;
+import by.topolev.contacts.services.UploadImageServiceFactory;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -34,6 +36,7 @@ public class ContactNewServlet extends HttpServlet {
 	private ServletFileUpload upload;
 	
 	private ContactService contactService = ContactServiceFactory.getContactService();
+	private UploadImageService uploadImageService = UploadImageServiceFactory.getUploadImageService();
 	
 	private EntityFromFormUtil<Contact> entityFromFormUtil = new EntityFromFormUtil<Contact>(Contact.class);
 
@@ -66,10 +69,18 @@ public class ContactNewServlet extends HttpServlet {
 
 		List<FileItem> items = getFileItemList(req);
 		if (items != null) {
+
+			/*Save profile image*/
+			
+
+			/*Save entity in DB*/
 			Contact contact = entityFromFormUtil.createEntityFromRequest(items,Contact.class);
 			contactService.updateContact(contact);
 			int count = contactService.getCountContacts();
 			resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double)count/10)-1));
+
+
+
 		}
 
 	}

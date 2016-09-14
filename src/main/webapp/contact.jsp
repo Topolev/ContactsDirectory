@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <!DOCTYPE html>
@@ -210,9 +211,11 @@
 					</div>
 			</div>
 
+
+			<!--List of phones-->
 			<div class="row">
 				<div class="big-block">
-					<input type="hidden" value="1">
+					<input type="hidden" id="phone-indexes" name="phone.indexes" value="">
 					<h2>Phones
 						<div class="control-panel">
 							<a href="" class="btn btn-default" id="create-phone">Create</a>
@@ -235,7 +238,8 @@
 							</tr>
 						</thead>
 						<tbody id="body-table-phone">
-							<c:forEach items="${contact.phoneList}" var="item" >
+
+							<c:forEach items="${contact.phoneList}" var="item" varStatus="status">
 							<tr>
 								<td>
 									<div class="wrap-checkbox">
@@ -246,6 +250,13 @@
 								<td>+${item.countryCode}-${item.operatorCode}-${item.phoneNumber}</td>
 								<td>${item.typePhone}</td>
 								<td>${item.description}</td>
+								<input type="hidden" name="phone${status.count}.id" value="${item.id}">
+								<input type="hidden" name="phone${status.count}.outerid" value="${status.count}">
+								<input type="hidden" name="phone${status.count}.countryCode" value="${item.countryCode}">
+								<input type="hidden" name="phone${status.count}.operatorCode" value="${item.operatorCode}">
+								<input type="hidden" name="phone${status.count}.phoneNumber" value="${item.phoneNumber}">
+								<input type="hidden" name="phone${status.count}.typePhone" value="${item.typePhone}">
+								<input type="hidden" name="phone${status.count}.description" value="${item.description}">
 							</tr>
 							</c:forEach>
 						</tbody>
@@ -309,6 +320,15 @@
 
 <script>
 	/*Contact phone*/
+	var autoincrement = ${fn:length(contact.phoneList)};
+	var availableIndexes = [];
+
+	for (var i = 1; i<= autoincrement; i++){
+		availableIndexes.push(i);
+	}
+
+	setValueInputById("phone-indexes", JSON.stringify(availableIndexes));
+
 	var create_phone = document.getElementById("create-phone");
 	var delete_phone = document.getElementById("delete-phone");
 	var edit_phone = document.getElementById("edit-phone");
@@ -317,10 +337,12 @@
 	var but_close_edit_modal = document.getElementById("close-edit-phone-modal");
 	var but_add_or_edit_phone = document.getElementById("add-edit-phone");
 	var placeToInsertPhoneRow = document.getElementById("body-table-phone");
-	var autoincrement = 0;
+
 
 	var click_button = undefined;
 	var choose_edit_phone = undefined;
+
+
 
 	document.getElementById("delete-all").onclick = function(){
 		var position = this.checked;
@@ -351,17 +373,33 @@
 		return false;
 	}
 
+	deleteValueFromArray = function(array, value){
+		for(var i=0; i<array.length; i++){
+			if (array[i] == value){
+				array.splice(i,1);
+				return;
+			}
+		}
+	}
+
 	delete_phone.onclick = function(){
 		var checkbox = document.getElementsByClassName("checkbox-phone");
 		var checked_checkbox = [];
+
+		var availableIndexes =  JSON.parse(getValueInputById("phone-indexes"));
+
 		for (var i = 0; i< checkbox.length; i++){
 			if (checkbox[i].checked) {
-				checked_checkbox.push(checkbox[i].parentNode.parentNode.parentNode);
+				var parent = checkbox[i].parentNode.parentNode.parentNode;
+				checked_checkbox.push(parent);
+				deleteValueFromArray(availableIndexes, getValueHiddenInputInParent(parent,"outerid"));
 			}
 		}
 		while(checked_checkbox.length != 0){
 			placeToInsertPhoneRow.removeChild(checked_checkbox.pop());
 		}
+
+		setValueInputById("phone-indexes", JSON.stringify(availableIndexes));
 		return false;
 	}
 
@@ -440,18 +478,22 @@
 		tr.innerHTML += "<td>" + typephone + "</td>";
 		tr.innerHTML += "<td>" + description +"</td>";
 
-		tr.appendChild(createHiddenInput("outerid" + increment , increment));
-		tr.appendChild(createHiddenInput("countrycode" + increment , countrycode));
-		tr.appendChild(createHiddenInput("operatorcode" + increment, operatorcode));
-		tr.appendChild(createHiddenInput("phonenumber" + increment, phonenumber));
-		tr.appendChild(createHiddenInput("typephone" + increment, typephone));
-		tr.appendChild(createHiddenInput("description" + increment, description));
+		tr.appendChild(createHiddenInput("phone" + increment + ".outerid" , increment));
+		tr.appendChild(createHiddenInput("phone" + increment + ".countryCode" , countrycode));
+		tr.appendChild(createHiddenInput("phone" + increment + ".operatorCode", operatorcode));
+		tr.appendChild(createHiddenInput("phone" + increment + ".phoneNumber", phonenumber));
+		tr.appendChild(createHiddenInput("phone" + increment + ".typePhone", typephone));
+		tr.appendChild(createHiddenInput("phone" + increment + ".description", description));
 
 	}
 
 	function createRowForPhone(){
 		var tr = document.createElement("tr");
 		autoincrement++;
+
+		var availableIndexes =  JSON.parse(getValueInputById("phone-indexes"));
+		availableIndexes.push(autoincrement);
+		setValueInputById("phone-indexes", JSON.stringify(availableIndexes));
 
 		fullTdForTr(tr, autoincrement);
 
@@ -473,9 +515,9 @@
 			popup_phone_modal.style.display = "block";
 			var parent = choose_checkbox.parentNode.parentNode.parentNode;
 			choose_edit_phone = getValueHiddenInputInParent(parent,"outerid");
-			var countrycode = getValueHiddenInputInParent(parent, "countrycode");
-			var operatorcode = getValueHiddenInputInParent(parent, "operatorcode");
-			var phonenumber = getValueHiddenInputInParent(parent, "phonenumber");
+			var countrycode = getValueHiddenInputInParent(parent, "countryCode");
+			var operatorcode = getValueHiddenInputInParent(parent, "operatorCode");
+			var phonenumber = getValueHiddenInputInParent(parent, "phoneNumber");
 			var description = getValueHiddenInputInParent(parent, "description");
 
 			setValueInputById("country-code",countrycode);

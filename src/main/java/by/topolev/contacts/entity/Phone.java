@@ -2,10 +2,12 @@ package by.topolev.contacts.entity;
 
 import by.topolev.contacts.orm.annotation.Column;
 import by.topolev.contacts.orm.annotation.Id;
+import by.topolev.contacts.orm.annotation.Table;
 
 /**
  * Created by Vladimir on 11.09.2016.
  */
+@Table(name="phone")
 public class Phone {
     @Id
     private Integer id;
@@ -24,6 +26,9 @@ public class Phone {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name="contact_id")
+    private Integer contact_id;
 
     public Integer getId() {
         return id;

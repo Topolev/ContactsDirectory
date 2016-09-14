@@ -2,14 +2,18 @@ package by.topolev.contacts.servlets.utils;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +26,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class EntityFromFormUtil<T> {
     private static final Logger LOG = LoggerFactory.getLogger(EntityFromFormUtil.class);
     private Class<T> clazz;
+
+    private ObjectMapper map = new ObjectMapper();
 
     public EntityFromFormUtil(Class<T> clazz) {
         this.clazz = clazz;
@@ -45,10 +51,24 @@ public class EntityFromFormUtil<T> {
             if (isSimpleField(field)) {
                 setField(entity, field, getValueFromForm(list, field, rootClass));
             } else {
-                if (isListField(field)){
-                    System.out.println("This is LIST");
+                if (isListField(field)) {
+                    Class<?> typeElementsOfList = getGenericTypeOfField(field);
+                    String nameInnerEntity = typeElementsOfList.getSimpleName().toLowerCase();
+                    FileItem fileItem = getFileItem(list, nameInnerEntity + ".indexes", rootClass);
 
-                } else{
+                    Integer[] array = getArrayFromString(fileItem.getString());
+                    if (array != null) {
+                        List listOfEntity = new ArrayList();
+
+                        for (Integer index : array) {
+                            Object innerEntity = typeElementsOfList.newInstance();
+                            createEntityFromRequest(list, nameInnerEntity + index + ".", innerEntity);
+                            listOfEntity.add(innerEntity);
+                        }
+                        setField(entity, field, listOfEntity);
+                    }
+
+                } else {
                     Object innerEntity = field.getType().newInstance();
                     setField(entity, field, innerEntity);
                     createEntityFromRequest(list, field.getName() + ".", innerEntity);
@@ -57,37 +77,57 @@ public class EntityFromFormUtil<T> {
         }
     }
 
+    private Integer[] getArrayFromString(String arrayStr) {
+        try {
+            return map.readValue(arrayStr, Integer[].class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     private boolean isSimpleField(Field field) {
         Class<?> clazz = field.getType();
         return clazz == int.class || clazz == long.class || clazz == String.class || clazz == Integer.class || clazz == Long.class || clazz == Date.class;
     }
 
-    private boolean isListField(Field field){
+    private boolean isListField(Field field) {
         return field.getType() == List.class;
     }
 
     private FileItem getFileItem(List<FileItem> list, Field field, String rootClass) {
         List<FileItem> collect = list.stream()
-                .filter(byFieldName(rootClass + field.getName()).and(isFormField(field)))
+                .filter(byFieldName(rootClass + field.getName()).and(isFormField()))
                 .collect(toList());
         return collect.isEmpty() ? null : collect.get(0);
     }
 
+    private FileItem getFileItem(List<FileItem> list, String nameField, String rootClass) {
+        List<FileItem> collect = list.stream()
+                .filter(byFieldName(rootClass + nameField).and(isFormField()))
+                .collect(toList());
+        return collect.isEmpty() ? null : collect.get(0);
+    }
+
+    private Class<?> getGenericTypeOfField(Field field) {
+        ParameterizedType generic = (ParameterizedType) field.getGenericType();
+        return (Class<?>) generic.getActualTypeArguments()[0];
+    }
 
     private Predicate<FileItem> byFieldName(String anObject) {
         return entry -> entry.getFieldName().equals(anObject);
     }
 
-    private Predicate<FileItem> isFormField(Field field) {
+    private Predicate<FileItem> isFormField() {
         return item -> item.isFormField();
     }
+
 
     private Object getValueFromForm(List<FileItem> list, Field field, String rootClass) {
         FileItem item = getFileItem(list, field, rootClass);
         if (item != null) {
             String valueStr = new String(item.get(), StandardCharsets.UTF_8);
 
-            if(isEmpty(valueStr)) {
+            if (isEmpty(valueStr)) {
                 return null;
             }
             if (field.getType() == String.class) {
@@ -99,7 +139,7 @@ public class EntityFromFormUtil<T> {
             if (field.getType() == long.class || field.getType() == Long.class) {
                 return Long.valueOf(valueStr);
             }
-            if (field.getType() == Date.class){
+            if (field.getType() == Date.class) {
                 DateFormat format = new SimpleDateFormat("dd-mm-yyyy");
                 try {
                     return format.parse(valueStr);
