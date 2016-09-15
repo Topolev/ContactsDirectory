@@ -207,10 +207,10 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
 
 
 
-/**/
+/*Callback function for table PHONE*/
 var callBackCreateTr = function(tr, increment){
     var id = this.getValueHiddenInputInParent(tr,"id");
-    console.log(id);
+
 
     var countrycode = this.getValueInputById("country-code");
     var operatorcode = this.getValueInputById("operator-code");
@@ -247,7 +247,6 @@ var clearPhoneModal = function(){
 }
 
 var editPhoneModal = function(choose_checkbox){
-
         var parent = choose_checkbox.parentNode.parentNode.parentNode;
         //choose_edit_phone = getValueHiddenInputInParent(parent,"inc");
         var typephone = this.getValueHiddenInputInParent(parent, "typePhone");
@@ -261,8 +260,52 @@ var editPhoneModal = function(choose_checkbox){
         this.setValueInputById("description",description);
         this.setValueRadioByClass("phone-radio", typephone);
 }
+/*END Callback function for table PHONE*/
+
+console.log("INCREMENET:" + initAutoincrement)
+var tablePhone = new Table("phone", initAutoincrement,callBackCreateTr, clearPhoneModal, editPhoneModal);
+tablePhone.setAvailableIndexes(initAvailableIndexes);
 
 
 
-var tabelPhone = new Table("phone", initAutoincrement,callBackCreateTr, clearPhoneModal, editPhoneModal);
-tabelPhone.setAvailableIndexes(initAvailableIndexes);
+
+
+
+
+/**/
+var callBackCreateAttachmentTr = function(tr, increment){
+    var namefile = this.getValueInputById("name-file");
+    var commentfile = this.getValueInputById("comment-file");
+    tr.innerHTML = "";
+    tr.innerHTML += "<td><div class='wrap-checkbox'>"+
+        "<input type='checkbox' class='checkbox checkbox-phone'" +
+        " onchange='tableAttachment.changeCheckRow(event)' value='" + increment + "'>" +
+        "<label></label></div>"+
+        "</td>";
+
+    tr.innerHTML += "<td>" + namefile+ "</td>";
+    tr.innerHTML += "<td>" + new Date() + "</td>";
+    tr.innerHTML += "<td>" + commentfile +"</td>";
+
+    //tr.appendChild(this.createHiddenInput("attachment" + increment + ".inc" , increment));
+    tr.appendChild(this.createHiddenInput("attachment" + increment + ".nameFile" , namefile));
+    tr.appendChild(this.createHiddenInput("attachment" + increment + ".commentFile" , commentfile));
+}
+var clearAttachmentModal = function(){
+    this.setValueInputById("name-file","");
+    this.setValueInputById("comment-file","");
+}
+var editAttachmentModal = function(choose_checkbox){
+    var parent = choose_checkbox.parentNode.parentNode.parentNode;
+    var namefile = this.getValueHiddenInputInParent(parent, "nameFile");
+    var commentfile = this.getValueHiddenInputInParent(parent, "commentFile");
+
+    this.setValueInputById("name-file",namefile);
+    this.setValueInputById("comment-file",commentfile);
+
+}
+
+
+
+var tableAttachment = new Table("attachment", 0, callBackCreateAttachmentTr, clearAttachmentModal, editAttachmentModal);
+//tablePhone.setAvailableIndexes([]);

@@ -134,13 +134,17 @@ public class EntityFromFormUtil<T> {
                 return valueStr;
             }
             if (field.getType() == int.class || field.getType() == Integer.class) {
-                return Integer.valueOf(valueStr);
+                try{
+                    return Integer.valueOf(valueStr);
+                } catch(NumberFormatException e){
+                    return null;
+                }
             }
             if (field.getType() == long.class || field.getType() == Long.class) {
                 return Long.valueOf(valueStr);
             }
             if (field.getType() == Date.class) {
-                DateFormat format = new SimpleDateFormat("dd-mm-yyyy");
+                DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
                 try {
                     return format.parse(valueStr);
                 } catch (ParseException e) {

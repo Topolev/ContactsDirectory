@@ -91,7 +91,7 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="birthday">Birthday</label>
-								<input type="text" class="form-control" id="birthday" placeholder="Choose birthday" name="birthday" value="<c:out value="${contact.birthday}"/>">
+								<input type="date" class="form-control" id="birthday" placeholder="Choose birthday" name="birthday" value="<c:out value="${contact.birthday}"/>">
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -245,7 +245,7 @@
 							<tr>
 								<td>
 									<div class="wrap-checkbox">
-										<input type="checkbox" class="checkbox" onchange="tabelPhone.changeCheckRow(event)">
+										<input type="checkbox" class="checkbox" onchange="tablePhone.changeCheckRow(event)">
 										<label></label>
 									</div>
 								</td>
@@ -269,12 +269,14 @@
 
 			<!--List of attachments-->
 			<div class="row">
-				<div class="big-block">
+				<div class="big-block" id="attachment">
+					<input type="hidden" id="attachment-indexes" name="phone.indexes" value="">
+					<input type="hidden" id="attachment-delete" name="phone.delete" value="">
 					<h2>Attachments
 						<div class="control-panel">
-							<a href="" class="btn btn-default" id="create-attach">Create</a>
-							<a href="" class="btn btn-default" id="edit-attach">Edit</a>
-							<a href="" class="btn btn-default" id="delete-attach">Delete</a>
+							<a href="" class="btn btn-default create-new-row" >Create</a>
+							<a href="" class="btn btn-default edit-row">Edit</a>
+							<a href="" class="btn btn-default delete-rows">Delete</a>
 						</div>
 					</h2>
 					<table class="table">
@@ -282,7 +284,7 @@
 							<tr>
 								<th>
 									<div class="wrap-checkbox">
-										<input type="checkbox" class="checkbox" id="delete-all">
+										<input type="checkbox" class="checkbox delete-all">
 										<label></label>
 									</div>
 								</th>
@@ -315,47 +317,69 @@
 </div>
 
 
-        <!--Popup for creating new phone-->
-        <div class="popup-overlay" id="phone-modal">
-        	<div class = "modal-window">
-        		<h5>Create/edit phone</h5>
-        		<div class="container-fluid">
-        			<div class="form-group">
-        				<label for="country-code">Country code</label>
-        				<input type="text" class="form-control" id="country-code" name="countryCode" placeholder="Country code">
-        			</div>
-        			<div class="form-group">
-        				<label for="operator-code">Operator code</label>
-        				<input type="text" class="form-control" id="operator-code" name="operatorCode" placeholder="Operator code">
-        			</div>
-        			<div class="form-group">
-        				<label for="phone-number">Number</label>
-        				<input type="text" class="form-control" id="phone-number" name="phoneNumber" placeholder="Phone number">
-        			</div>
-        			<div class="form-group">
-        				<label for="home">Type phone</label>
+<!--Popup for creating new phone-->
+<div class="popup-overlay" id="phone-modal">
+	<div class = "modal-window">
+		<h5>Create/edit phone</h5>
+		<div class="container-fluid">
+			<div class="form-group">
+				<label for="country-code">Country code</label>
+				<input type="text" class="form-control" id="country-code" name="countryCode" placeholder="Country code">
+			</div>
+			<div class="form-group">
+				<label for="operator-code">Operator code</label>
+				<input type="text" class="form-control" id="operator-code" name="operatorCode" placeholder="Operator code">
+			</div>
+			<div class="form-group">
+				<label for="phone-number">Number</label>
+				<input type="text" class="form-control" id="phone-number" name="phoneNumber" placeholder="Phone number">
+			</div>
+			<div class="form-group">
+				<label for="home">Type phone</label>
 
-        				<div class="wrap-phone">
-        				<input type="radio" name="typePhone" value="Home" class="radio phone-radio" id="home"/>
-        				<label for="home" class="phone"><i class="fa fa-phone" aria-hidden="true"></i><span>Home</span></label>
+				<div class="wrap-phone">
+				<input type="radio" name="typePhone" value="Home" class="radio phone-radio" id="home"/>
+				<label for="home" class="phone"><i class="fa fa-phone" aria-hidden="true"></i><span>Home</span></label>
 
-        				<input type="radio" name="typePhone" value="Mobile" class="radio phone-radio" id="mobile"/>
-        				<label for="mobile" class="phone"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile</label>
-        				</div>
+				<input type="radio" name="typePhone" value="Mobile" class="radio phone-radio" id="mobile"/>
+				<label for="mobile" class="phone"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile</label>
+				</div>
 
-        			</div>
-        			<div class="form-group">
-        				<label for="description">Description</label>
-        				<input type="text" class="form-control" id="description" placeholder="Enter email">
-        			</div>
-        		</div>
-        		<div class="modal-buttons">
-        			<a href="#" class="btn btn-default create-edit" id="add-edit-phone">Save</a>
-        			<a href="#" class="btn btn-default close-modal" id="close-phone-modal">Cancel</a>
-        		</div>
-        	</div>
-        </div>
+			</div>
+			<div class="form-group">
+				<label for="description">Description</label>
+				<input type="text" class="form-control" id="description" placeholder="Enter email">
+			</div>
+		</div>
+		<div class="modal-buttons">
+			<a href="#" class="btn btn-default create-edit">Save</a>
+			<a href="#" class="btn btn-default close-modal">Cancel</a>
+		</div>
+	</div>
+</div>
+<!--END Popup for creating new phone-->
 
+<!--Popup for creating new attachment-->
+<div class="popup-overlay" id="attachment-modal">
+	<div class = "modal-window">
+		<h5>Create/edit attachtment</h5>
+		<div class="container-fluid">
+			<div class="form-group">
+				<label for="name-file">Name file</label>
+				<input type="text" class="form-control" id="name-file" name="nameFile" placeholder="Name file">
+			</div>
+			<div class="form-group">
+				<label for="comment-file">Comment</label>
+				<input type="text" class="form-control" id="comment-file" name="commentFile" placeholder="Comment">
+			</div>
+		</div>
+		<div class="modal-buttons">
+			<a href="#" class="btn btn-default create-edit">Save</a>
+			<a href="#" class="btn btn-default close-modal">Cancel</a>
+		</div>
+	</div>
+</div>
+<!--END Popup for creating new phone-->
 
 </div>
 <script>
