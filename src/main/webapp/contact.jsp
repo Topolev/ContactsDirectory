@@ -124,7 +124,7 @@
 								<input type="radio" name="maritalStatus" class="radio" id="single" value="Single" <c:if test="${contact.maritalStatus eq 'Single'}">checked</c:if> />
 								<label for="single" class="sex"><span class="icon">Ù</span>Single</label>
 
-								<input type="radio" name="maritalstatus" class="radio" id="married" value="Married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
+								<input type="radio" name="maritalStatus" class="radio" id="married" value="Married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
 								<label for="married" class="sex"><span class="icon">ÙÙ</span>Married</label>
 								<div class="clear"></div>
 							</div>
