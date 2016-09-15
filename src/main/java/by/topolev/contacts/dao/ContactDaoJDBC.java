@@ -5,8 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +46,28 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		}
 		System.out.println(query);
 		return em.getListEntity(query, Contact.class);
+	}
+
+	@Override
+	public List<Contact> getSearchContact(Map<String, String> valueFields) {
+
+		if (valueFields != null && !valueFields.isEmpty()){
+			LOG.debug("Map of search fields: {}", valueFields.toString());
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT contact.* FROM contact JOIN address ON contact.id=address.contact_id WHERE ");
+			for (Map.Entry<String,String> entry : valueFields.entrySet()){
+				query.append(entry.getKey()).append("='").append(entry.getValue()).append("' AND ");
+			}
+			query.delete(query.length()-5, query.length());
+
+			LOG.debug("Search query: {}", query.toString());
+
+			return em.getListEntity(query.toString(), Contact.class);
+		} else{
+			LOG.debug("Search query: SELECT * FROM contact");
+			return em.getListEntity("SELECT * FROM contact", Contact.class);
+		}
+
 	}
 
 	@Override

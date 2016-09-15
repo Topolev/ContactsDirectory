@@ -26,7 +26,7 @@
 					<a href="${root}contactlist">Contact list</a>
 				</li>
 				<li>
-					<a href="">Search</a>
+					<a href="${root}searchform">Search</a>
 				</li>
 				<li>
 					<a href="">Send emails</a>

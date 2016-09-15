@@ -29,6 +29,11 @@
 		<servlet-class>by.topolev.contacts.servlets.ShowImageServlet</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>SearchForm</servlet-name>
+		<servlet-class>by.topolev.contacts.servlets.SearchFormServlet</servlet-class>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>ContactList</servlet-name>
 		<url-pattern>/contactlist</url-pattern>
@@ -52,5 +57,10 @@
 	<servlet-mapping>
 		<servlet-name>ShowImage</servlet-name>
 		<url-pattern>/showimage</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SearchForm</servlet-name>
+		<url-pattern>/searchform</url-pattern>
 	</servlet-mapping>
 </web-app>
