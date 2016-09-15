@@ -5,9 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Created by Vladimir on 11.09.2016.
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OneToOne {
-	String foreignkey();
-	String table();
+public @interface OneToMany {
+    String foreignkey();
+    String table();
 }

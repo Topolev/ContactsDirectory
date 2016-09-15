@@ -8,7 +8,8 @@ public interface ContactDao {
 	List<Contact> getContactList();
 	List<Contact> getLimitContactList(int beginRow, int countRow);
 	List<Contact> getLimitContactList(int beginRow, int countRow, String sortField, String sortType);
+	void updateContact(Contact contact);
 	Contact getContactById(int id);
 	int getCountContacts();
-	void deleteContacts(int...id);
+	void deleteContacts(Integer...id);
 }

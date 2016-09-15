@@ -1,11 +1,9 @@
 package by.topolev.contacts.entity;
 
 import java.util.Date;
+import java.util.List;
 
-import by.topolev.contacts.orm.annotation.Column;
-import by.topolev.contacts.orm.annotation.Id;
-import by.topolev.contacts.orm.annotation.OneToOne;
-import by.topolev.contacts.orm.annotation.Table;
+import by.topolev.contacts.orm.annotation.*;
 
 @Table(name = "contact")
 public class Contact {
@@ -45,8 +43,12 @@ public class Contact {
 	@Column(name="photo")
 	private String photo;
 
-	@OneToOne(clazz = "by.topolev.contacts.entity.Address", table = "address")
+	@OneToOne(foreignkey = "contact_id", table = "address")
 	private Address address;
+
+	@OneToMany(foreignkey = "contact_id", table = "phone")
+	private List<Phone> phoneList;
+
 
 	public Integer getId() {
 		return id;
@@ -143,7 +145,14 @@ public class Contact {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	
+
+	public List<Phone> getPhoneList() {
+		return phoneList;
+	}
+
+	public void setPhoneList(List<Phone> phoneList) {
+		this.phoneList = phoneList;
+	}
 
 	public String getPhoto() {
 		return photo;
@@ -157,6 +166,7 @@ public class Contact {
 		StringBuilder str = new StringBuilder();
 		str.append(" id: " + id);
 		str.append(" first name: " + firstname);
+		str.append(" last name: " + lastname);
 		str.append(" sex: " + sex);
 		return str.toString();
 	}

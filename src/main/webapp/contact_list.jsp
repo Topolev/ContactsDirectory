@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
+ 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,7 +36,7 @@
 	<section>
 		<h3>Contact list</h3>
 		<div class="control-panel">
-			<a href="" class="btn btn-default">Create new contact</a>
+			<a href="${root_directory}contactnew" class="btn btn-default">Create new contact</a>
 			<a href="" class="btn btn-default" id="show-delete-popup">Delete selected contacts</a>
 			<div class="select-show">
 				<span>Show:<span>
