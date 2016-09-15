@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.topolev.contacts.dao.PhoneDao;
+import by.topolev.contacts.dao.PhoneDaoFactory;
 import by.topolev.contacts.services.UploadImageService;
 import by.topolev.contacts.services.UploadImageServiceFactory;
 import org.apache.commons.fileupload.FileItem;
@@ -20,6 +22,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.rewrite.RewriteAppender;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +35,14 @@ import by.topolev.contacts.servlets.utils.EntityFromFormUtil;
 public class ContactNewServlet extends HttpServlet {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ContactNewServlet.class);
+    private static final ObjectMapper map = new ObjectMapper();
 
 	private ServletFileUpload upload;
 	
 	private ContactService contactService = ContactServiceFactory.getContactService();
 	private UploadImageService uploadImageService = UploadImageServiceFactory.getUploadImageService();
+
+    private PhoneDao phoneDao = PhoneDaoFactory.getPhoneDao();
 	
 	private EntityFromFormUtil<Contact> entityFromFormUtil = new EntityFromFormUtil<Contact>(Contact.class);
 
@@ -85,6 +91,12 @@ public class ContactNewServlet extends HttpServlet {
 			}
 
 			contactService.updateContact(contact);
+
+            /*Delete phones*/
+            String listDeletePhoneIdStr = getFieldValue("phone.delete",items);
+            Integer[] listDeletePhoneId = getArrayFromString(listDeletePhoneIdStr);
+            phoneDao.deletePhones(listDeletePhoneId);
+
 			int count = contactService.getCountContacts();
 			resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double)count/10)-1));
 
@@ -116,5 +128,20 @@ public class ContactNewServlet extends HttpServlet {
 		}
 		return null;
 	}
+
+	private String getFieldValue(String nameField, List<FileItem> items){
+        for (FileItem item : items) {
+            if (item.isFormField() && item.getFieldName().equals(nameField)) return item.getString();
+        }
+        return null;
+    }
+
+    private Integer[] getArrayFromString(String arrayStr) {
+        try {
+            return map.readValue(arrayStr, Integer[].class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
 }

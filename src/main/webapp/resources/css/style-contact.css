@@ -188,7 +188,7 @@
   padding: 10px;
   text-align: center;
 }
-#body-table-phone .checked {
+tr.checked {
   background: #fde0e1;
 }
 @media only screen and (max-width: 750px) {

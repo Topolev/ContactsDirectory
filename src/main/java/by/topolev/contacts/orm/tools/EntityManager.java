@@ -210,6 +210,7 @@ public class EntityManager {
     }
 
     public <T> void deleteEntity(Class<T> clazz, Integer... idList) {
+        if (idList == null) return;
         StringBuilder query = new StringBuilder();
         MetaEntity metaEntity = metaEntityList.get(clazz);
 

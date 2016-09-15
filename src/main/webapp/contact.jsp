@@ -215,13 +215,14 @@
 
 			<!--List of phones-->
 			<div class="row">
-				<div class="big-block">
+				<div class="big-block" id="phone">
 					<input type="hidden" id="phone-indexes" name="phone.indexes" value="">
+					<input type="hidden" id="phone-delete" name="phone.delete" value="">
 					<h2>Phones
 						<div class="control-panel">
-							<a href="" class="btn btn-default" id="create-phone">Create</a>
-							<a href="" class="btn btn-default" id="edit-phone">Edit</a>
-							<a href="" class="btn btn-default" id="delete-phone">Delete</a>
+							<a href="" class="btn btn-default create-new-row" >Create</a>
+							<a href="" class="btn btn-default edit-row">Edit</a>
+							<a href="" class="btn btn-default delete-rows">Delete</a>
 						</div>
 					</h2>
 					<table class="table">
@@ -229,7 +230,7 @@
 							<tr>
 								<th>
 									<div class="wrap-checkbox">
-										<input type="checkbox" class="checkbox" id="delete-all">
+										<input type="checkbox" class="checkbox delete-all">
 										<label></label>
 									</div>
 								</th>
@@ -238,13 +239,13 @@
 								<th>Description</th>
 							</tr>
 						</thead>
-						<tbody id="body-table-phone">
+						<tbody>
 
 							<c:forEach items="${contact.phoneList}" var="item" varStatus="status">
 							<tr>
 								<td>
 									<div class="wrap-checkbox">
-										<input type="checkbox" class="checkbox checkbox-phone" onchange="change_check_phone(event)">
+										<input type="checkbox" class="checkbox" onchange="tabelPhone.changeCheckRow(event)">
 										<label></label>
 									</div>
 								</td>
@@ -252,7 +253,7 @@
 								<td>${item.typePhone}</td>
 								<td>${item.description}</td>
 								<input type="hidden" name="phone${status.count}.id" value="${item.id}">
-								<input type="hidden" name="phone${status.count}.outerid" value="${status.count}">
+								<input type="hidden" name="phone${status.count}.inc" value="${status.count}">
 								<input type="hidden" name="phone${status.count}.countryCode" value="${item.countryCode}">
 								<input type="hidden" name="phone${status.count}.operatorCode" value="${item.operatorCode}">
 								<input type="hidden" name="phone${status.count}.phoneNumber" value="${item.phoneNumber}">
@@ -264,6 +265,49 @@
 					</table>
 				</div>
 			</div><!--end row-->
+			<!--End list of phones-->
+
+			<!--List of attachments-->
+			<div class="row">
+				<div class="big-block">
+					<h2>Attachments
+						<div class="control-panel">
+							<a href="" class="btn btn-default" id="create-attach">Create</a>
+							<a href="" class="btn btn-default" id="edit-attach">Edit</a>
+							<a href="" class="btn btn-default" id="delete-attach">Delete</a>
+						</div>
+					</h2>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>
+									<div class="wrap-checkbox">
+										<input type="checkbox" class="checkbox" id="delete-all">
+										<label></label>
+									</div>
+								</th>
+								<th>File name</th>
+								<th>Upload date</th>
+								<th>Comment</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<div class="wrap-checkbox">
+										<input type="checkbox" class="checkbox checkbox-phone" onchange="change_check_phone(event)">
+										<label></label>
+									</div>
+								</td>
+								<td>FileName.doc</td>
+								<td>12-12-2009</td>
+								<td>Comment</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!--End list of attachments-->
 
 			<input type="submit" class="btn btn-default" value="Save contact"/>
 		</section>
@@ -306,271 +350,26 @@
         			</div>
         		</div>
         		<div class="modal-buttons">
-        			<a href="#" class="btn btn-default" id="add-edit-phone">Save</a>
-        			<a href="#" class="btn btn-default" id="close-phone-modal">Cancel</a>
+        			<a href="#" class="btn btn-default create-edit" id="add-edit-phone">Save</a>
+        			<a href="#" class="btn btn-default close-modal" id="close-phone-modal">Cancel</a>
         		</div>
         	</div>
         </div>
 
 
 </div>
-
-
-</body>
-</html>
-
 <script>
-	/*Contact phone*/
-	var autoincrement = ${fn:length(contact.phoneList)};
-	var availableIndexes = [];
-
-	for (var i = 1; i<= autoincrement; i++){
-		availableIndexes.push(i);
-	}
-
-	setValueInputById("phone-indexes", JSON.stringify(availableIndexes));
-
-	var create_phone = document.getElementById("create-phone");
-	var delete_phone = document.getElementById("delete-phone");
-	var edit_phone = document.getElementById("edit-phone");
-	var popup_phone_modal = document.getElementById("phone-modal");
-	var but_close_phone_modal = document.getElementById("close-phone-modal");
-	var but_close_edit_modal = document.getElementById("close-edit-phone-modal");
-	var but_add_or_edit_phone = document.getElementById("add-edit-phone");
-	var placeToInsertPhoneRow = document.getElementById("body-table-phone");
-
-
-	var click_button = undefined;
-	var choose_edit_phone = undefined;
-
-
-
-	document.getElementById("delete-all").onclick = function(){
-		var position = this.checked;
-		var listCheckbox = document.getElementsByClassName("checkbox-phone");
-		for (var i = 0; i < listCheckbox.length; i++) {
-			listCheckbox[i].checked = position;
-		}
-		for(var i = 0; i < listCheckbox.length; i++){
-			if (listCheckbox[i].checked == true){
-				listCheckbox[i].parentNode.parentNode.parentNode.setAttribute("class", "checked");
-			} else{
-				listCheckbox[i].parentNode.parentNode.parentNode.removeAttribute("class");
-			}
-		}
-		change_check_phone();
-	}
-
-	create_phone.onclick = function(){
-		clear_phone_form();
-		popup_phone_modal.style.display = "block";
-		click_button = "create";
-		return false;
-	}
-
-	edit_phone.onclick = function(){
-		changeEditRowForPhone();
-		click_button = "edit";
-		return false;
-	}
-
-	deleteValueFromArray = function(array, value){
-		for(var i=0; i<array.length; i++){
-			if (array[i] == value){
-				array.splice(i,1);
-				return;
-			}
-		}
-	}
-
-	delete_phone.onclick = function(){
-		var checkbox = document.getElementsByClassName("checkbox-phone");
-		var checked_checkbox = [];
-
-		var availableIndexes =  JSON.parse(getValueInputById("phone-indexes"));
-
-		for (var i = 0; i< checkbox.length; i++){
-			if (checkbox[i].checked) {
-				var parent = checkbox[i].parentNode.parentNode.parentNode;
-				checked_checkbox.push(parent);
-				deleteValueFromArray(availableIndexes, getValueHiddenInputInParent(parent,"outerid"));
-			}
-		}
-		while(checked_checkbox.length != 0){
-			placeToInsertPhoneRow.removeChild(checked_checkbox.pop());
-		}
-
-		setValueInputById("phone-indexes", JSON.stringify(availableIndexes));
-		return false;
-	}
-
-	but_close_phone_modal.onclick = function(){
-		popup_phone_modal.style.display = "none";
-		return false;
-	}
-
-	but_add_or_edit_phone.onclick = function(){
-		if (click_button == "create") createRowForPhone();
-		if (click_button == "edit") editRowForPhone();
-		return false;
-	}
-
-	function getValueInputById(id){
-		var value = document.getElementById(id).value;
-		document.getElementById(id).value = "";
-		return value;
-	}
-
-	function setValueInputById(id, value){
-		document.getElementById(id).value = value;
-	}
-
-	function getValueRadioByClass(nameClass){
-		var radio = document.getElementsByClassName(nameClass);
-		for (var i = 0; i < radio.length; i++){
-			if (radio[i].checked) return radio[i].value;
-		}
-	}
-
-	function setValueRadioByClass(nameClass, value){
-		var radio = document.getElementsByClassName(nameClass);
-		for (var i = 0; i < radio.length; i++){
-			if (radio[i].value == value) radio[i].checked = true;
-		}
-	}
-
-	function createHiddenInput(name, value){
-		var input = document.createElement("input");
-		input.setAttribute('type','hidden');
-		input.setAttribute('name',name);
-		input.setAttribute('value',value);
-		return input;
-	}
-
-	/*Block button Edit if choose more that 1 phone*/
-	function change_check_phone(event){
-		if (event != undefined){
-			if (event.target.checked) event.target.parentNode.parentNode.parentNode.setAttribute("class", "checked");
-			else event.target.parentNode.parentNode.parentNode.removeAttribute("class");
-		}
-		var checkbox = document.getElementsByClassName("checkbox-phone");
-		var countChecked = 0;
-		for (var i = 0; i< checkbox.length; i++){
-			if (checkbox[i].checked) countChecked++;
-		}
-		if (countChecked > 1) edit_phone.setAttribute("disabled","disabled");
-		else edit_phone.removeAttribute("disabled");
-	}
-
-	function fullTdForTr(tr, increment){
-		var countrycode = getValueInputById("country-code");
-		var operatorcode = getValueInputById("operator-code");
-		var phonenumber = getValueInputById("phone-number");
-		var typephone = getValueRadioByClass("phone-radio");
-		var description = getValueInputById("description");
-
-		tr.innerHTML = "";
-		tr.innerHTML += "<td><div class='wrap-checkbox'>"+
-		                      "<input type='checkbox' class='checkbox checkbox-phone'" +
-							  " onchange='change_check_phone(event)' value='" + increment + "'>" +
-							  "<label></label></div>"+
-					    "</td>";
-		tr.innerHTML += "<td>+" + countrycode + "-" + operatorcode + "-" + phonenumber + "</td>";
-		tr.innerHTML += "<td>" + typephone + "</td>";
-		tr.innerHTML += "<td>" + description +"</td>";
-
-		tr.appendChild(createHiddenInput("phone" + increment + ".outerid" , increment));
-		tr.appendChild(createHiddenInput("phone" + increment + ".countryCode" , countrycode));
-		tr.appendChild(createHiddenInput("phone" + increment + ".operatorCode", operatorcode));
-		tr.appendChild(createHiddenInput("phone" + increment + ".phoneNumber", phonenumber));
-		tr.appendChild(createHiddenInput("phone" + increment + ".typePhone", typephone));
-		tr.appendChild(createHiddenInput("phone" + increment + ".description", description));
-
-	}
-
-	function createRowForPhone(){
-		var tr = document.createElement("tr");
-		autoincrement++;
-
-		var availableIndexes =  JSON.parse(getValueInputById("phone-indexes"));
-		availableIndexes.push(autoincrement);
-		setValueInputById("phone-indexes", JSON.stringify(availableIndexes));
-
-		fullTdForTr(tr, autoincrement);
-
-		placeToInsertPhoneRow.appendChild(tr);
-		popup_phone_modal.style.display = "none";
-		change_check_phone();
-	}
-
-	function getChooseCheckbox(){
-		var listCheckbox = document.getElementsByClassName("checkbox-phone");
-		for (var i = 0; i < listCheckbox.length; i++) {
-			if (listCheckbox[i].checked) return listCheckbox[i];
-		}
-	}
-
-	function changeEditRowForPhone(){
-		var choose_checkbox = getChooseCheckbox();
-		if (choose_checkbox != undefined){
-			popup_phone_modal.style.display = "block";
-			var parent = choose_checkbox.parentNode.parentNode.parentNode;
-			choose_edit_phone = getValueHiddenInputInParent(parent,"outerid");
-			var countrycode = getValueHiddenInputInParent(parent, "countryCode");
-			var operatorcode = getValueHiddenInputInParent(parent, "operatorCode");
-			var phonenumber = getValueHiddenInputInParent(parent, "phoneNumber");
-			var description = getValueHiddenInputInParent(parent, "description");
-
-			setValueInputById("country-code",countrycode);
-			setValueInputById("operator-code",operatorcode);
-			setValueInputById("phone-number",phonenumber);
-			setValueInputById("description",description);
-		}
-	}
-
-	function clear_phone_form(){
-		setValueInputById("country-code","");
-		setValueInputById("operator-code","");
-		setValueInputById("phone-number","");
-		setValueInputById("description","");
-		setValueRadioByClass("phone-radio", "Home")
-	}
-
-	function editRowForPhone(){
-		var choose_checkbox = getChooseCheckbox();
-		if (choose_checkbox != undefined){
-			var tr = choose_checkbox.parentNode.parentNode.parentNode;
-			tr.removeAttribute("class");
-			fullTdForTr(tr, choose_edit_phone);
-		}
-		popup_phone_modal.style.display = "none";
-	}
-
-	function getValueHiddenInputInParent(parent, name){
-		var input = parent.getElementsByTagName("input");
-		var regexp = new RegExp(name);
-		for (var i = 0; i<input.length; i++){
-			if ((input[i].getAttribute("type") == "hidden")
-			    && (input[i].getAttribute("name").search(regexp) != -1)){
-					return input[i].value;
-				}
-		}
+	var initAutoincrement = ${fn:length(contact.phoneList)};
+	var initAvailableIndexes = [];
+	for (var i = 1; i<= initAutoincrement; i++){
+		initAvailableIndexes.push(i);
 	}
 
 </script>
 
 
+<script src="${root_for_js}/contact.js"></script>
 
-
-
-
-
-
-
-
-
-
-
-
-
+</body>
+</html>
 
