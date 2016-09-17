@@ -301,9 +301,14 @@
 										<label></label>
 									</div>
 								</td>
-								<td>FileName.doc</td>
-								<td>12-12-2009</td>
+								<td>nameFile</td>
+								<td>2016-17-08</td>
 								<td>Comment</td>
+								<input type="hidden" name="attachment0.id" value="0">
+								<input type="hidden" name="attachment0.inc" value="0">
+								<input type="hidden" name="attachment0.nameFile" value="nameFile">
+								<input type="hidden" name="attachment0.commentFile" value="Comment">
+								<input type="hidden" name="attachment0.dateFile" value="2016-17-08">
 							</tr>
 						</tbody>
 					</table>
@@ -360,6 +365,12 @@
 <!--END Popup for creating new phone-->
 
 <!--Popup for creating new attachment-->
+
+
+
+<div id="container-file">
+	<input type="file" name="file0" onchange = "tableAttachment.changeFile(event)">
+</div>
 <div class="popup-overlay" id="attachment-modal">
 	<div class = "modal-window">
 		<h5>Create/edit attachtment</h5>
@@ -371,6 +382,12 @@
 			<div class="form-group">
 				<label for="comment-file">Comment</label>
 				<input type="text" class="form-control" id="comment-file" name="commentFile" placeholder="Comment">
+			</div>
+			<div class="form-group">
+				<label class="block">Choosen file: </label>
+				<span id="choosen-file" class="block"></span>
+				<button class="btn btn-default" id="upload-file" onclick="tableAttachment.chooseFile()">Choose new image</button>
+
 			</div>
 		</div>
 		<div class="modal-buttons">

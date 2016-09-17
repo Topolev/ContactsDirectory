@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -76,7 +77,16 @@ public class ContactNewServlet extends HttpServlet {
 		List<FileItem> items = getFileItemList(req);
 		if (items != null) {
 
-
+			String idStr = getFieldValue("id",items);
+			if (!"".equals(idStr)){
+				try{
+					Integer.valueOf(idStr);
+				}catch(NumberFormatException e){
+					LOG.debug("Someone attempts to apply huck related with SQL Injection");
+					resp.sendRedirect(req.getContextPath() + "/contactlist");
+					return;
+				}
+			}
 
 
 			/*Extract entity from form*/
@@ -96,6 +106,10 @@ public class ContactNewServlet extends HttpServlet {
             String listDeletePhoneIdStr = getFieldValue("phone.delete",items);
             Integer[] listDeletePhoneId = getArrayFromString(listDeletePhoneIdStr);
             phoneDao.deletePhones(listDeletePhoneId);
+
+			/*Save attachments*/
+			
+
 
 			int count = contactService.getCountContacts();
 			resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double)count/10)-1));
