@@ -1,6 +1,7 @@
 package by.topolev.contacts.services;
 
 import java.util.List;
+import java.util.Map;
 
 import by.topolev.contacts.dao.ContactDao;
 import by.topolev.contacts.dao.ContactDaoFactory;
@@ -32,6 +33,11 @@ public class ContactServiceImpl implements ContactService{
 	@Override
 	public List<Contact> getLimitContactList(int page, int countRow, String sortField, String sortType){
 		return contactDao.getLimitContactList(page*countRow, countRow, sortField, sortType);
+	}
+
+	@Override
+	public List<Contact> getSearchContact(Map<String, String> valueFields) {
+		return contactDao.getSearchContact(valueFields);
 	}
 
 	@Override

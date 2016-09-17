@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -13,10 +15,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import by.topolev.contacts.dao.AttachmentDao;
+import by.topolev.contacts.dao.AttachmentDaoFactory;
 import by.topolev.contacts.dao.PhoneDao;
 import by.topolev.contacts.dao.PhoneDaoFactory;
-import by.topolev.contacts.services.UploadImageService;
-import by.topolev.contacts.services.UploadImageServiceFactory;
+import by.topolev.contacts.entity.Attachment;
+import by.topolev.contacts.services.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -28,8 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.orm.annotation.Column;
-import by.topolev.contacts.services.ContactService;
-import by.topolev.contacts.services.ContactServiceFactory;
 import by.topolev.contacts.servlets.utils.EntityFromFormUtil;
 
 public class ContactNewServlet extends HttpServlet {
@@ -42,7 +44,10 @@ public class ContactNewServlet extends HttpServlet {
 	private ContactService contactService = ContactServiceFactory.getContactService();
 	private UploadImageService uploadImageService = UploadImageServiceFactory.getUploadImageService();
 
+	private UploadFileServiceImpl uploadFileService = new UploadFileServiceImpl();
+
     private PhoneDao phoneDao = PhoneDaoFactory.getPhoneDao();
+	private AttachmentDao attachmentDao = AttachmentDaoFactory.getAttachmentDao();
 	
 	private EntityFromFormUtil<Contact> entityFromFormUtil = new EntityFromFormUtil<Contact>(Contact.class);
 
@@ -76,7 +81,16 @@ public class ContactNewServlet extends HttpServlet {
 		List<FileItem> items = getFileItemList(req);
 		if (items != null) {
 
-
+			String idStr = getFieldValue("id",items);
+			if (!"".equals(idStr)){
+				try{
+					Integer.valueOf(idStr);
+				}catch(NumberFormatException e){
+					LOG.debug("Someone attempts to apply huck related with SQL Injection");
+					resp.sendRedirect(req.getContextPath() + "/contactlist");
+					return;
+				}
+			}
 
 
 			/*Extract entity from form*/
@@ -90,12 +104,37 @@ public class ContactNewServlet extends HttpServlet {
 				contact.setPhoto(uploadImageService.saveImage(photoItem));
 			}
 
+
+			/*Save attachments*/
+			String listAttachments = getFieldValue("attachment.indexes",items);
+			Integer[] listAttachmentsId = getArrayFromString(listAttachments);
+
+			List<Attachment> attachment = contact.getAttachmentList();
+
+			if (attachment != null) {
+				Iterator<Attachment> iterator = attachment.iterator();
+
+				for (Integer i : listAttachmentsId) {
+					FileItem fileItem = getFileItemByName("file" + i, items);
+					String nameFile = uploadFileService.saveFile(fileItem);
+					Attachment currentAttachment = iterator.next();
+					if (nameFile != null) currentAttachment.setNameFileInSystem(nameFile);
+				}
+			}
+
 			contactService.updateContact(contact);
+
+
 
             /*Delete phones*/
             String listDeletePhoneIdStr = getFieldValue("phone.delete",items);
             Integer[] listDeletePhoneId = getArrayFromString(listDeletePhoneIdStr);
             phoneDao.deletePhones(listDeletePhoneId);
+
+			/*Delete attachtments*/
+			String listDeleteAttachmentIdStr = getFieldValue("attachment.delete",items);
+			Integer[] listDeleteAttachmentId = getArrayFromString(listDeleteAttachmentIdStr);
+			attachmentDao.deleteAttachment(listDeleteAttachmentId);
 
 			int count = contactService.getCountContacts();
 			resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double)count/10)-1));
@@ -139,7 +178,7 @@ public class ContactNewServlet extends HttpServlet {
     private Integer[] getArrayFromString(String arrayStr) {
         try {
             return map.readValue(arrayStr, Integer[].class);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             return null;
         }
     }

@@ -1,4 +1,9 @@
-function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
+function Table(idBlock, increment, callBackFullTr, clearModal, editModal, closeModalInCreateMode){
+
+    this.increment = increment;
+
+    this.incChoosenRow = undefined;
+
     var self = this;
 
     var blockTable = document.getElementById(idBlock);
@@ -13,7 +18,7 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
     var buttonCreateOrEditModal = popupWindow.getElementsByClassName("create-edit")[0];
 
     var typePressButton = undefined;
-    var choose_edit_row = undefined;
+
     var availableIndexes = [];
     var deleteId = [];
 
@@ -31,6 +36,7 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
     buttonEditRow.onclick = function(){
         var choose_checkbox = getChooseCheckbox();
         if (choose_checkbox != undefined){
+            self.incChoosenRow = self.getValueHiddenInputInParent(choose_checkbox.parentNode.parentNode.parentNode,"inc")
             editModal.apply(self, [choose_checkbox]);
             popupWindow.style.display = "block";
             typePressButton = "edit";
@@ -56,11 +62,19 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
             if (listCheckbox[i].checked) {
                 var parent = listCheckbox[i].parentNode.parentNode.parentNode;
                 var id = self.getValueHiddenInputInParent(parent,"id");
+
                 if (id != undefined){
                     deleteId.push(id);
                 };
                 checked_checkbox.push(parent);
                 deleteValueFromArray(availableIndexes, self.getValueHiddenInputInParent(parent,"inc"));
+
+                /*It belongs only tableAttachmnet (delete input-file)*/
+                if (idBlock == "attachment"){
+                    var inc = self.getValueHiddenInputInParent(parent,"inc");
+                    document.getElementById("container-file").removeChild(self.getFileInput("file" + inc));
+                }
+
             }
         }
         self.setValueInputById(idBlock + "-indexes",JSON.stringify(availableIndexes));
@@ -74,6 +88,10 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
 
     buttonCloseModal.onclick = function(){
         popupWindow.style.display = "none";
+        if (typePressButton == "create" && closeModalInCreateMode != undefined){
+            closeModalInCreateMode.apply(self);
+        }
+
         return false;
     }
 
@@ -85,10 +103,12 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
 
     function createNewRow(){
         var tr = document.createElement("tr");
-        availableIndexes.push(++increment);
+        self.increment++;
+        availableIndexes.push(self.increment);
         self.setValueInputById(idBlock + "-indexes",JSON.stringify(availableIndexes))
         console.log(availableIndexes)
-        callBackFullTr.apply(self, [tr, increment]);
+
+        callBackFullTr.apply(self, [tr, self.increment]);
         bodyTable.appendChild(tr);
         popupWindow.style.display = "none";
     }
@@ -98,6 +118,7 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
         if (choose_checkbox != undefined){
             var tr = choose_checkbox.parentNode.parentNode.parentNode;
             var inc = self.getValueHiddenInputInParent(tr,"inc");
+            self.incChoosenRow = inc;
             tr.removeAttribute("class");
             callBackFullTr.apply(self, [tr, inc]);
         }
@@ -162,6 +183,12 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
         input.setAttribute('value',value);
         return input;
     }
+    this.getFileInput = function(name){
+        var fileInputs = document.getElementsByTagName("input");
+        for (var i=0; i<fileInputs.length; i++){
+            if (fileInputs[i].getAttribute("type") == "file" && fileInputs[i].getAttribute("name") == name) return fileInputs[i];
+        }
+    }
 
     this.getValueRadioByClass = function(nameClass){
         var radio = document.getElementsByClassName(nameClass);
@@ -197,6 +224,32 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal){
 
         doDisabledButttonEdit();
         return false;
+    }
+
+    this.chooseFile = function(event){
+        if (typePressButton == "create") {
+            self.getFileInput("file" + (this.increment + 1)).click();
+        }
+        if (typePressButton == "edit"){
+            console.log(this.incChoosenRow)
+            self.getFileInput("file" + this.incChoosenRow).click();
+        }
+        /*console.log("chooseFile");
+        if (typePressButton =="create"){
+            console.log(typePressButton)
+            console.log("inc" + increment)
+            self.getFileInput("file" + increment).click();
+        }
+        if (typePressButton == "edit"){
+            console.log(self.increment_choosen_row)
+            this.getFileInput("file" + this.increment_choosen_row).click();
+
+        }*/
+    }
+
+    this.changeFile = function(event){
+        currentInputFile = event.currentTarget;
+        document.getElementById("choosen-file").innerHTML = currentInputFile.value.split('/').pop().split('\\').pop();
     }
 
 }
@@ -262,9 +315,9 @@ var editPhoneModal = function(choose_checkbox){
 }
 /*END Callback function for table PHONE*/
 
-console.log("INCREMENET:" + initAutoincrement)
-var tablePhone = new Table("phone", initAutoincrement,callBackCreateTr, clearPhoneModal, editPhoneModal);
-tablePhone.setAvailableIndexes(initAvailableIndexes);
+console.log("INCREMENET:" + initAutoincrementPhoto)
+var tablePhone = new Table("phone", initAutoincrementPhoto,callBackCreateTr, clearPhoneModal, editPhoneModal);
+tablePhone.setAvailableIndexes(initAvailableIndexesPhoto);
 
 
 
@@ -274,6 +327,11 @@ tablePhone.setAvailableIndexes(initAvailableIndexes);
 
 /**/
 var callBackCreateAttachmentTr = function(tr, increment){
+    console.log("CREATE ROW")
+    console.log(increment)
+    var id = this.getValueHiddenInputInParent(tr,"id");
+    var nameFileInSystem = this.getValueHiddenInputInParent(tr, "nameFileInSystem");
+
     var namefile = this.getValueInputById("name-file");
     var commentfile = this.getValueInputById("comment-file");
     tr.innerHTML = "";
@@ -283,29 +341,67 @@ var callBackCreateAttachmentTr = function(tr, increment){
         "<label></label></div>"+
         "</td>";
 
+    var date = new Date();
+    var day = (parseInt(date.getDate(), 10) < 10 ) ? ('0'+date.getDate()) : (date.getDate());
+    var month = (parseInt(date.getMonth() + 1, 10) < 10 ) ? ('0'+date.getMonth()) : (date.getMonth());
+
+    var dateStr =  date.getFullYear() + "-" + month+ "-" + day;
+
     tr.innerHTML += "<td>" + namefile+ "</td>";
-    tr.innerHTML += "<td>" + new Date() + "</td>";
+    tr.innerHTML += "<td>" + dateStr + "</td>";
     tr.innerHTML += "<td>" + commentfile +"</td>";
 
-    //tr.appendChild(this.createHiddenInput("attachment" + increment + ".inc" , increment));
+    if (id != undefined){
+        tr.appendChild(this.createHiddenInput("attachment" + increment + ".id" ,id));
+        tr.appendChild(this.createHiddenInput("attachment" + increment + ".nameFileInSystem" ,nameFileInSystem));
+    }
+    tr.appendChild(this.createHiddenInput("attachment" + increment + ".inc" , increment));
     tr.appendChild(this.createHiddenInput("attachment" + increment + ".nameFile" , namefile));
     tr.appendChild(this.createHiddenInput("attachment" + increment + ".commentFile" , commentfile));
+    tr.appendChild(this.createHiddenInput("attachment" + increment + ".dateFile" , dateStr));
 }
+
+
 var clearAttachmentModal = function(){
     this.setValueInputById("name-file","");
     this.setValueInputById("comment-file","");
+    document.getElementById("choosen-file").innerHTML = "File isn't choosen";
+
+    /*create new input file*/
+    var container = document.getElementById("container-file");
+    var inputfile = document.createElement("input");
+    inputfile.setAttribute("type","file");
+    inputfile.setAttribute("name", "file" + (this.increment + 1));
+    inputfile.addEventListener("change", tableAttachment.changeFile);
+    container.appendChild(inputfile);
 }
+
+
 var editAttachmentModal = function(choose_checkbox){
     var parent = choose_checkbox.parentNode.parentNode.parentNode;
+
+    var id = this.getValueHiddenInputInParent(parent,"id");
     var namefile = this.getValueHiddenInputInParent(parent, "nameFile");
     var commentfile = this.getValueHiddenInputInParent(parent, "commentFile");
+    var inc = this.incChoosenRow;
+
+    if (this.getFileInput("file" + inc).value == ""){
+        document.getElementById("choosen-file").innerHTML = namefile;
+    } else{
+        document.getElementById("choosen-file").innerHTML = this.getFileInput("file" + inc).value.split('/').pop().split('\\').pop();
+    }
 
     this.setValueInputById("name-file",namefile);
     this.setValueInputById("comment-file",commentfile);
 
 }
 
+var closeAttachModalInCreateMode = function(){
+    document.getElementById("container-file").removeChild(this.getFileInput("file" + (this.increment + 1)));
+
+}
 
 
-var tableAttachment = new Table("attachment", 0, callBackCreateAttachmentTr, clearAttachmentModal, editAttachmentModal);
-//tablePhone.setAvailableIndexes([]);
+var tableAttachment = new Table("attachment", initAutoincrementAttachment, callBackCreateAttachmentTr, clearAttachmentModal, editAttachmentModal, closeAttachModalInCreateMode);
+tableAttachment.setAvailableIndexes(initAvailableIndexesAttachment);
+console.log(tableAttachment)

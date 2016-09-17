@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import by.topolev.contacts.entity.Attachment;
 import by.topolev.contacts.entity.Phone;
 import by.topolev.contacts.orm.annotation.*;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class EntityManager {
         classEntity.add(Contact.class);
         classEntity.add(Address.class);
         classEntity.add(Phone.class);
+        classEntity.add(Attachment.class);
 
         for (Class<?> clazz : classEntity) {
             metaEntityList.put(clazz, createMetaEntity(clazz));
@@ -295,6 +297,10 @@ public class EntityManager {
     }
 
     private void setValueField(Object object, Field field, Object value) {
+        if (field == null){
+            LOG.debug("Method gets empty field for object {}. System attempts assign value {}", object.getClass().getName(), value);
+            return;
+        }
         field.setAccessible(true);
         try {
             field.set(object, value);

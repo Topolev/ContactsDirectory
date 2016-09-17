@@ -49,6 +49,9 @@ public class Contact {
 	@OneToMany(foreignkey = "contact_id", table = "phone")
 	private List<Phone> phoneList;
 
+	@OneToMany(foreignkey = "contact_id", table = "attachment")
+	private List<Attachment> attachmentList;
+
 
 	public Integer getId() {
 		return id;
@@ -160,6 +163,14 @@ public class Contact {
 
 	public void setPhoto(String photo) {
 		this.photo = photo;
+	}
+
+	public List<Attachment> getAttachmentList() {
+		return attachmentList;
+	}
+
+	public void setAttachmentList(List<Attachment> attachmentList) {
+		this.attachmentList = attachmentList;
 	}
 
 	public String toString() {
