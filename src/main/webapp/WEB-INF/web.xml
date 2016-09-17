@@ -4,6 +4,7 @@
 
 <web-app>
 	<display-name>Archetype Created Web Application</display-name>
+	<!--
 	<servlet>
 		<servlet-name>ContactList</servlet-name>
 		<servlet-class>by.topolev.contacts.servlets.ContactListServlet</servlet-class>
@@ -32,8 +33,14 @@
 	<servlet>
 		<servlet-name>SearchForm</servlet-name>
 		<servlet-class>by.topolev.contacts.servlets.SearchFormServlet</servlet-class>
+	</servlet> -->
+
+	<servlet>
+		<servlet-name>FrontController</servlet-name>
+		<servlet-class>by.topolev.contacts.servlets.frontcontroller.FrontControllerServlet</servlet-class>
 	</servlet>
 
+	<!--
 	<servlet-mapping>
 		<servlet-name>ContactList</servlet-name>
 		<url-pattern>/contactlist</url-pattern>
@@ -62,5 +69,10 @@
 	<servlet-mapping>
 		<servlet-name>SearchForm</servlet-name>
 		<url-pattern>/searchform</url-pattern>
+	</servlet-mapping>-->
+
+	<servlet-mapping>
+		<servlet-name>FrontController</servlet-name>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>
