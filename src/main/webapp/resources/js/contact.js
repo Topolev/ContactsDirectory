@@ -315,9 +315,9 @@ var editPhoneModal = function(choose_checkbox){
 }
 /*END Callback function for table PHONE*/
 
-console.log("INCREMENET:" + initAutoincrement)
-var tablePhone = new Table("phone", initAutoincrement,callBackCreateTr, clearPhoneModal, editPhoneModal);
-tablePhone.setAvailableIndexes(initAvailableIndexes);
+console.log("INCREMENET:" + initAutoincrementPhoto)
+var tablePhone = new Table("phone", initAutoincrementPhoto,callBackCreateTr, clearPhoneModal, editPhoneModal);
+tablePhone.setAvailableIndexes(initAvailableIndexesPhoto);
 
 
 
@@ -330,6 +330,7 @@ var callBackCreateAttachmentTr = function(tr, increment){
     console.log("CREATE ROW")
     console.log(increment)
     var id = this.getValueHiddenInputInParent(tr,"id");
+    var nameFileInSystem = this.getValueHiddenInputInParent(tr, "nameFileInSystem");
 
     var namefile = this.getValueInputById("name-file");
     var commentfile = this.getValueInputById("comment-file");
@@ -344,7 +345,7 @@ var callBackCreateAttachmentTr = function(tr, increment){
     var day = (parseInt(date.getDate(), 10) < 10 ) ? ('0'+date.getDate()) : (date.getDate());
     var month = (parseInt(date.getMonth() + 1, 10) < 10 ) ? ('0'+date.getMonth()) : (date.getMonth());
 
-    var dateStr =  date.getFullYear() + "-" + day+ "-" + month;
+    var dateStr =  date.getFullYear() + "-" + month+ "-" + day;
 
     tr.innerHTML += "<td>" + namefile+ "</td>";
     tr.innerHTML += "<td>" + dateStr + "</td>";
@@ -352,6 +353,7 @@ var callBackCreateAttachmentTr = function(tr, increment){
 
     if (id != undefined){
         tr.appendChild(this.createHiddenInput("attachment" + increment + ".id" ,id));
+        tr.appendChild(this.createHiddenInput("attachment" + increment + ".nameFileInSystem" ,nameFileInSystem));
     }
     tr.appendChild(this.createHiddenInput("attachment" + increment + ".inc" , increment));
     tr.appendChild(this.createHiddenInput("attachment" + increment + ".nameFile" , namefile));
@@ -400,6 +402,6 @@ var closeAttachModalInCreateMode = function(){
 }
 
 
-var tableAttachment = new Table("attachment", 0, callBackCreateAttachmentTr, clearAttachmentModal, editAttachmentModal, closeAttachModalInCreateMode);
-//tablePhone.setAvailableIndexes([]);
+var tableAttachment = new Table("attachment", initAutoincrementAttachment, callBackCreateAttachmentTr, clearAttachmentModal, editAttachmentModal, closeAttachModalInCreateMode);
+tableAttachment.setAvailableIndexes(initAvailableIndexesAttachment);
 console.log(tableAttachment)

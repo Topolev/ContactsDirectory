@@ -34,8 +34,8 @@
 <script src="${root_for_js}/bootstrap.js"></script>
 </head>
 <body>
-	
-	
+
+
 <jsp:include page="header.jsp"/>
 
 <div id="wrap-content" class="user-container">
@@ -213,6 +213,8 @@
 			</div>
 
 
+
+
 			<!--List of phones-->
 			<div class="row">
 				<div class="big-block" id="phone">
@@ -267,11 +269,22 @@
 			</div><!--end row-->
 			<!--End list of phones-->
 
+
+			<div>${contact.attachmentList}</div>
+
+
 			<!--List of attachments-->
 			<div class="row">
+				<div id="container-file">
+					<!--<input type="file" name="file0" onchange = "tableAttachment.changeFile(event)">-->
+					<c:forEach items="${contact.attachmentList}" var="item" varStatus="status">
+						<input type="file" name="file${status.count}" onchange = "tableAttachment.changeFile(event)">
+					</c:forEach>
+
+				</div>
 				<div class="big-block" id="attachment">
-					<input type="hidden" id="attachment-indexes" name="phone.indexes" value="">
-					<input type="hidden" id="attachment-delete" name="phone.delete" value="">
+					<input type="hidden" id="attachment-indexes" name="attachment.indexes" value="">
+					<input type="hidden" id="attachment-delete" name="attachment.delete" value="">
 					<h2>Attachments
 						<div class="control-panel">
 							<a href="" class="btn btn-default create-new-row" >Create</a>
@@ -294,22 +307,48 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>
-									<div class="wrap-checkbox">
-										<input type="checkbox" class="checkbox checkbox-phone" onchange="change_check_phone(event)">
-										<label></label>
-									</div>
-								</td>
-								<td>nameFile</td>
-								<td>2016-17-08</td>
-								<td>Comment</td>
-								<input type="hidden" name="attachment0.id" value="0">
-								<input type="hidden" name="attachment0.inc" value="0">
-								<input type="hidden" name="attachment0.nameFile" value="nameFile">
-								<input type="hidden" name="attachment0.commentFile" value="Comment">
-								<input type="hidden" name="attachment0.dateFile" value="2016-17-08">
+
+
+
+
+
+                        <c:forEach items="${contact.attachmentList}" var="item" varStatus="status">
+                            <tr>
+                                <td>
+                                    <div class="wrap-checkbox">
+                                        <input type="checkbox" class="checkbox checkbox-phone" onchange="tableAttachment.changeCheckRow(event)">
+                                        <label></label>
+                                    </div>
+                                </td>
+                                <td>${item.nameFile}</td>
+                                <td></td>
+                                <td>${item.commentFile}</td>
+                                <input type="hidden" name="attachment${status.count}.id" value="${item.id}">
+                                <input type="hidden" name="attachment${status.count}.inc" value="${status.count}">
+                                <input type="hidden" name="attachment${status.count}.nameFile" value="${item.nameFile}">
+                                <input type="hidden" name="attachment${status.count}.commentFile" value="${item.commentFile}">
+                                <input type="hidden" name="attachment${status.count}.nameFileInSystem" value="${item.nameFileInSystem}">
+                                <input type="hidden" name="attachment${status.count}.dateFile" value="">
+                                <!--
+                                <td>
+                                <div class="wrap-checkbox">
+                                    <input type="checkbox" class="checkbox checkbox-phone" onchange="tableAttachment.changeCheckRow(event)">
+                                    <label></label>
+                                </div>
+                                </td>
+                                <td>nameFile</td>
+                                <td>2016-17-08</td>
+                                <td>Comment</td>
+                                <input type="hidden" name="attachment0.id" value="0">
+                                <input type="hidden" name="attachment0.inc" value="0">
+                                <input type="hidden" name="attachment0.nameFile" value="nameFile">
+                                <input type="hidden" name="attachment0.commentFile" value="Comment">
+                                <input type="hidden" name="attachment0.dateFile" value="2016-17-08">-->
 							</tr>
+                        </c:forEach>
+
+
+
 						</tbody>
 					</table>
 				</div>
@@ -368,9 +407,7 @@
 
 
 
-<div id="container-file">
-	<input type="file" name="file0" onchange = "tableAttachment.changeFile(event)">
-</div>
+
 <div class="popup-overlay" id="attachment-modal">
 	<div class = "modal-window">
 		<h5>Create/edit attachtment</h5>
@@ -400,10 +437,17 @@
 
 </div>
 <script>
-	var initAutoincrement = ${fn:length(contact.phoneList)};
-	var initAvailableIndexes = [];
-	for (var i = 1; i<= initAutoincrement; i++){
-		initAvailableIndexes.push(i);
+	var initAutoincrementPhoto = ${fn:length(contact.phoneList)};
+	var initAvailableIndexesPhoto = [];
+	for (var i = 1; i<= initAutoincrementPhoto; i++){
+		initAvailableIndexesPhoto.push(i);
+	}
+
+
+	var initAutoincrementAttachment = ${fn:length(contact.attachmentList)}
+	var initAvailableIndexesAttachment = [];
+	for (var i = 1; i<= initAutoincrementAttachment; i++){
+		initAvailableIndexesAttachment.push(i);
 	}
 
 </script>

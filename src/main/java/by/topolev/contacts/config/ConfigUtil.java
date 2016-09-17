@@ -6,5 +6,6 @@ public class ConfigUtil {
 	public static final String USER_DATABASE = "topolev";
 	public static final String PASSWORD_DATABASE = "topolev";
 
-	public static final String PATH_UPLOAD_PROFILE_IMAGE = "/";
+	public static final String PATH_UPLOAD_PROFILE_IMAGE = "/uploadImage/";
+    public static final String PATH_UPLOAD_PROFILE_FILES = "/uploadFiles/";
 }
