@@ -19,6 +19,7 @@ public class RequestHelper {
     private static Map<MetaRequest, Command> mapResources = new HashMap<MetaRequest, Command>();
 
     public static void init(ServletContext servletContext){
+        mapResources.put(new MetaRequest("/","get"), new IndexCommand());
         mapResources.put(new MetaRequest("/contactlist","get"), new ContactListCommand());
         mapResources.put(new MetaRequest("/contactdelete","get"), new ContactDeleteCommand());
         mapResources.put(new MetaRequest("/contact","get"), new ContactShowCommand());
