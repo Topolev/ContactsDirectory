@@ -270,12 +270,12 @@
 			<!--End list of phones-->
 
 
-			<div>${contact.attachmentList}</div>
+
 
 
 			<!--List of attachments-->
 			<div class="row">
-				<div id="container-file">
+				<div id="container-file" style="display: none">
 					<!--<input type="file" name="file0" onchange = "tableAttachment.changeFile(event)">-->
 					<c:forEach items="${contact.attachmentList}" var="item" varStatus="status">
 						<input type="file" name="file${status.count}" onchange = "tableAttachment.changeFile(event)">

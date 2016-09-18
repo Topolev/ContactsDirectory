@@ -3,7 +3,6 @@ package by.topolev.contacts.servlets.commands;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.ContactService;
 import by.topolev.contacts.services.ContactServiceFactory;
-import by.topolev.contacts.servlets.ContactListServlet;
 import by.topolev.contacts.servlets.formdata.InfoSortField;
 import by.topolev.contacts.servlets.formdata.Paginator;
 import by.topolev.contacts.servlets.frontcontroller.Command;
@@ -32,7 +31,7 @@ public class ContactListCommand implements Command {
     public ContactListCommand(){};
 
     @Override
-    public String excute(HttpServletRequest req, HttpServletResponse resp) {
+    public String execute(HttpServletRequest req, HttpServletResponse resp) {
         int count = contactService.getCountContacts();
 
         int page = getRequestParametr(req, "page", int.class, 0);
@@ -66,7 +65,6 @@ public class ContactListCommand implements Command {
         req.setAttribute("paginator", paginator);
         req.setAttribute("sortFields", sortFields);
 
-        //req.getRequestDispatcher("/contact_list.jsp").forward(req, resp);
         return "contact_list.jsp";
     }
 

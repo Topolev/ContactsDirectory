@@ -4,75 +4,14 @@
 
 <web-app>
 	<display-name>Archetype Created Web Application</display-name>
-	<!--
-	<servlet>
-		<servlet-name>ContactList</servlet-name>
-		<servlet-class>by.topolev.contacts.servlets.ContactListServlet</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>ContactDelete</servlet-name>
-		<servlet-class>by.topolev.contacts.servlets.ContactDeleteServlet</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>ContactNew</servlet-name>
-		<servlet-class>by.topolev.contacts.servlets.ContactNewServlet</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>Contact</servlet-name>
-		<servlet-class>by.topolev.contacts.servlets.ContactServlet</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>ShowImage</servlet-name>
-		<servlet-class>by.topolev.contacts.servlets.ShowImageServlet</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>SearchForm</servlet-name>
-		<servlet-class>by.topolev.contacts.servlets.SearchFormServlet</servlet-class>
-	</servlet> -->
-
-	<servlet>
-		<servlet-name>FrontController</servlet-name>
-		<servlet-class>by.topolev.contacts.servlets.frontcontroller.FrontControllerServlet</servlet-class>
-	</servlet>
-
-	<!--
-	<servlet-mapping>
-		<servlet-name>ContactList</servlet-name>
-		<url-pattern>/contactlist</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>ContactDelete</servlet-name>
-		<url-pattern>/contactdelete</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>ContactNew</servlet-name>
-		<url-pattern>/contactnew</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>Contact</servlet-name>
-		<url-pattern>/contact</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>ShowImage</servlet-name>
-		<url-pattern>/showimage</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SearchForm</servlet-name>
-		<url-pattern>/searchform</url-pattern>
-	</servlet-mapping>-->
-
-	<servlet-mapping>
-		<servlet-name>FrontController</servlet-name>
+	
+	<filter>
+		<filter-name>FrontController</filter-name>
+		<filter-class>by.topolev.contacts.servlets.frontcontroller.FrontControllerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>FrontController</filter-name>
 		<url-pattern>/*</url-pattern>
-	</servlet-mapping>
+	</filter-mapping>
+
 </web-app>

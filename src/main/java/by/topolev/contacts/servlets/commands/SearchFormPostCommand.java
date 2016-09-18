@@ -1,26 +1,22 @@
-package by.topolev.contacts.servlets;
-
-
+package by.topolev.contacts.servlets.commands;
 
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.ContactService;
 import by.topolev.contacts.services.ContactServiceFactory;
+import by.topolev.contacts.servlets.frontcontroller.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by Vladimir on 15.09.2016.
+ * Created by Vladimir on 18.09.2016.
  */
-public class SearchFormServlet extends HttpServlet {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SearchFormServlet.class);
+public class SearchFormPostCommand implements Command {
+    private static final Logger LOG = LoggerFactory.getLogger(SearchFormPostCommand.class);
 
     private List<String> listFields = new ArrayList<String>(Arrays.asList("first_name","last_name","middle_name","sex","marital_status","nationality", "country", "city"));
 
@@ -28,18 +24,7 @@ public class SearchFormServlet extends HttpServlet {
 
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        LOG.debug("SERACH FORM");
-
-
-
-        req.getRequestDispatcher("/searchform.jsp").forward(req, resp);
-    }
-
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-
+    public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Map<String, String> valueFields = new HashMap<>();
         for (String field : listFields){
             String value = getPostParameter(field,req);
@@ -63,7 +48,8 @@ public class SearchFormServlet extends HttpServlet {
         req.setAttribute("paginator", paginator);
         req.setAttribute("sortFields", sortFields);*/
 
-        req.getRequestDispatcher("/contact_list.jsp").forward(req, resp);
+
+        return "/contact_list.jsp";
     }
 
     private String getPostParameter(String nameField, HttpServletRequest req){
