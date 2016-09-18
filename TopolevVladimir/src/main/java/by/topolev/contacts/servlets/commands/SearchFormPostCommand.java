@@ -10,7 +10,11 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static java.nio.charset.StandardCharsets.*;
 
 /**
  * Created by Vladimir on 18.09.2016.
@@ -28,8 +32,9 @@ public class SearchFormPostCommand implements Command {
 
         Map<String, String> valueFields = new HashMap<>();
         for (String field : listFields){
-            String value = getPostParameter(field,req);
+            String value = getPostParameter(field, req);
             if (value != null){
+                value = new String(value.getBytes("ISO-8859-1"), StandardCharsets.UTF_8);
                 valueFields.put(field,value);
                 req.setAttribute(field, value);
             }
