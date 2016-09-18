@@ -11,24 +11,29 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
 
+
 /**
  * Created by Vladimir on 18.09.2016.
  */
-public class ShowImageCommand implements Command {
-    private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommand.class);
+public class UploadFileCommand implements Command {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UploadFileCommand.class);
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String rootDirectory = ConfigUtil.getPathUploadProfileImage();
+        String rootDirectory = ConfigUtil.getPathUploadProfileFiles();
+
         File file = new File(rootDirectory + req.getParameter("file"));
+        OutputStream out = resp.getOutputStream();
         if (!file.exists()){
-            LOG.info(String.format("File with path '%s' isn't excited.", file.getAbsolutePath()));
+            LOG.info("File with path '{}' isn't excited.", file.getAbsolutePath());
+            out.write("File isn't excited".getBytes());
         } else{
             InputStream in = new FileInputStream(file);
             byte[] image = IOUtils.toByteArray(in);
-            OutputStream out = resp.getOutputStream();
             out.write(image);
         }
+
         return null;
     }
 }

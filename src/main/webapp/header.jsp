@@ -28,9 +28,6 @@
 				<li>
 					<a href="${root}searchform">Search</a>
 				</li>
-				<li>
-					<a href="">Send emails</a>
-				</li>
 			</ul>
 			<div class="navbar-right">
 				<div id="wrap-lan">

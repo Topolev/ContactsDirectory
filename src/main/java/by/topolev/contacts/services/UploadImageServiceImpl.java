@@ -3,6 +3,7 @@ package by.topolev.contacts.services;
 
 import static by.topolev.contacts.config.ConfigUtil.*;
 
+import by.topolev.contacts.config.ConfigUtil;
 import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class UploadImageServiceImpl implements UploadImageService {
         if (item == null || item.getName() == null) return null;
 
         String fileName = getUniqueFileName(item.getName());
-        File file = new File(PATH_UPLOAD_PROFILE_IMAGE + fileName);
+        File file = new File(ConfigUtil.getPathUploadProfileImage() + fileName);
         try {
             item.write(file);
             LOG.debug(String.format("Image upload is success, file path = %s", file.getAbsolutePath()));
@@ -38,7 +39,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 
 
     private void createUploadDirIfNotExist() {
-        File file = new File(PATH_UPLOAD_PROFILE_IMAGE);
+        File file = new File(ConfigUtil.getPathUploadProfileImage());
         if (!file.exists()) {
             file.mkdir();
             LOG.debug("Create folder for uploading images: {}", file.getAbsolutePath());

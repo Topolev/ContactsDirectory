@@ -25,11 +25,13 @@ public class SearchFormPostCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
         Map<String, String> valueFields = new HashMap<>();
         for (String field : listFields){
             String value = getPostParameter(field,req);
             if (value != null){
                 valueFields.put(field,value);
+                req.setAttribute(field, value);
             }
         }
 
@@ -40,6 +42,9 @@ public class SearchFormPostCommand implements Command {
         LOG.debug(contactList.toString());
 
         req.setAttribute("contactList", contactList);
+
+
+
         /*req.setAttribute("count", count);
         req.setAttribute("page", page);
         req.setAttribute("countRow", countRow);
@@ -49,7 +54,7 @@ public class SearchFormPostCommand implements Command {
         req.setAttribute("sortFields", sortFields);*/
 
 
-        return "/contact_list.jsp";
+        return "/searchformwithresult.jsp";
     }
 
     private String getPostParameter(String nameField, HttpServletRequest req){

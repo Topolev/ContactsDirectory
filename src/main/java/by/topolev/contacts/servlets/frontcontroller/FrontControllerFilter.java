@@ -1,19 +1,32 @@
 package by.topolev.contacts.servlets.frontcontroller;
 
+import by.topolev.contacts.config.ConfigUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * Created by Vladimir on 18.09.2016.
  */
 public class FrontControllerFilter implements Filter{
 
+    private static final Logger LOG = LoggerFactory.getLogger(FrontControllerFilter.class);
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         ServletContext servletContext = filterConfig.getServletContext();
+        ConfigUtil.init(servletContext);
+        
         RequestHelper.init(servletContext);
+
+
+
     }
 
     @Override

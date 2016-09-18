@@ -341,11 +341,16 @@ var callBackCreateAttachmentTr = function(tr, increment){
         "<label></label></div>"+
         "</td>";
 
-    var date = new Date();
-    var day = (parseInt(date.getDate(), 10) < 10 ) ? ('0'+date.getDate()) : (date.getDate());
-    var month = (parseInt(date.getMonth() + 1, 10) < 10 ) ? ('0'+date.getMonth()) : (date.getMonth());
 
-    var dateStr =  date.getFullYear() + "-" + month+ "-" + day;
+    var date = new Date();
+
+    var month = date.getMonth() + 1;
+
+
+    var day = (parseInt(date.getDate(), 10) < 10 ) ? ('0'+date.getDate()) : (date.getDate());
+    var month = (parseInt(date.getMonth() + 1, 10) < 10 ) ? ('0' + (date.getMonth() + 1)) : (date.getMonth() + 1);
+
+    var dateStr =  date.getFullYear() + "-" + day+ "-" + month;
 
     tr.innerHTML += "<td>" + namefile+ "</td>";
     tr.innerHTML += "<td>" + dateStr + "</td>";

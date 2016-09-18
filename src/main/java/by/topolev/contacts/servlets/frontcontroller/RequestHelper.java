@@ -27,6 +27,8 @@ public class RequestHelper {
         mapResources.put(new MetaRequest("/showimage","get"), new ShowImageCommand());
         mapResources.put(new MetaRequest("/searchform","get"), new SearchFormGetCommand());
         mapResources.put(new MetaRequest("/searchform","post"), new SearchFormPostCommand());
+        mapResources.put(new MetaRequest("/uploadfile","get"), new UploadFileCommand());
+        mapResources.put(new MetaRequest("/sendmessage","get"), new SendMessageCommand());
     }
 
     private HttpServletRequest request;
@@ -41,7 +43,6 @@ public class RequestHelper {
 
         LOG.debug("Current URI: {} ; Current methos: {}",currentURI, currentMethod);
         MetaRequest metaRequest = new MetaRequest(currentURI,currentMethod);
-
 
         return mapResources.get(metaRequest);
     }

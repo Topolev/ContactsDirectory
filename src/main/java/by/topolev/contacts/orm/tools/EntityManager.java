@@ -7,10 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import by.topolev.contacts.entity.Attachment;
 import by.topolev.contacts.entity.Phone;
@@ -29,139 +28,61 @@ public class EntityManager {
 
     private Map<Class<?>, MetaEntity> metaEntityList = new HashMap<>();
     private List<Class<?>> classEntity = new ArrayList<>();
+    private MetaEntityReader metaEntityReader = new MetaEntityReader();
 
     public EntityManager() {
-        System.out.println("Entity manager");
+        LOG.debug("Init Entity Manager");
 
         classEntity.add(Contact.class);
         classEntity.add(Address.class);
         classEntity.add(Phone.class);
         classEntity.add(Attachment.class);
 
-        for (Class<?> clazz : classEntity) {
-            metaEntityList.put(clazz, createMetaEntity(clazz));
-        }
+        metaEntityList = metaEntityReader.getMetaEntity(classEntity);
     }
 
-    private MetaEntity createMetaEntity(Class<?> clazz) {
-        MetaEntity metaEntity = new MetaEntity();
-        metaEntity.setTable(clazz.getAnnotation(Table.class));
-
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            Id id = field.getAnnotation(Id.class);
-            Column column = field.getAnnotation(Column.class);
-            OneToOne oneToOne = field.getAnnotation(OneToOne.class);
-            OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-            if (id != null)
-                metaEntity.setIdField(field);
-            if (column != null)
-                metaEntity.getFieldsColumn().put(field, column);
-            if (oneToOne != null)
-                metaEntity.getFieldsOneToOne().put(field, oneToOne);
-            if (oneToMany != null)
-                metaEntity.getFieldsOneToMany().put(field, oneToMany);
-        }
-        return metaEntity;
-    }
-
-    private String getStringValue(Object obj, Field field) {
-        field.setAccessible(true);
-        Object value;
-        try {
-            value = field.get(obj);
-            field.setAccessible(false);
-            if (value == null)
-                return "null";
-            if (field.getType() == String.class)
-                return "'" + value.toString() + "'";
-            return value.toString();
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            return "null";
-        }
-    }
-
-    private <T> Integer getIdEntity(T entity){
+    public <T> void updateEntity(T entity){
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
-        Field idField = metaEntity.getIdField();
-        return (Integer) getValueField(entity,idField);
-    }
-
-   public <T> void updateEntity(T entity){
-       MetaEntity metaEntity = metaEntityList.get(entity.getClass());
-       Integer id = getIdEntity(entity);
-       StringBuilder query = new StringBuilder();
-
-       if (id == null){
-           query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()))
-                   .append(getSetSectionQuery(entity));
-           id = executeQueryInsertUpdateRow(query.toString());
-       } else{
-           query.append(String.format("UPDATE %s SET ", metaEntity.getTable().name()))
-                   .append(getSetSectionQuery(entity))
-                   .append(" WHERE id=")
-                   .append(id);
-           executeQueryInsertUpdateRow(query.toString());
-       }
-
-       LOG.debug(query.toString());
-
-       if (id != null) {
-
-           for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
-               Object currentObject = getValueField(entity, entry.getKey());
-               Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
-               setValueField(currentObject, foreignkey, id);
-               updateEntity(currentObject);
-           }
-
-           for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()){
-               List listOfEntity = (List) getValueField(entity, entry.getKey());
-
-               for (Object currentObject : listOfEntity){
-                   Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
-                   setValueField(currentObject, foreignkey, id);
-                   updateEntity(currentObject);
-               }
-           }
-
-       }
-
-   }
-
-    private <T> String getSetSectionQuery(T entity){
-        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        Integer id = getIdEntity(entity);
         StringBuilder query = new StringBuilder();
-        for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
-            query.append(String.format(" %s = %s ,", entry.getValue().name(), getStringValue(entity, entry.getKey())));
-        }
-        query.delete(query.length() - 1, query.length()); // delete the last comma
-        return query.toString();
-    }
 
-    private Integer executeQueryInsertUpdateRow(String query){
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            statement.executeUpdate();
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()){
-                return generatedKeys.getInt(1);
+        if (id == null){
+            query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()))
+                    .append(getSetSectionQuery(entity));
+            id = executeQueryInsertUpdateRow(query.toString());
+        } else{
+            query.append(String.format("UPDATE %s SET ", metaEntity.getTable().name()))
+                    .append(getSetSectionQuery(entity))
+                    .append(" WHERE id=")
+                    .append(id);
+            executeQueryInsertUpdateRow(query.toString());
+        }
+
+        LOG.debug(query.toString());
+
+        if (id != null) {
+
+            for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
+                Object currentObject = getValueField(entity, entry.getKey());
+                Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+                setValueField(currentObject, foreignkey, id);
+                updateEntity(currentObject);
             }
-        } catch(SQLException e){
-            LOG.debug("Can not insert or update row. Query: {}", query);
+
+            for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()){
+                List listOfEntity = (List) getValueField(entity, entry.getKey());
+
+                for (Object currentObject : listOfEntity){
+                    Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+                    setValueField(currentObject, foreignkey, id);
+                    updateEntity(currentObject);
+                }
+            }
+
         }
-        return null;
+
     }
 
-    private Field getFieldByName(Object obj, String fieldName){
-        Field[] fields = obj.getClass().getDeclaredFields();
-        for (Field field : fields){
-            if (field.getName().equals(fieldName)) return field;
-        }
-        return null;
-    }
 
     public <T> List<T> getListEntity(String query, Class<T> clazz) {
         List<T> entityList = new ArrayList<T>();
@@ -211,16 +132,35 @@ public class EntityManager {
         return entity;
     }
 
-    public <T> void deleteEntity(Class<T> clazz, Integer... idList) {
-        if (idList == null) return;
+    private String getSectionQueryIdConnectedWithOr(Integer... idList){
         StringBuilder query = new StringBuilder();
-        MetaEntity metaEntity = metaEntityList.get(clazz);
-
-        query.append("DELETE FROM " + metaEntity.getTable().name() + " WHERE");
         for (Integer id : idList) {
             query.append(" id = " + id + " OR");
         }
         query.delete(query.length() - 3, query.length());
+        return query.toString();
+    }
+
+
+    public <T> List<T> getEntityById(Class<T> clazz, Integer... idList){
+        if (idList == null) return null;
+
+        StringBuilder query = new StringBuilder();
+        MetaEntity metaEntity = metaEntityList.get(clazz);
+
+        query.append("SELECT * FROM " + metaEntity.getTable().name() + " WHERE");
+        query.append(getSectionQueryIdConnectedWithOr(idList));
+
+        return getListEntity(query.toString(), clazz);
+    }
+
+    public <T> void deleteEntity(Class<T> clazz, Integer... idList) {
+        if (idList == null || idList.length == 0) return;
+        StringBuilder query = new StringBuilder();
+        MetaEntity metaEntity = metaEntityList.get(clazz);
+
+        query.append("DELETE FROM " + metaEntity.getTable().name() + " WHERE");
+        query.append(getSectionQueryIdConnectedWithOr(idList));
 
         Connection connection = null;
         try {
@@ -236,8 +176,76 @@ public class EntityManager {
             }
         }
 
-        System.out.println(query);
+        LOG.debug("Complite query: {}", query);
     }
+
+
+
+    private String getStringValue(Object obj, Field field) {
+
+        field.setAccessible(true);
+        Object value;
+        try {
+            value = field.get(obj);
+            field.setAccessible(false);
+            if (value == null)
+                return "null";
+            if (field.getType() == String.class){
+                return "'" + value.toString() + "'";
+            }
+            if (field.getType() == Date.class){
+                DateFormat format = new SimpleDateFormat("yyyy-dd-mm");
+                return "'" + format.format((Date) value) + "'";
+            }
+            return value.toString();
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            return "null";
+        }
+    }
+
+    private <T> Integer getIdEntity(T entity){
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        Field idField = metaEntity.getIdField();
+        return (Integer) getValueField(entity,idField);
+    }
+
+
+
+    private <T> String getSetSectionQuery(T entity){
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        StringBuilder query = new StringBuilder();
+        for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
+            query.append(String.format(" %s = %s ,", entry.getValue().name(), getStringValue(entity, entry.getKey())));
+        }
+        query.delete(query.length() - 1, query.length()); // delete the last comma
+        return query.toString();
+    }
+
+    private Integer executeQueryInsertUpdateRow(String query){
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement.executeUpdate();
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()){
+                return generatedKeys.getInt(1);
+            }
+        } catch(SQLException e){
+            LOG.debug("Can not insert or update row. Query: {}", query);
+        }
+        return null;
+    }
+
+    private Field getFieldByName(Object obj, String fieldName){
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields){
+            if (field.getName().equals(fieldName)) return field;
+        }
+        return null;
+    }
+
+
 
     public int getCountAllEntity(Class<?> clazz){
         Table table = clazz.getAnnotation(Table.class);

@@ -20,9 +20,9 @@ public class Attachment {
     @Column(name = "comment_file")
     private String commentFile;
 
-    /*
+
     @Column(name = "date_file")
-    private Date dateFile;*/
+    private Date dateFile;
 
     @Column(name = "name_file_in_system")
     private String nameFileInSystem;
@@ -53,14 +53,14 @@ public class Attachment {
     public void setCommentFile(String commentFile) {
         this.commentFile = commentFile;
     }
-/*
+
     public Date getDateFile() {
         return dateFile;
     }
 
     public void setDateFile(Date dateFile) {
         this.dateFile = dateFile;
-    }*/
+    }
 
 
     public String getNameFileInSystem() {

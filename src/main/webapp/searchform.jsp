@@ -32,6 +32,8 @@
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="${root_for_js}/bootstrap.js"></script>
+
+
 </head>
 <body>
 
@@ -125,5 +127,6 @@
         </section>
 
 </div>
+<script src="${root_for_js}/main.js"></script>
 </body>
 </html>

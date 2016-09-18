@@ -12,6 +12,7 @@ public interface ContactService {
 	List<Contact> getLimitContactList(int page, int countRow, String sortField, String sortType);
 	List<Contact> getSearchContact(Map<String, String> valueFields);
 	Contact getContactById(int id);
+	List<Contact> getContactById(Integer... idList);
 	void deleteContact(Integer...idList);
 	void updateContact(Contact contact);
 

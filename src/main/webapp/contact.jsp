@@ -213,8 +213,6 @@
 			</div>
 
 
-
-
 			<!--List of phones-->
 			<div class="row">
 				<div class="big-block" id="phone">
@@ -270,18 +268,16 @@
 			<!--End list of phones-->
 
 
-
-
-
 			<!--List of attachments-->
 			<div class="row">
+
 				<div id="container-file" style="display: none">
 					<!--<input type="file" name="file0" onchange = "tableAttachment.changeFile(event)">-->
 					<c:forEach items="${contact.attachmentList}" var="item" varStatus="status">
 						<input type="file" name="file${status.count}" onchange = "tableAttachment.changeFile(event)">
 					</c:forEach>
-
 				</div>
+
 				<div class="big-block" id="attachment">
 					<input type="hidden" id="attachment-indexes" name="attachment.indexes" value="">
 					<input type="hidden" id="attachment-delete" name="attachment.delete" value="">
@@ -309,9 +305,6 @@
 						<tbody>
 
 
-
-
-
                         <c:forEach items="${contact.attachmentList}" var="item" varStatus="status">
                             <tr>
                                 <td>
@@ -320,15 +313,15 @@
                                         <label></label>
                                     </div>
                                 </td>
-                                <td>${item.nameFile}</td>
-                                <td></td>
+                                <td><a href="${root_directory}uploadfile?file=${item.nameFileInSystem}">${item.nameFile}</a></td>
+                                <td>${item.dateFile}</td>
                                 <td>${item.commentFile}</td>
                                 <input type="hidden" name="attachment${status.count}.id" value="${item.id}">
                                 <input type="hidden" name="attachment${status.count}.inc" value="${status.count}">
                                 <input type="hidden" name="attachment${status.count}.nameFile" value="${item.nameFile}">
                                 <input type="hidden" name="attachment${status.count}.commentFile" value="${item.commentFile}">
                                 <input type="hidden" name="attachment${status.count}.nameFileInSystem" value="${item.nameFileInSystem}">
-                                <input type="hidden" name="attachment${status.count}.dateFile" value="">
+                                <input type="hidden" name="attachment${status.count}.dateFile" value="${item.dateFile}">
                                 <!--
                                 <td>
                                 <div class="wrap-checkbox">
@@ -346,8 +339,6 @@
                                 <input type="hidden" name="attachment0.dateFile" value="2016-17-08">-->
 							</tr>
                         </c:forEach>
-
-
 
 						</tbody>
 					</table>
@@ -403,11 +394,8 @@
 </div>
 <!--END Popup for creating new phone-->
 
+
 <!--Popup for creating new attachment-->
-
-
-
-
 <div class="popup-overlay" id="attachment-modal">
 	<div class = "modal-window">
 		<h5>Create/edit attachtment</h5>
@@ -454,6 +442,7 @@
 
 
 <script src="${root_for_js}/contact.js"></script>
+<script src="${root_for_js}/main.js"></script>
 
 </body>
 </html>

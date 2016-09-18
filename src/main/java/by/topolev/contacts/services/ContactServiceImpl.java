@@ -26,6 +26,11 @@ public class ContactServiceImpl implements ContactService{
 	}
 
 	@Override
+	public List<Contact> getContactById(Integer... idList) {
+		return contactDao.getContactById(idList);
+	}
+
+	@Override
 	public List<Contact> getLimitContactList(int page, int countRow) {
 		return contactDao.getLimitContactList(page*countRow, countRow);
 	}

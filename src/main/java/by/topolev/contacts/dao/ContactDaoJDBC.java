@@ -16,12 +16,12 @@ import by.topolev.contacts.entity.Address;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.orm.tools.EntityManager;
 
-public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
+public class ContactDaoJDBC implements ContactDao {
 	private static final Logger LOG = LoggerFactory.getLogger(ContactDaoJDBC.class);
 
 	private EntityManager em = new EntityManager();
 
-	private AddressDao addressDao = new AddressDaoJdbc();
+	//private AddressDao addressDao = new AddressDaoJdbc();
 
 	@Override
 	public List<Contact> getContactList() {
@@ -75,6 +75,10 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		return em.getEntity(String.format("SELECT * FROM contact WHERE id=%d", id), Contact.class);
 	}
 
+	public List<Contact> getContactById(Integer... idList){
+		return em.getEntityById(Contact.class, idList);
+	}
+
 	@Override
 	public int getCountContacts() {
 		return em.getCountAllEntity(Contact.class);
@@ -91,6 +95,8 @@ public class ContactDaoJDBC extends AbstractDaoJDBC implements ContactDao {
 		em.updateEntity(contact);
 		
 	}
+
+
 	public static void main(String[] args) {
 		ContactDao contactDao = new ContactDaoJDBC();
 		for (Contact contact : contactDao.getContactList()) {
