@@ -47,13 +47,11 @@ public class UploadFileServiceImpl {
 
     private String getExpansionFile(String fileName) {
         String[] spliteFileName = fileName.split("\\.");
-        if (spliteFileName.length == 2) return spliteFileName[1];
-        return "";
+        return spliteFileName.length == 2 ? spliteFileName[1] : "";
     }
 
     private String getUniqueFileName(String fileName) {
         String exp = getExpansionFile(fileName);
-        String uniqueFileName = UUID.randomUUID().toString().replaceAll("-", "") + "." + exp;
-        return uniqueFileName;
+        return UUID.randomUUID().toString().replaceAll("-", "") + "." + exp;
     }
 }

@@ -13,6 +13,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 /**
  * Created by Vladimir on 18.09.2016.
  */
@@ -32,6 +35,10 @@ public class ContactCreateUpdateCommand implements Command {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContactCreateUpdateCommand.class);
     private static final ObjectMapper map = new ObjectMapper();
+    public static final String UPLOADPHOTO = "uploadphoto";
+    public static final String FILE = "file";
+    public static final String ATTACHMENT_INDEXES = "attachment.indexes";
+    public static final String ID = "id";
 
     private ServletFileUpload upload;
 
@@ -64,8 +71,8 @@ public class ContactCreateUpdateCommand implements Command {
         List<FileItem> items = getFileItemList(req);
         if (items != null) {
 
-            String idStr = getFieldValue("id",items);
-            if (!"".equals(idStr)){
+            String idStr = getFieldValue(ID, items);
+            if (isNotEmpty(idStr)) {
                 try{
                     Integer.valueOf(idStr);
                 }catch(NumberFormatException e){
@@ -77,19 +84,19 @@ public class ContactCreateUpdateCommand implements Command {
 
 
 			/*Extract entity from form*/
-            Contact contact = entityFromFormUtil.createEntityFromRequest(items,Contact.class);
+            Contact contact = entityFromFormUtil.createEntityFromRequest(items, Contact.class);
 
 			/*Save profile image*/
-            FileItem photoItem = getFileItemByName("uploadphoto", items);
+            FileItem photoItem = getFileItemByName(UPLOADPHOTO, items);
 
 
-            if (photoItem != null && photoItem.getName() != null && !"".equals(photoItem.getName())){
+            if (photoItem != null && isNotEmpty(photoItem.getName())){
                 contact.setPhoto(uploadImageService.saveImage(photoItem));
             }
 
 
 			/*Save attachments*/
-            String listAttachments = getFieldValue("attachment.indexes",items);
+            String listAttachments = getFieldValue(ATTACHMENT_INDEXES,items);
             Integer[] listAttachmentsId = getArrayFromString(listAttachments);
 
             List<Attachment> attachment = contact.getAttachmentList();
@@ -98,10 +105,12 @@ public class ContactCreateUpdateCommand implements Command {
                 Iterator<Attachment> iterator = attachment.iterator();
 
                 for (Integer i : listAttachmentsId) {
-                    FileItem fileItem = getFileItemByName("file" + i, items);
+                    FileItem fileItem = getFileItemByName(FILE + i, items);
                     String nameFile = uploadFileService.saveFile(fileItem);
                     Attachment currentAttachment = iterator.next();
-                    if (nameFile != null) currentAttachment.setNameFileInSystem(nameFile);
+                    if (nameFile != null) {
+                        currentAttachment.setNameFileInSystem(nameFile);
+                    }
                 }
             }
 

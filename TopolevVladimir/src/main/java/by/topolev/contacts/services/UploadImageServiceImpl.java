@@ -54,8 +54,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 
     private String getUniqueFileName(String fileName) {
         String exp = getExpansionFile(fileName);
-        String uniqueFileName = UUID.randomUUID().toString().replaceAll("-", "") + "." + exp;
-        return uniqueFileName;
+        return UUID.randomUUID().toString().replaceAll("-", "") + "." + exp;
     }
 
 

@@ -24,7 +24,7 @@ public class ContactShowCommand implements Command{
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         int id;
         try {
-            id = Integer.valueOf(req.getParameter("id"));
+            id = Integer.parseInt(req.getParameter("id"));
         } catch (NumberFormatException e) {
             LOG.debug("User id is invalid");
             return "/error.jsp";
