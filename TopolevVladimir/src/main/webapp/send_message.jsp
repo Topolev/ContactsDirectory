@@ -25,6 +25,7 @@
     <!-- Bootstrap -->
     <link href="${root_for_css}/style-common.css" rel="stylesheet">
     <link href="${root_for_css}/style-contact.css" rel="stylesheet">
+    <link href="${root_for_css}/style-sendmessage.css" rel="stylesheet">
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
@@ -51,7 +52,7 @@
                     <label class="col-sm-2 control-label">Send to: </label>
                     <div class="col-sm-10">
                         <c:forEach items="${contacts}" var="item">
-                            <span>${item.email}</span>,
+                            <span class="email">${item.email}</span>
                         </c:forEach>
                     </div>
                 </div>
