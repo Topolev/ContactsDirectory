@@ -1,11 +1,17 @@
 package by.topolev.contacts.services;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.dao.ContactDao;
 import by.topolev.contacts.dao.ContactDaoFactory;
 import by.topolev.contacts.entity.Contact;
+
+import javax.servlet.ServletException;
 
 public class ContactServiceImpl implements ContactService{
 	
@@ -55,6 +61,30 @@ public class ContactServiceImpl implements ContactService{
 		contactDao.updateContact(contact);
 		
 	}
-	
-	
+
+
+
+	@Override
+	public List<Contact> getContactListWhoTodayCelebrateBirthday() {
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+
+		int day = calendar.get(Calendar.DATE);
+		int month = calendar.get(Calendar.MONTH) + 1;
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT * FROM contact WHERE DAY(birthday) = ").append(day).append(" AND MONTH(birthday) = ").append(month);
+
+		return contactDao.getContactListAccordingQuery(query.toString());
+	}
+
+	public static void main(String... args) throws ServletException {
+		ContactServiceImpl test =  new ContactServiceImpl();
+
+		test.getContactListWhoTodayCelebrateBirthday();
+
+	}
+
+
 }

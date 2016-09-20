@@ -29,6 +29,11 @@ public class ContactDaoJDBC implements ContactDao {
 	}
 
 	@Override
+	public List<Contact> getContactListAccordingQuery(String query){
+		return em.getListEntity(query, Contact.class);
+	}
+
+	@Override
 	public List<Contact> getLimitContactList(int beginRow, int countRow) {
 		return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class);
 	}

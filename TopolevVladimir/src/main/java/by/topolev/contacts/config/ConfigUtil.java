@@ -12,61 +12,66 @@ import java.util.Properties;
 
 public class ConfigUtil {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ConfigUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigUtil.class);
 
-	public static final String DATABASE_URL = "database.url";
-	public static final String DATABASE_DRIVER = "database.driver";
-	public static final String DATABASE_USER = "database.user";
-	public static final String DATABASE_PASSWORD = "database.password";
-	public static final String PATH_UPLOAD_PROFILE_IMAGE = "path.upload.profile.image";
-	public static final String PATH_UPLOAD_PROFILE_FILES = "path.upload.profile.files";
-	public static final String GMAIL_USERNAME = "gmail.username";
-	public static final String GMAIL_PASSWORD = "gmail.password";
+    public static final String DATABASE_URL = "database.url";
+    public static final String DATABASE_DRIVER = "database.driver";
+    public static final String DATABASE_USER = "database.user";
+    public static final String DATABASE_PASSWORD = "database.password";
+    public static final String PATH_UPLOAD_PROFILE_IMAGE = "path.upload.profile.image";
+    public static final String PATH_UPLOAD_PROFILE_FILES = "path.upload.profile.files";
+    public static final String GMAIL_USERNAME = "gmail.username";
+    public static final String GMAIL_PASSWORD = "gmail.password";
+    public static final String MAIL_ADMINISTRATOR = "mail.administrator";
 
-	private static Properties properties;
+    private static Properties properties;
 
-	public static void init(ServletContext servletContext) throws ServletException {
-		properties = new Properties();
+    public static void init(ServletContext servletContext) throws ServletException {
+        properties = new Properties();
 
-		try {
-			properties.load(servletContext.getResourceAsStream("/resources/application.properties"));
-		} catch (IOException e) {
-			LOG.error("Can not start up application because configuration properties are not initialized.");
-			throw new ServletException(e);
-		}
-	}
+        try {
+            properties.load(servletContext.getResourceAsStream("/resources/application.properties"));
+        } catch (IOException e) {
+            LOG.error("Can not start up application because configuration properties are not initialized.");
+            throw new ServletException(e);
+        }
 
-	public static String getJdbcDriver(){
-		return properties.getProperty(DATABASE_DRIVER);
-	}
 
-	public static String getDatebaseUrl(){
-		return properties.getProperty(DATABASE_URL);
-	}
+    }
 
-	public static String getDatebaseUser(){
-		return properties.getProperty(DATABASE_USER);
-	}
+    public static String getJdbcDriver() {
+        return properties.getProperty(DATABASE_DRIVER);
+    }
 
-	public static String getDatebasePassword(){
-		return properties.getProperty(DATABASE_PASSWORD);
-	}
+    public static String getDatebaseUrl() {
+        return properties.getProperty(DATABASE_URL);
+    }
 
-	public static String getPathUploadProfileImage(){
-		return properties.getProperty(PATH_UPLOAD_PROFILE_IMAGE);
-	}
+    public static String getDatebaseUser() {
+        return properties.getProperty(DATABASE_USER);
+    }
 
-	public static String getPathUploadProfileFiles(){
-		return properties.getProperty(PATH_UPLOAD_PROFILE_FILES);
-	}
+    public static String getDatebasePassword() {
+        return properties.getProperty(DATABASE_PASSWORD);
+    }
 
-	public static String getGmailUsername(){
-		return properties.getProperty(GMAIL_USERNAME);
-	}
+    public static String getPathUploadProfileImage() {
+        return properties.getProperty(PATH_UPLOAD_PROFILE_IMAGE);
+    }
 
-	public static String getGmailPassword(){
-		return properties.getProperty(GMAIL_PASSWORD);
-	}
+    public static String getPathUploadProfileFiles() {
+        return properties.getProperty(PATH_UPLOAD_PROFILE_FILES);
+    }
+
+    public static String getGmailUsername() { return properties.getProperty(GMAIL_USERNAME); }
+
+    public static String getGmailPassword() {
+        return properties.getProperty(GMAIL_PASSWORD);
+    }
+
+    public static String getMailAdministrator() {
+        return properties.getProperty(MAIL_ADMINISTRATOR);
+    }
 
 
 }
