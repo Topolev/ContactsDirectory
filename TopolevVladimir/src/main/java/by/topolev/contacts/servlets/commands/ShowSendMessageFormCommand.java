@@ -16,9 +16,9 @@ import java.util.List;
 /**
  * Created by Vladimir on 18.09.2016.
  */
-public class SendMessageCommand implements Command {
+public class ShowSendMessageFormCommand implements Command {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SendMessageCommand.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShowSendMessageFormCommand.class);
 
     private ObjectMapper map = new ObjectMapper();
 
@@ -33,6 +33,8 @@ public class SendMessageCommand implements Command {
         List<Contact> contacts = contactService.getContactById(idList);
 
         req.setAttribute("contacts", contacts);
+        req.setAttribute("sendto", req.getParameter("sendto"));
+
 
 
         /*contactService.deleteContact(idList);*/

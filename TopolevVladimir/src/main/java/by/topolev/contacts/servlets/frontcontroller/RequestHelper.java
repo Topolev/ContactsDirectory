@@ -29,7 +29,9 @@ public class RequestHelper {
         mapResources.put(new MetaRequest("/searchform","get"), new SearchFormGetCommand());
         mapResources.put(new MetaRequest("/searchform","post"), new SearchFormPostCommand());
         mapResources.put(new MetaRequest("/uploadfile","get"), new UploadFileCommand());
-        mapResources.put(new MetaRequest("/sendmessage","get"), new SendMessageCommand());
+        mapResources.put(new MetaRequest("/sendmessage","get"), new ShowSendMessageFormCommand());
+        mapResources.put(new MetaRequest("/sendmessage","post"), new SendMessagesCommand());
+
     }
 
     private HttpServletRequest request;
