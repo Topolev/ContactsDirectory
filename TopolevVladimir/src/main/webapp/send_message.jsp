@@ -46,7 +46,7 @@
     <section>
         <h3>Send messages via email</h3>
         <div class="block-input">
-            <form method="post"  action="/searchform" class="form-horizontal" >
+            <form method="post"  action="/sendmessage" class="form-horizontal" >
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Send to: </label>
@@ -60,26 +60,40 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="subject">Subject: </label>
                     <div class="col-sm-10">
-                        <input type="text" name="last_name" class="form-control" id="subject" placeholder="Subject email">
+                        <input type="text" name="subject" class="form-control" id="subject" placeholder="Subject email">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="subject">Template: </label>
                     <div class="col-sm-10">
-                        <input type="text" name="last_name" class="form-control" id="subject" placeholder="Subject email">
+                        <select name="template" id="template">
+                            <option value="withouttemplate">Without template</option>
+                            <option value="template1">Template 01</option>
+                            <option value="template2">Template 02</option>
+                        </select>
+
+                        <input type="hidden" name="template1" value="Hello, $u.firstname$.&#13;&#10;We glad to see you in our site!&#13;&#10;Regards!"./>
+                        <input type="hidden" name="template2" value="Hello, $u.lastname$"./>
+
+
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="message">Message: </label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="message" >
+                        <div class="alert alert-warning">
+                            If you want You can use private information for each contact. Availabale expression:
+                            &lt;firstName&gt;, &lt;lastName&gt;.
+                        </div>
+                        <textarea class="form-control" id="message" name="message">
                         </textarea>
                     </div>
                 </div>
+                <input type="hidden" value=${sendto} name="sendto">
+                <input type="submit" value="Send messages" class="btn btn-default">
                 <a href="${root_directory}contactlist" class="btn btn-default">Cancel</a>
-
 
             </form>
         </div>
@@ -88,3 +102,22 @@
 <script src="${root_for_js}/main.js"></script>
 </body>
 </html>
+
+<script>
+    document.getElementById("template").onchange = function(){
+        var value = this.value;
+        var input = getHiddenInputField(value);
+        document.getElementById("message").innerHTML = input.value;
+    }
+
+    getHiddenInputField = function(nameField){
+        var hidden = document.getElementsByTagName("input");
+        for (var i = 0; i <hidden.length; i++){
+            if ((hidden[i].getAttribute("type"))== "hidden" &&( hidden[i].getAttribute("name") == nameField)){
+                return hidden[i];
+            }
+        }
+    }
+
+
+</script>

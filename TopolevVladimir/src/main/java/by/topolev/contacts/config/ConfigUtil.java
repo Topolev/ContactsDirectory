@@ -20,6 +20,8 @@ public class ConfigUtil {
 	public static final String DATABASE_PASSWORD = "database.password";
 	public static final String PATH_UPLOAD_PROFILE_IMAGE = "path.upload.profile.image";
 	public static final String PATH_UPLOAD_PROFILE_FILES = "path.upload.profile.files";
+	public static final String GMAIL_USERNAME = "gmail.username";
+	public static final String GMAIL_PASSWORD = "gmail.password";
 
 	private static Properties properties;
 
@@ -56,6 +58,14 @@ public class ConfigUtil {
 
 	public static String getPathUploadProfileFiles(){
 		return properties.getProperty(PATH_UPLOAD_PROFILE_FILES);
+	}
+
+	public static String getGmailUsername(){
+		return properties.getProperty(GMAIL_USERNAME);
+	}
+
+	public static String getGmailPassword(){
+		return properties.getProperty(GMAIL_PASSWORD);
 	}
 
 
