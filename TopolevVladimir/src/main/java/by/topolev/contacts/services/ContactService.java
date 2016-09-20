@@ -15,5 +15,6 @@ public interface ContactService {
 	List<Contact> getContactById(Integer... idList);
 	void deleteContact(Integer...idList);
 	void updateContact(Contact contact);
+	List<Contact> getContactListWhoTodayCelebrateBirthday();
 
 }

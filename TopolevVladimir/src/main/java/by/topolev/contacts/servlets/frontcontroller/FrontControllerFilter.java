@@ -1,6 +1,8 @@
 package by.topolev.contacts.servlets.frontcontroller;
 
 import by.topolev.contacts.config.ConfigUtil;
+import by.topolev.contacts.qurtz.JobsFactory;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +23,16 @@ public class FrontControllerFilter implements Filter{
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         ServletContext servletContext = filterConfig.getServletContext();
+
         ConfigUtil.init(servletContext);
-        
+        /*
+        try {
+            JobsFactory.initJobs();
+            LOG.debug("Initial of JOBs was successfull.");
+        } catch (SchedulerException e) {
+            LOG.debug("Problems with initial jobs", e);
+        }*/
+
         RequestHelper.init(servletContext);
 
 
