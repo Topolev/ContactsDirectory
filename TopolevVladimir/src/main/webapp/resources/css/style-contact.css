@@ -191,6 +191,17 @@
 tr.checked {
   background: #fde0e1;
 }
+.form-group .warn-message {
+  display: none;
+}
+.form-group.has-error .warn-message {
+  display: block;
+  padding: 3px 12px;
+  border: 1px solid #ebccd1;
+  background: #f2dede;
+  margin-top: 5px;
+  color: #a94442;
+}
 @media only screen and (max-width: 750px) {
   #choose-photo button {
     white-space: normal;

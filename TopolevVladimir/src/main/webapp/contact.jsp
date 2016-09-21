@@ -69,14 +69,30 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="firstname">First name</label>
-								<input type="text" class="form-control" id="firstname" placeholder="Enter your first name" name="firstname" value="<c:out value="${contact.firstname}" />">
+								<label for="firstname" class="control-label">First name</label>
+								<input type="text"
+									   class="form-control"
+									   id="firstname"
+									   placeholder="Enter your first name"
+									   name="firstname"
+									   value="<c:out value="${contact.firstname}"/>"
+									   onchange = "validate.validateField(event,['isNotEmpty'],'submit')"
+									   onblur = "validate.validateField(event,['isNotEmpty'],'submit')">
+								<div class="warn-message">This field must not be empty. This field must not be empty.</div>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="lastname">Last name</label>
-								<input type="text" class="form-control" id="lastname" placeholder="Enter last name" name="lastname" value="<c:out value="${contact.lastname}"/>" >
+								<label for="lastname" class="control-label">Last name</label>
+								<input type="text"
+									   class="form-control"
+									   id="lastname"
+									   placeholder="Enter last name"
+									   name="lastname"
+									   value="<c:out value="${contact.lastname}"/>"
+									   onchange = "validate.validateField(event,['isNotEmpty'],'submit')"
+									   onblur = "validate.validateField(event,['isNotEmpty'],'submit')" >
+								<div class="warn-message"></div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -90,8 +106,14 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="birthday">Birthday</label>
-								<input type="date" class="form-control" id="birthday" placeholder="Choose birthday" name="birthday" value="<c:out value="${contact.birthday}"/>">
+								<label for="birthday" class="control-label">Birthday</label>
+								<input type="date" class="form-control"
+									   id="birthday" placeholder="Choose birthday"
+									   name="birthday"
+									   value="<c:out value="${contact.birthday}"/>"
+									   onchange = "validate.validateField(event,['isDate'],'submit')"
+									   onblur = "validate.validateField(event,['isDate'],'submit')">
+								<div class="warn-message"></div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -109,7 +131,7 @@
 							<div class="form-group">
 								<label for="male" class="block">Sex:</label>
 
-								<input type="radio" name="sex" class="radio" id="male" value="Male" <c:if test="${contact.sex eq 'Male'}">checked</c:if> />
+								<input type="radio" name="sex" class="radio" id="male" value="Male" <c:if test="${(contact.sex ==null) or (contact.sex eq 'Male')}">checked</c:if> />
 								<label for="male" class="sex"><span class="icon">Ù</span>Male</label>
 
 								<input type="radio" name="sex" class="radio" id="female" value="Female" <c:if test="${contact.sex eq 'Female'}">checked</c:if> />
@@ -121,7 +143,7 @@
 							<div class="form-group">
 								<label for="single" class="block">Marital status:</label>
 
-								<input type="radio" name="maritalStatus" class="radio" id="single" value="Single" <c:if test="${contact.maritalStatus eq 'Single'}">checked</c:if> />
+								<input type="radio" name="maritalStatus" class="radio" id="single" value="Single" <c:if test="${(contact.maritalStatus == null) or (contact.maritalStatus eq 'Single')}">checked</c:if> />
 								<label for="single" class="sex"><span class="icon">Ù</span>Single</label>
 
 								<input type="radio" name="maritalStatus" class="radio" id="married" value="Married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
@@ -142,8 +164,15 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="email">Email</label>
-								<input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" value="${contact.email}">
+								<label for="email" class="control-label">Email</label>
+								<input type="text"
+									   class="form-control"
+									   id="email" name="email"
+									   placeholder="Enter your email"
+									   value="${contact.email}"
+									   onchange = "validate.validateField(event,['isNotEmpty','isEmail'],'submit')"
+									   onblur = "validate.validateField(event,['isNotEmpty','isEmail'],'submit')" >
+								<div class="warn-message"></div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -170,8 +199,14 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="index">Index</label>
-								<input type="text" class="form-control" id="index" placeholder="Index" name="address.ind" value="${contact.address.ind}">
+								<label for="index" class="control-label">Index</label>
+								<input type="text"
+									   class="form-control"
+									   id="index" placeholder="Index"
+									   name="address.ind" value="${contact.address.ind}"
+									   onchange = "validate.validateField(event,['isNumber'],'submit')"
+									   onblur = "validate.validateField(event,['isNumber'],'submit')">
+								<div class="warn-message"></div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -198,14 +233,27 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="build">Build</label>
-								<input type="text" class="form-control" id="build" placeholder="Build" name="address.build" value="${contact.address.build}">
+								<label for="build" class="control-label">Build</label>
+								<input type="text"
+									   class="form-control"
+									   id="build" placeholder="Build"
+									   name="address.build" value="${contact.address.build}"
+									   onchange = "validate.validateField(event,['isNumber'],'submit')"
+									   onblur = "validate.validateField(event,['isNumber'],'submit')">
+								<div class="warn-message"></div>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="flat">Flat</label>
-								<input type="text" class="form-control" id="flat" placeholder="Flat" name="address.flat" value="${contact.address.flat}">
+								<label for="flat" class="control-label">Flat</label>
+								<input type="text"
+									   class="form-control"
+									   id="flat"
+									   placeholder="Flat"
+									   name="address.flat" value="${contact.address.flat}"
+									   onchange = "validate.validateField(event,['isNumber'],'submit')"
+									   onblur = "validate.validateField(event,['isNumber'],'submit')">
+								<div class="warn-message"></div>
 							</div>
 						</div>
 					</div>
@@ -322,21 +370,6 @@
                                 <input type="hidden" name="attachment${status.count}.commentFile" value="${item.commentFile}">
                                 <input type="hidden" name="attachment${status.count}.nameFileInSystem" value="${item.nameFileInSystem}">
                                 <input type="hidden" name="attachment${status.count}.dateFile" value="${item.dateFile}">
-                                <!--
-                                <td>
-                                <div class="wrap-checkbox">
-                                    <input type="checkbox" class="checkbox checkbox-phone" onchange="tableAttachment.changeCheckRow(event)">
-                                    <label></label>
-                                </div>
-                                </td>
-                                <td>nameFile</td>
-                                <td>2016-17-08</td>
-                                <td>Comment</td>
-                                <input type="hidden" name="attachment0.id" value="0">
-                                <input type="hidden" name="attachment0.inc" value="0">
-                                <input type="hidden" name="attachment0.nameFile" value="nameFile">
-                                <input type="hidden" name="attachment0.commentFile" value="Comment">
-                                <input type="hidden" name="attachment0.dateFile" value="2016-17-08">-->
 							</tr>
                         </c:forEach>
 
@@ -346,7 +379,7 @@
 			</div>
 			<!--End list of attachments-->
 
-			<input type="submit" class="btn btn-default" value="Save contact"/>
+			<input type="submit" id="submit" class="btn btn-default" value="Save contact"/>
 		</section>
 	</form>
 </div>
@@ -358,16 +391,37 @@
 		<h5>Create/edit phone</h5>
 		<div class="container-fluid">
 			<div class="form-group">
-				<label for="country-code">Country code</label>
-				<input type="text" class="form-control" id="country-code" name="countryCode" placeholder="Country code">
+				<label for="country-code" class="control-label">Country code</label>
+				<input type="text"
+					   class="form-control"
+					   id="country-code"
+					   name="countryCode"
+					   placeholder="Country code"
+					   onchange = "validate.validateField(event,['isNotEmpty','isNumber'],'save-phone')"
+					   onblur = "validate.validateField(event,['isNotEmpty','isNumber'],'save-phone')">
+				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
-				<label for="operator-code">Operator code</label>
-				<input type="text" class="form-control" id="operator-code" name="operatorCode" placeholder="Operator code">
+				<label for="operator-code" class="control-label">Operator code</label>
+				<input type="text"
+					   class="form-control"
+					   id="operator-code"
+					   name="operatorCode"
+					   placeholder="Operator code"
+					   onchange = "validate.validateField(event,['isNotEmpty','isNumber'],'save-phone')"
+					   onblur = "validate.validateField(event,['isNotEmpty','isNumber'],'save-phone')">
+				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
-				<label for="phone-number">Number</label>
-				<input type="text" class="form-control" id="phone-number" name="phoneNumber" placeholder="Phone number">
+				<label for="phone-number" class="control-label">Number</label>
+				<input type="text"
+					   class="form-control"
+					   id="phone-number"
+					   name="phoneNumber"
+					   placeholder="Phone number"
+					   onchange = "validate.validateField(event,['isNotEmpty','isNumber'],'save-phone')"
+					   onblur = "validate.validateField(event,['isNotEmpty','isNumber'],'save-phone')">
+				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
 				<label for="home">Type phone</label>
@@ -387,7 +441,7 @@
 			</div>
 		</div>
 		<div class="modal-buttons">
-			<a href="#" class="btn btn-default create-edit">Save</a>
+			<a href="#" class="btn btn-default create-edit" id="save-phone">Save</a>
 			<a href="#" class="btn btn-default close-modal">Cancel</a>
 		</div>
 	</div>
@@ -401,8 +455,15 @@
 		<h5>Create/edit attachtment</h5>
 		<div class="container-fluid">
 			<div class="form-group">
-				<label for="name-file">Name file</label>
-				<input type="text" class="form-control" id="name-file" name="nameFile" placeholder="Name file">
+				<label for="name-file" class="control-label">Name file</label>
+				<input type="text"
+					   class="form-control"
+					   id="name-file"
+					   name="nameFile"
+					   placeholder="Name file"
+					   onchange = "validate.validateField(event,['isNotEmpty'],'save-attachment')"
+					   onblur = "validate.validateField(event,['isNotEmpty'],'save-attachment')">
+				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
 				<label for="comment-file">Comment</label>
@@ -416,7 +477,7 @@
 			</div>
 		</div>
 		<div class="modal-buttons">
-			<a href="#" class="btn btn-default create-edit">Save</a>
+			<a href="#" class="btn btn-default create-edit" id="save-attachment">Save</a>
 			<a href="#" class="btn btn-default close-modal">Cancel</a>
 		</div>
 	</div>
@@ -443,6 +504,93 @@
 
 <script src="${root_for_js}/contact.js"></script>
 <script src="${root_for_js}/main.js"></script>
+
+<script>
+
+	function Validate(){
+		var map = {
+			isNotEmpty : {func: isNotEmpty, message: "Field can not be empty."},
+			isNumber : {func: isNumber, message: "Field must consist only numbers."},
+			isEmail : {func: isEmail, message: "Invalid format email."},
+			isDate : {func: isDate, message: "Invalid format date."}
+		};
+
+		var isEmailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		var isNumberRE = /^\d+$/;
+		var isUrlRE = /^((https?|ftp)\:\/\/)?([a-z0-9]{1})((\.[a-z0-9-])|([a-z0-9-]))*\.([a-z]{2,6})(\/?)$/;
+
+		function isNotEmpty(value){
+			return !(value.trim() == "");
+		}
+
+		function isEmail(value){
+			if (value.trim() == "") return true;
+			return isEmailRE.test(value);
+		}
+		function isNumber(value){
+			if (value.trim() == "") return true;
+			return isNumberRE.test(value);
+		}
+		function isUrl(value){
+			return isUrlRE.test(value);
+		}
+		function isDate(value){
+			return  !(value.trim() == "");
+		}
+
+		this.validateField = function(event, validators, idBlock){
+			event = event || window.event;
+			var field = event.currentTarget;
+			var value = field.value.trim();
+			var buttonLock = document.getElementById(idBlock);
+
+			var isValid = true;
+			for (var i= 0; i < validators.length; i++){
+				if (!map[validators[i]].func(value)) {
+					field.nextElementSibling.innerHTML = map[validators[i]].message;
+					field.parentNode.classList.add("has-error");
+					isValid = false;
+					buttonLock.setAttribute("disabled", "disabled");
+				};
+			}
+			if (isValid) {
+				field.parentNode.classList.remove("has-error");
+				buttonLock.removeAttribute("disabled") ;
+			}
+		}
+
+		this.validateFieldList = function(mapForm){
+			var isValidForm = true;
+			for (var i=0; i < mapForm.length; i++){
+
+				var value = document.getElementById(mapForm[i].id).value;
+
+				for ( var j = 0; j < mapForm[i].validators.length; j++){
+					if (!map[mapForm[i].validators[j]].func(value)){
+						alert(map[mapForm[i].validators[j]].message);
+						isValid = false;
+					}
+				}
+
+
+			}
+		}
+	}
+
+	var validate = new Validate();
+
+	var mapValidateForm = [
+		{id: "field1", validators : ['isNotEmpty']},
+		{id: "field2", validators : ['isNumber']},
+	]
+
+
+	var validateField = function(){
+		validate.validateFieldList(mapValidateForm);
+	}
+
+
+</script>
 
 </body>
 </html>
