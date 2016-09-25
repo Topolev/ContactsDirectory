@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Vladimir on 20.09.2016.
@@ -41,16 +43,19 @@ public class SendMessagesCommand implements Command {
 
         LOG.debug(req.getParameter("message"));
 
-        String subject = req.getParameter("subject");
+        final String subject = req.getParameter("subject");
 
-        
+        ExecutorService exec = Executors.newCachedThreadPool();
         for(Contact contact : contacts){
             ST template = new ST(req.getParameter("message"),'$','$');
             template.add("u", contact);
-            String text = template.render();
-            sendEmailService.sendMessage(ConfigUtil.getGmailUsername(), contact.getEmail(), subject, text);
-        }
+            final String text = template.render();
 
+            exec.execute(() ->{sendEmailService.sendMessage(ConfigUtil.getGmailUsername(), contact.getEmail(), subject, text);});
+          //  sendEmailService.sendMessage(ConfigUtil.getGmailUsername(), contact.getEmail(), subject, text);
+        }
+        exec.shutdown();
+        resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=0");
         return null;
     }
 }
