@@ -6,9 +6,13 @@ import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Created by Vladimir on 14.09.2016.
@@ -54,20 +58,22 @@ public class UploadImageServiceImpl implements UploadImageService {
     private void createUploadDirIfNotExist() {
         File file = new File(ConfigUtil.getPathUploadProfileImage());
         if (!file.exists()) {
-            file.mkdir();
-            LOG.debug("Create folder for uploading images: {}", file.getAbsolutePath());
+            if (file.mkdir()) {
+                LOG.debug("Create folder for uploading images: {}", file.getAbsolutePath());
+            } else{
+                LOG.debug("Can't create folder for uploading images: {}", file.getAbsolutePath());
+            }
         }
     }
 
     private String getExtensionFile(String fileName) {
         String[] spliteFileName = fileName.split("\\.");
-        if (spliteFileName.length == 2) return spliteFileName[1];
-        return "";
+        return spliteFileName.length == 2 ? spliteFileName[1] : EMPTY;
     }
 
     private String getUniqueFileName(String fileName) {
         String exp = getExtensionFile(fileName);
-        return UUID.randomUUID().toString().replaceAll("-", "") + "." + exp;
+        return UUID.randomUUID().toString().replaceAll("-", EMPTY) + "." + exp;
     }
 
 

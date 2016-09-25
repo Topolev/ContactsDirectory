@@ -26,7 +26,6 @@ public class ContactListCommand implements Command {
 
     private ContactService contactService = ContactServiceFactory.getContactService();
 
-    private static ObjectMapper map = new ObjectMapper();
 
     public ContactListCommand(){};
 
@@ -34,10 +33,10 @@ public class ContactListCommand implements Command {
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
         int count = contactService.getCountContacts();
 
-        int page = getRequestParametr(req, "page", int.class, 0);
-        int countRow = getRequestParametr(req, "countRow", int.class, 10);
-        Integer sortField = getRequestParametr(req, "sortField", Integer.class, null);
-        String sortType = getRequestParametr(req, "sortType", String.class, null);
+        int page = getRequestParameter(req, "page", int.class, 0);
+        int countRow = getRequestParameter(req, "countRow", int.class, 10);
+        Integer sortField = getRequestParameter(req, "sortField", Integer.class, null);
+        String sortType = getRequestParameter(req, "sortType", String.class, null);
 
         List<InfoSortField> sortFields = getDefaultSortFields();
 

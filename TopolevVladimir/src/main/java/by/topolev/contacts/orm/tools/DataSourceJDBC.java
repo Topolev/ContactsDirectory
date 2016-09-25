@@ -20,7 +20,7 @@ public class DataSourceJDBC implements DataSource {
         this.driverClassName = driverClassName;
 
         try {
-            Class.forName(driverClassName + "1");
+            Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
             LOG.error("JDBC driver isn't found");
             throw new RuntimeException(e);

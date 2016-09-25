@@ -3,7 +3,6 @@ package by.topolev.contacts.dao;
 import by.topolev.contacts.entity.Phone;
 import by.topolev.contacts.orm.tools.EntityManager;
 import by.topolev.contacts.orm.tools.EntityManagerFactory;
-import by.topolev.contacts.orm.tools.EntityManagerJDBC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

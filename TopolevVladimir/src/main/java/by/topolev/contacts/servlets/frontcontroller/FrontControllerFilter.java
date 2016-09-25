@@ -2,9 +2,6 @@ package by.topolev.contacts.servlets.frontcontroller;
 
 import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.orm.tools.EntityManagerFactory;
-import by.topolev.contacts.qurtz.JobsFactory;
-import by.topolev.contacts.servlets.utils.EntityFromFormUtil;
-import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +9,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Properties;
 
 /**
  * Created by Vladimir on 18.09.2016.

@@ -1,10 +1,6 @@
 package by.topolev.contacts.orm.tools;
 
 import by.topolev.contacts.config.ConfigUtil;
-
-import java.sql.SQLException;
-
-import static by.topolev.contacts.config.ConfigUtil.*;
 public class DataSourceFactory {
 
 

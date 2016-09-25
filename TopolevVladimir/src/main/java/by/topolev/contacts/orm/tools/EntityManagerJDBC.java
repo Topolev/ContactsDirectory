@@ -1,31 +1,32 @@
 package by.topolev.contacts.orm.tools;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import by.topolev.contacts.entity.Address;
 import by.topolev.contacts.entity.Attachment;
+import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.entity.Phone;
-import by.topolev.contacts.orm.annotation.*;
+import by.topolev.contacts.orm.annotation.Column;
+import by.topolev.contacts.orm.annotation.OneToMany;
+import by.topolev.contacts.orm.annotation.OneToOne;
+import by.topolev.contacts.orm.annotation.Table;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import by.topolev.contacts.entity.Address;
-import by.topolev.contacts.entity.Contact;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
 
 public class EntityManagerJDBC implements EntityManager {
 
     private final static Logger LOG = LoggerFactory.getLogger(EntityManagerJDBC.class);
+    public static final String CAN_NOT_CLOSE_CONNECTION = "Can not close connection";
 
-    DataSource dataSource;
+    private DataSource dataSource;
 
     private static volatile EntityManager instance;
 
@@ -33,7 +34,7 @@ public class EntityManagerJDBC implements EntityManager {
     private List<Class<?>> classEntity = new ArrayList<>();
     private MetaEntityReader metaEntityReader = new MetaEntityReader();
 
-    private EntityManagerJDBC()  {
+    private EntityManagerJDBC() {
         LOG.debug("Init Entity Manager for JDBC");
 
         dataSource = DataSourceFactory.getDataSource();
@@ -90,10 +91,12 @@ public class EntityManagerJDBC implements EntityManager {
             for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()) {
                 List listOfEntity = (List) getValueField(entity, entry.getKey());
 
-                for (Object currentObject : listOfEntity) {
-                    Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
-                    setValueField(currentObject, foreignkey, id);
-                    updateEntity(currentObject);
+                if (CollectionUtils.isNotEmpty(listOfEntity)) {
+                    for (Object currentObject : listOfEntity) {
+                        Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+                        setValueField(currentObject, foreignkey, id);
+                        updateEntity(currentObject);
+                    }
                 }
             }
 
@@ -105,10 +108,11 @@ public class EntityManagerJDBC implements EntityManager {
     public <T> List<T> getListEntity(String query, Class<T> clazz) {
         List<T> entityList = new ArrayList<T>();
         Connection connection = null;
+        PreparedStatement statment = null;
 
         try {
             connection = dataSource.getConnection();
-            PreparedStatement statment = connection.prepareStatement(query);
+            statment = connection.prepareStatement(query);
             ResultSet result = statment.executeQuery();
             while (result.next()) {
                 entityList.add(getEntityFromResultSet(result, clazz));
@@ -116,24 +120,36 @@ public class EntityManagerJDBC implements EntityManager {
         } catch (SQLException e) {
             LOG.debug("Problem with getting of entity list", e);
         } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                LOG.debug("Can not close connection", e);
-            }
+            closeConnection(connection, statment);
         }
 
         return entityList;
     }
 
+    private void closeConnection(Connection connection, Statement statment) {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+            if (statment != null) {
+                statment.close();
+            }
+        } catch (SQLException e) {
+            LOG.debug(CAN_NOT_CLOSE_CONNECTION, e);
+        }
+    }
+
+
+
     @Override
     public <T> T getEntity(String query, Class<T> clazz) {
         T entity = null;
         Connection connection = null;
+        PreparedStatement statment = null;
 
         try {
             connection = dataSource.getConnection();
-            PreparedStatement statment = connection.prepareStatement(query);
+            statment = connection.prepareStatement(query);
             ResultSet result = statment.executeQuery();
             if (!result.next())
                 return null;
@@ -141,13 +157,8 @@ public class EntityManagerJDBC implements EntityManager {
         } catch (SQLException e) {
             LOG.debug("Problem with getting of entity list", e);
         } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                LOG.debug("Can not close connection", e);
-            }
+            closeConnection(connection, statment);
         }
-
         return entity;
     }
 
@@ -177,17 +188,15 @@ public class EntityManagerJDBC implements EntityManager {
         query.append(getSectionQueryIdConnectedWithOr(idList));
 
         Connection connection = null;
+        Statement statement = null;
         try {
             connection = dataSource.getConnection();
-            connection.createStatement().executeUpdate(query.toString());
+            statement = connection.createStatement();
+            statement.executeUpdate(query.toString());
         } catch (SQLException e) {
             LOG.debug("Problem with delete", e);
         } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                LOG.debug("Can not close connection", e);
-            }
+            closeConnection(connection, statement);
         }
 
         LOG.debug("Complete query: {}", query);
@@ -197,7 +206,8 @@ public class EntityManagerJDBC implements EntityManager {
     public int getCountAllEntity(Class<?> clazz) {
         Table table = clazz.getAnnotation(Table.class);
         Connection connection = null;
-        PreparedStatement statement;
+        PreparedStatement statement = null;
+
         try {
             connection = dataSource.getConnection();
             statement = connection.prepareStatement("SELECT COUNT(*) AS count FROM " + table.name());
@@ -207,11 +217,7 @@ public class EntityManagerJDBC implements EntityManager {
         } catch (SQLException e) {
             LOG.debug("Can get numbers of rows with query {}", "SELECT COUNT(*) AS count FROM " + table.name(), e);
         } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                LOG.debug("Can not close connection", e);
-            }
+            closeConnection(connection, statement);
         }
         return 0;
     }
@@ -267,9 +273,11 @@ public class EntityManagerJDBC implements EntityManager {
 
     private Integer executeQueryInsertUpdateRow(String query) {
         Connection connection = null;
+        PreparedStatement statement = null;
+
         try {
             connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -277,6 +285,8 @@ public class EntityManagerJDBC implements EntityManager {
             }
         } catch (SQLException e) {
             LOG.debug("Can not insert or update row. Query: {}", query);
+        } finally {
+            closeConnection(connection, statement);
         }
         return null;
     }
@@ -288,7 +298,6 @@ public class EntityManagerJDBC implements EntityManager {
         }
         return null;
     }
-
 
 
     private <T> T getEntityFromResultSet(ResultSet result, Class<T> clazz) {

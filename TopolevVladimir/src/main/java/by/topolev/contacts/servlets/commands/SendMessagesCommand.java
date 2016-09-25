@@ -43,6 +43,7 @@ public class SendMessagesCommand implements Command {
 
         String subject = req.getParameter("subject");
 
+        
         for(Contact contact : contacts){
             ST template = new ST(req.getParameter("message"),'$','$');
             template.add("u", contact);

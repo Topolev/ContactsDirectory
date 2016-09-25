@@ -9,13 +9,11 @@ import java.io.File;
 import java.util.UUID;
 
 
-
 /**
  * Created by Vladimir on 17.09.2016.
  */
 public class UploadFileServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(UploadImageServiceImpl.class);
-
 
 
     public String saveFile(FileItem item) {
@@ -36,12 +34,14 @@ public class UploadFileServiceImpl {
     }
 
 
-
     private void createUploadDirIfNotExist() {
         File file = new File(ConfigUtil.getPathUploadProfileFiles());
         if (!file.exists()) {
-            file.mkdir();
-            LOG.debug("Create folder for uploading files: {}", file.getAbsolutePath());
+            if (file.mkdir()) {
+                LOG.debug("Create folder for uploading files: {}", file.getAbsolutePath());
+            } else{
+                LOG.debug("Can't create folder for upload files", file.getAbsolutePath());
+            }
         }
     }
 

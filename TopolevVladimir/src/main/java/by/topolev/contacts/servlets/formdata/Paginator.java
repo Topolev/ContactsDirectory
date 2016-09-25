@@ -13,7 +13,7 @@ public class Paginator {
 	private int countPage;
 
 	
-	List<Integer> listPages = new ArrayList<>();
+	private List<Integer> listPages = new ArrayList<>();
 
 	public boolean isSkipLeft() {
 		return skipLeft;

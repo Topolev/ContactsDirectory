@@ -13,7 +13,7 @@ public interface ContactDao {
 	List<Contact> getSearchContact(Map<String, String> valueFields);
 	void updateContact(Contact contact);
 	Contact getContactById(int id);
-	public List<Contact> getContactById(Integer... idList);
+	List<Contact> getContactById(Integer... idList);
 	int getCountContacts();
 	void deleteContacts(Integer...id);
 }

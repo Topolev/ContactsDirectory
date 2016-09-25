@@ -1,7 +1,5 @@
 package by.topolev.contacts.config;
 
-import by.topolev.contacts.servlets.frontcontroller.FrontControllerFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -13,7 +13,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -49,8 +49,6 @@ public class ContactCreateUpdateCommand implements Command {
 
     private PhoneDao phoneDao = PhoneDaoFactory.getPhoneDao();
     private AttachmentDao attachmentDao = AttachmentDaoFactory.getAttachmentDao();
-
-    private EntityFromFormUtil<Contact> entityFromFormUtil = new EntityFromFormUtil<Contact>(Contact.class);
 
     public ContactCreateUpdateCommand(ServletContext servletContext) {
         DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -83,7 +81,7 @@ public class ContactCreateUpdateCommand implements Command {
 
 
 			/*Extract entity from form*/
-            Contact contact = entityFromFormUtil.createEntityFromRequest(items, Contact.class);
+            Contact contact = EntityFromFormUtil.createEntityFromRequest(items, Contact.class);
 
 			/*Save profile image*/
             FileItem photoItem = getFileItemByName(UPLOADPHOTO, items);
@@ -163,16 +161,21 @@ public class ContactCreateUpdateCommand implements Command {
     }
 
     private String getFieldValue(String nameField, List<FileItem> items){
-        for (FileItem item : items) {
-            if (item.isFormField() && item.getFieldName().equals(nameField)) return item.getString();
-        }
-        return null;
+        Optional<String> first = items.stream()
+                .filter(item -> item.isFormField())
+                .filter(item -> item.getFieldName().equals(nameField))
+                .map(FileItem::getString)
+                .findFirst();
+
+        return first.isPresent() ? first.get() : null;
     }
+
+
 
     private Integer[] getArrayFromString(String arrayStr) {
         try {
-            return map.readValue(arrayStr, Integer[].class);
-        } catch (IOException | NullPointerException e) {
+            return arrayStr == null ? null : map.readValue(arrayStr, Integer[].class);
+        } catch (IOException e) {
             return null;
         }
     }

@@ -1,14 +1,13 @@
 package by.topolev.contacts.dao;
 
-import java.util.*;
-
+import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.orm.tools.EntityManager;
 import by.topolev.contacts.orm.tools.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import by.topolev.contacts.entity.Contact;
-import by.topolev.contacts.orm.tools.EntityManagerJDBC;
+import java.util.List;
+import java.util.Map;
 
 public class ContactDaoJDBC implements ContactDao {
 	private static final Logger LOG = LoggerFactory.getLogger(ContactDaoJDBC.class);
