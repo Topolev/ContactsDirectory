@@ -59,7 +59,7 @@ public class ContactDaoJDBC implements ContactDao {
 		if (valueFields != null && !valueFields.isEmpty()){
 			LOG.debug("Map of search fields: {}", valueFields.toString());
 			StringBuilder query = new StringBuilder();
-			query.append("SELECT contact.* FROM contact JOIN address ON contact.id=address.contact_id WHERE ");
+			query.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ");
 			for (Map.Entry<String,String> entry : valueFields.entrySet()){
 				query.append(entry.getKey()).append("='").append(entry.getValue()).append("' AND ");
 			}

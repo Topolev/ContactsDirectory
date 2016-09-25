@@ -26,12 +26,7 @@
     <link href="${root_for_css}/style-common.css" rel="stylesheet">
     <link href="${root_for_css}/style-contact.css" rel="stylesheet">
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
-    <script src="${root_for_js}/jquery-1.12.3.min.js"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${root_for_js}/bootstrap.js"></script>
 </head>
 <body>
 

@@ -27,3 +27,18 @@ for (var i in a_lang){
         return false;
     }
 }
+
+
+var showNavbar = true;
+document.getElementById("header-button").onclick = function(){
+    var navbar =  document.getElementById("main-navbar");
+    if (showNavbar){
+        navbar.className += " in";
+        showNavbar = false;
+    } else{
+        navbar.classList.remove("in");
+        showNavbar = true;
+    }
+
+
+}

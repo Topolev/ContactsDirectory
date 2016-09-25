@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Paginator {
-	boolean skipLeft;
-	boolean skipRight;
+	private boolean skipLeft;
+	private boolean skipRight;
 	
-	boolean buttonPrev;
-	boolean buttonNext;
+	private boolean buttonPrev;
+	private boolean buttonNext;
+
+	private int countPage;
+
 	
 	List<Integer> listPages = new ArrayList<>();
 
@@ -51,6 +54,12 @@ public class Paginator {
 	public void setListPages(List<Integer> listPages) {
 		this.listPages = listPages;
 	}
-	
-	
+
+	public int getCountPage() {
+		return countPage;
+	}
+
+	public void setCountPage(int countPage) {
+		this.countPage = countPage;
+	}
 }

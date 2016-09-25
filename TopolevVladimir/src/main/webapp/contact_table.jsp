@@ -103,6 +103,11 @@
             </li>
         </c:if>
         <c:if test="${paginator.skipLeft}">
+            <li>
+                <a href="<c:url value="/contactlist?page=0&countRow=${countRow}&sortField=${sortField}&sortType=${sortType}" />">
+                    1
+                </a>
+            </li>
             <li class="not-link"><span>...</span></li>
         </c:if>
 
@@ -117,6 +122,11 @@
 
         <c:if test="${paginator.skipRight}">
             <li class="not-link"><span>...</span></li>
+            <li>
+                <a href="<c:url value="/contactlist?page=${paginator.countPage - 1}&countRow=${countRow}&sortField=${sortField}&sortType=${sortType}" />">
+                        ${paginator.countPage}
+                </a>
+            </li>
         </c:if>
         <c:if test="${paginator.buttonNext}">
             <li>

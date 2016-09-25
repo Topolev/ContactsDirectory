@@ -1,8 +1,10 @@
-function Table(idBlock, increment, callBackFullTr, clearModal, editModal, closeModalInCreateMode){
+function Table(idBlock, increment, callBackFullTr, clearModal, editModal, closeModalInCreateMode, mapValidator){
 
     this.increment = increment;
 
     this.incChoosenRow = undefined;
+
+    this.validator = new Validate();
 
     var self = this;
 
@@ -79,7 +81,6 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal, closeM
         }
         self.setValueInputById(idBlock + "-indexes",JSON.stringify(availableIndexes));
         self.setValueInputById(idBlock + "-delete", JSON.stringify(deleteId));
-        console.log(availableIndexes)
         while(checked_checkbox.length != 0){
             bodyTable.removeChild(checked_checkbox.pop());
         }
@@ -96,6 +97,10 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal, closeM
     }
 
     buttonCreateOrEditModal.onclick = function(){
+        if (mapValidator != undefined) {
+            if (!self.validator.validateFieldList(mapValidator)) return false;
+        }
+
         if (typePressButton == "create") createNewRow();
         if (typePressButton == "edit") editCurrentRow();
         return false;
@@ -234,22 +239,13 @@ function Table(idBlock, increment, callBackFullTr, clearModal, editModal, closeM
             console.log(this.incChoosenRow)
             self.getFileInput("file" + this.incChoosenRow).click();
         }
-        /*console.log("chooseFile");
-        if (typePressButton =="create"){
-            console.log(typePressButton)
-            console.log("inc" + increment)
-            self.getFileInput("file" + increment).click();
-        }
-        if (typePressButton == "edit"){
-            console.log(self.increment_choosen_row)
-            this.getFileInput("file" + this.increment_choosen_row).click();
 
-        }*/
     }
 
     this.changeFile = function(event){
         currentInputFile = event.currentTarget;
         document.getElementById("choosen-file").innerHTML = currentInputFile.value.split('/').pop().split('\\').pop();
+        self.validator.validateFieldList([{id:"choosen-file", validators: ['isChoosenFile']}]);
     }
 
 }
@@ -301,7 +297,6 @@ var clearPhoneModal = function(){
 
 var editPhoneModal = function(choose_checkbox){
         var parent = choose_checkbox.parentNode.parentNode.parentNode;
-        //choose_edit_phone = getValueHiddenInputInParent(parent,"inc");
         var typephone = this.getValueHiddenInputInParent(parent, "typePhone");
         var countrycode = this.getValueHiddenInputInParent(parent, "countryCode");
         var operatorcode = this.getValueHiddenInputInParent(parent, "operatorCode");
@@ -315,8 +310,13 @@ var editPhoneModal = function(choose_checkbox){
 }
 /*END Callback function for table PHONE*/
 
-console.log("INCREMENET:" + initAutoincrementPhoto)
-var tablePhone = new Table("phone", initAutoincrementPhoto,callBackCreateTr, clearPhoneModal, editPhoneModal);
+var mapValidatePhoneForm = [
+    {id: "country-code", validators: ['isNotEmpty', 'isNumber']},
+    {id: "operator-code", validators: ['isNotEmpty', 'isNumber']},
+    {id: "phone-number", validators: ['isNotEmpty', 'isNumber']},
+];
+
+var tablePhone = new Table("phone", initAutoincrementPhoto,callBackCreateTr, clearPhoneModal, editPhoneModal, undefined, mapValidatePhoneForm);
 tablePhone.setAvailableIndexes(initAvailableIndexesPhoto);
 
 
@@ -327,8 +327,7 @@ tablePhone.setAvailableIndexes(initAvailableIndexesPhoto);
 
 /**/
 var callBackCreateAttachmentTr = function(tr, increment){
-    console.log("CREATE ROW")
-    console.log(increment)
+
     var id = this.getValueHiddenInputInParent(tr,"id");
     var nameFileInSystem = this.getValueHiddenInputInParent(tr, "nameFileInSystem");
 
@@ -406,7 +405,11 @@ var closeAttachModalInCreateMode = function(){
 
 }
 
+var mapValidateAttachForm = [
+    {id: "name-file", validators: ['isNotEmpty']},
+    {id:"choosen-file", validators: ['isChoosenFile']},
+]
 
-var tableAttachment = new Table("attachment", initAutoincrementAttachment, callBackCreateAttachmentTr, clearAttachmentModal, editAttachmentModal, closeAttachModalInCreateMode);
+var tableAttachment = new Table("attachment", initAutoincrementAttachment, callBackCreateAttachmentTr, clearAttachmentModal, editAttachmentModal, closeAttachModalInCreateMode, mapValidateAttachForm);
 tableAttachment.setAvailableIndexes(initAvailableIndexesAttachment);
 console.log(tableAttachment)

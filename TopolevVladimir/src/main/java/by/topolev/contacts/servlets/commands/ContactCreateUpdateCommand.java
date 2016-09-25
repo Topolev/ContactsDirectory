@@ -70,7 +70,6 @@ public class ContactCreateUpdateCommand implements Command {
 
         List<FileItem> items = getFileItemList(req);
         if (items != null) {
-
             String idStr = getFieldValue(ID, items);
             if (isNotEmpty(idStr)) {
                 try{

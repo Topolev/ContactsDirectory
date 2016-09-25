@@ -45,7 +45,11 @@ document.getElementById("delete-contact").onclick = function(event) {
 
 document.getElementById("send-messages").onclick = function(){
     var checkedId = getCheckedId();
-    window.location.replace(rootPath + "/sendmessage?sendto=" + JSON.stringify(checkedId));
+    if (checkedId.length > 0){
+        window.location.replace(rootPath + "/sendmessage?sendto=" + JSON.stringify(checkedId));
+    } else{
+        alert("You have to choose one contact at least.")
+    }
     return false;
 }
 

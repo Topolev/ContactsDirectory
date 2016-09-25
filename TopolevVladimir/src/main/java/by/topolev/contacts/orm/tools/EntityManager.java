@@ -176,7 +176,7 @@ public class EntityManager {
             }
         }
 
-        LOG.debug("Complite query: {}", query);
+        LOG.debug("Complete query: {}", query);
     }
 
 

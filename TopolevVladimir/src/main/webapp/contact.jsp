@@ -26,12 +26,7 @@
 <link href="${root_for_css}/style-common.css" rel="stylesheet">
 <link href="${root_for_css}/style-contact.css" rel="stylesheet">
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
-<script src="${root_for_js}/jquery-1.12.3.min.js"></script>
 
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="${root_for_js}/bootstrap.js"></script>
 </head>
 <body>
 
@@ -471,7 +466,8 @@
 			</div>
 			<div class="form-group">
 				<label class="block">Choosen file: </label>
-				<span id="choosen-file" class="block"></span>
+				<span id="choosen-file" class="block" onchange="validate.validateField(event,['isChoosenFile'],'save-attachment')"></span>
+				<div class="warn-message"></div>
 				<button class="btn btn-default" id="upload-file" onclick="tableAttachment.chooseFile()">Choose new image</button>
 
 			</div>
@@ -501,93 +497,44 @@
 
 </script>
 
-
+<script src="${root_for_js}/validate.js"></script>
 <script src="${root_for_js}/contact.js"></script>
 <script src="${root_for_js}/main.js"></script>
 
 <script>
 
-	function Validate(){
-		var map = {
-			isNotEmpty : {func: isNotEmpty, message: "Field can not be empty."},
-			isNumber : {func: isNumber, message: "Field must consist only numbers."},
-			isEmail : {func: isEmail, message: "Invalid format email."},
-			isDate : {func: isDate, message: "Invalid format date."}
-		};
-
-		var isEmailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		var isNumberRE = /^\d+$/;
-		var isUrlRE = /^((https?|ftp)\:\/\/)?([a-z0-9]{1})((\.[a-z0-9-])|([a-z0-9-]))*\.([a-z]{2,6})(\/?)$/;
-
-		function isNotEmpty(value){
-			return !(value.trim() == "");
-		}
-
-		function isEmail(value){
-			if (value.trim() == "") return true;
-			return isEmailRE.test(value);
-		}
-		function isNumber(value){
-			if (value.trim() == "") return true;
-			return isNumberRE.test(value);
-		}
-		function isUrl(value){
-			return isUrlRE.test(value);
-		}
-		function isDate(value){
-			return  !(value.trim() == "");
-		}
-
-		this.validateField = function(event, validators, idBlock){
-			event = event || window.event;
-			var field = event.currentTarget;
-			var value = field.value.trim();
-			var buttonLock = document.getElementById(idBlock);
-
-			var isValid = true;
-			for (var i= 0; i < validators.length; i++){
-				if (!map[validators[i]].func(value)) {
-					field.nextElementSibling.innerHTML = map[validators[i]].message;
-					field.parentNode.classList.add("has-error");
-					isValid = false;
-					buttonLock.setAttribute("disabled", "disabled");
-				};
-			}
-			if (isValid) {
-				field.parentNode.classList.remove("has-error");
-				buttonLock.removeAttribute("disabled") ;
-			}
-		}
-
-		this.validateFieldList = function(mapForm){
-			var isValidForm = true;
-			for (var i=0; i < mapForm.length; i++){
-
-				var value = document.getElementById(mapForm[i].id).value;
-
-				for ( var j = 0; j < mapForm[i].validators.length; j++){
-					if (!map[mapForm[i].validators[j]].func(value)){
-						alert(map[mapForm[i].validators[j]].message);
-						isValid = false;
-					}
-				}
 
 
-			}
-		}
-	}
+
 
 	var validate = new Validate();
 
-	var mapValidateForm = [
-		{id: "field1", validators : ['isNotEmpty']},
-		{id: "field2", validators : ['isNumber']},
+	var mapValidateMainForm = [
+		{id: "firstname", validators : ['isNotEmpty']},
+		{id: "lastname", validators: ['isNotEmpty']},
+		{id: "birthday", validators: ['isDate']},
+		{id: "email", validators: ['isNotEmpty', 'isEmail']},
+		{id: "index", validators: ['isNumber']},
+		{id: "build", validators: ['isNumber']},
+		{id: "flat", validators: ['isNumber']},
 	]
 
 
-	var validateField = function(){
-		validate.validateFieldList(mapValidateForm);
+	document.getElementById("submit").onclick = function(){
+		return validate.validateFieldList(mapValidateMainForm);
 	}
+
+
+
+
+
+
+	/*document.getElementById("save-phone").onclick = function(){
+		return validate.validateFieldList(mapValidatePhoneForm);
+	}*/
+
+
+
 
 
 </script>

@@ -82,11 +82,11 @@ public class ContactListCommand implements Command {
         Paginator paginator = new Paginator();
         paginator.setButtonNext((page+1) < countPage);
         paginator.setButtonPrev(page != 0);
+        paginator.setCountPage(countPage);
 
-
-        if (page < 2) {
+        if (page < 3) {
             addSequencyNumberInCollection(paginator.getListPages(), 0, Math.min(5, countPage-1));
-        } else if (page < countPage - 2){
+        } else if (page < countPage - 3){
             addSequencyNumberInCollection(paginator.getListPages(), page-1, page+1);
         } else {
             addSequencyNumberInCollection(paginator.getListPages(), Math.max(0, countPage - 5), countPage-1);

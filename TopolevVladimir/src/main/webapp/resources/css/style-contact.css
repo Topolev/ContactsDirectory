@@ -202,6 +202,9 @@ tr.checked {
   margin-top: 5px;
   color: #a94442;
 }
+#upload-file {
+  margin-top: 5px;
+}
 @media only screen and (max-width: 750px) {
   #choose-photo button {
     white-space: normal;
