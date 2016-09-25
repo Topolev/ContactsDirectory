@@ -1,25 +1,19 @@
 package by.topolev.contacts.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
+import by.topolev.contacts.orm.tools.EntityManager;
+import by.topolev.contacts.orm.tools.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static by.topolev.contacts.config.ConfigUtil.*;
-
-import by.topolev.contacts.entity.Address;
 import by.topolev.contacts.entity.Contact;
-import by.topolev.contacts.orm.tools.EntityManager;
+import by.topolev.contacts.orm.tools.EntityManagerJDBC;
 
 public class ContactDaoJDBC implements ContactDao {
 	private static final Logger LOG = LoggerFactory.getLogger(ContactDaoJDBC.class);
 
-	private EntityManager em = new EntityManager();
+	private EntityManager em = EntityManagerFactory.getEntityManager();
 
 	//private AddressDao addressDao = new AddressDaoJdbc();
 
@@ -81,7 +75,7 @@ public class ContactDaoJDBC implements ContactDao {
 	}
 
 	public List<Contact> getContactById(Integer... idList){
-		return em.getEntityById(Contact.class, idList);
+		return em.getEntitiesById(Contact.class, idList);
 	}
 
 	@Override

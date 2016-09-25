@@ -1,7 +1,9 @@
 package by.topolev.contacts.servlets.frontcontroller;
 
 import by.topolev.contacts.config.ConfigUtil;
+import by.topolev.contacts.orm.tools.EntityManagerFactory;
 import by.topolev.contacts.qurtz.JobsFactory;
+import by.topolev.contacts.servlets.utils.EntityFromFormUtil;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,8 @@ public class FrontControllerFilter implements Filter{
         ServletContext servletContext = filterConfig.getServletContext();
 
         ConfigUtil.init(servletContext);
+
+        EntityManagerFactory.getEntityManager();
         /*
         try {
             JobsFactory.initJobs();
