@@ -66,8 +66,10 @@
                             <option value="template2">Template 02</option>
                         </select>
 
-                        <input type="hidden" name="template1" value="Hello, $u.firstname$.&#13;&#10;We glad to see you in our site!&#13;&#10;Regards!"./>
-                        <input type="hidden" name="template2" value="Hello, $u.lastname$"./>
+
+                        <input type="hidden" name="withouttemplate" value=""/>
+                        <input type="hidden" name="template1" value="Hello, $u.firstname$.&#13;&#10;We glad to see you in our site!&#13;&#10;Regards!"/>
+                        <input type="hidden" name="template2" value="Hello, $u.lastname$" />
 
 
                     </div>
@@ -78,7 +80,11 @@
                     <div class="col-sm-10">
                         <div class="alert alert-warning">
                             If you want You can use private information for each contact. Availabale expression:
-                            &lt;firstName&gt;, &lt;lastName&gt;.
+                            <div>First name: $u.firstname$</div>
+                            <div>Last name: $u.lastname$</div>
+                            <div>Middle name:$u.middlename$</div>
+                            <div>City: $u.address.city$</div>
+                            <div>Country: $u.address.country$</div>
                         </div>
                         <textarea class="form-control" id="message" name="message">
                         </textarea>

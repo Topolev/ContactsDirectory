@@ -134,7 +134,7 @@ public class EntityFromFormUtil {
         FileItem item = getFileItem(list, field, rootClass);
         if (item != null) {
             String value = new String(item.get(), UTF_8);
-            if (isEmpty(value)) {
+            if (isEmpty(value.trim())) {
                 return null;
             }
             if (field.getType() == String.class) {

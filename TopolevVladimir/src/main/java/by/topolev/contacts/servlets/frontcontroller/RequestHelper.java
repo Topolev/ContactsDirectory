@@ -28,7 +28,8 @@ public class RequestHelper {
         mapResources.put(new MetaRequest("/contactnew", GET), new ContactGetFormCommand());
         mapResources.put(new MetaRequest("/contactnew", POST), new ContactCreateUpdateCommand(servletContext));
         mapResources.put(new MetaRequest("/showimage", GET), new ShowImageCommand());
-        mapResources.put(new MetaRequest("/searchform", GET), new SearchFormGetCommand());
+        mapResources.put(new MetaRequest("/showsearchform", GET), new SearchFormGetCommand());
+        mapResources.put(new MetaRequest("/searchform", GET), new SearchFormPostCommand());
         mapResources.put(new MetaRequest("/searchform", POST), new SearchFormPostCommand());
         mapResources.put(new MetaRequest("/uploadfile", GET), new UploadFileCommand());
         mapResources.put(new MetaRequest("/sendmessage", GET), new ShowSendMessageFormCommand());

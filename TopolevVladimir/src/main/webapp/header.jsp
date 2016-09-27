@@ -26,7 +26,7 @@
 					<a href="${root}contactlist">Contact list</a>
 				</li>
 				<li>
-					<a href="${root}searchform">Search</a>
+					<a href="${root}showsearchform">Search</a>
 				</li>
 			</ul>
 			<div class="navbar-right">

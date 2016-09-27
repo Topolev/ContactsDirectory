@@ -203,23 +203,29 @@ public class EntityManagerJDBC implements EntityManager {
     }
 
     @Override
-    public int getCountAllEntity(Class<?> clazz) {
+    public int getCountRows(String query, Class<?> clazz){
         Table table = clazz.getAnnotation(Table.class);
         Connection connection = null;
         PreparedStatement statement = null;
-
-        try {
+        try{
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement("SELECT COUNT(*) AS count FROM " + table.name());
+            statement = connection.prepareStatement(query);
             ResultSet result = statement.executeQuery();
             result.next();
             return result.getInt(1);
-        } catch (SQLException e) {
-            LOG.debug("Can get numbers of rows with query {}", "SELECT COUNT(*) AS count FROM " + table.name(), e);
-        } finally {
+        } catch(SQLException e){
+            LOG.debug("Can get numbers of rows with query {}", query, e);
+        }
+        finally{
             closeConnection(connection, statement);
         }
         return 0;
+    }
+
+    @Override
+    public int getCountAllEntity(Class<?> clazz) {
+        Table table = clazz.getAnnotation(Table.class);
+        return getCountRows("SELECT COUNT(*) FROM " + table.name(), clazz);
     }
 
 

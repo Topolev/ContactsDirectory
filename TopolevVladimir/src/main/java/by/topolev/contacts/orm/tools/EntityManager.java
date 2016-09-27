@@ -12,5 +12,6 @@ public interface EntityManager {
     <T> List<T> getEntitiesById(Class<T> clazz, Integer... idList);
     <T> void deleteEntity(Class<T> clazz, Integer... idList);
     int getCountAllEntity(Class<?> clazz);
+    int getCountRows(String query, Class<?> clazz);
 
 }

@@ -81,9 +81,15 @@
             </a>
         </td>
         <td>${contact.birthday}</td>
-        <td>${contact.address.country},${contact.address.city},
-                ${contact.address.street},
-                ${contact.address.build}-${contact.address.flat}</td>
+        <td>
+            <c:if test="${(contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null)}">
+                ${contact.address.country},${contact.address.city},
+                ${contact.address.street},${contact.address.build}-${contact.address.flat}
+            </c:if>
+            <c:if test="${!((contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null))}">
+            User hasn't entered full address.
+            </c:if>
+        </td>
         <td>${contact.workplace}</td>
         </c:forEach>
     </tbody>
@@ -121,6 +127,7 @@
 
 
         <c:if test="${paginator.skipRight}">
+
             <li class="not-link"><span>...</span></li>
             <li>
                 <a href="<c:url value="/contactlist?page=${paginator.countPage - 1}&countRow=${countRow}&sortField=${sortField}&sortType=${sortType}" />">

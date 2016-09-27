@@ -49,6 +49,16 @@ public class ContactServiceImpl implements ContactService{
 	}
 
 	@Override
+	public List<Contact> getSearchContact(Map<String, String> valueFields, int page, int countRow) {
+		return contactDao.getSearchContact(valueFields,page*countRow, countRow);
+	}
+
+	@Override
+	public int getCountSearchContact(Map<String, String> valueFields){
+		return contactDao.getCountSearchContact(valueFields);
+	}
+
+	@Override
 	public void deleteContact(Integer... idList) {
 		contactDao.deleteContacts(idList);
 	}

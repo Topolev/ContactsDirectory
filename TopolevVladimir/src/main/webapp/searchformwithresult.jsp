@@ -41,7 +41,7 @@
     <section>
         <h3>Search form</h3>
         <div class="block-input">
-            <form method="post"  action="/searchform" class="form-horizontal" >
+            <form method="post"  action="/searchform" class="form-horizontal" accept-charset="UTF-8">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="firstname">First name</label>
@@ -121,20 +121,12 @@
             </form>
         </div>
 
-
+        <div>Search <strong>${count}</strong> contacts</div>
         <div class="control-panel">
             <a href="" class="btn btn-default" id="show-delete-popup">Delete selected contacts</a>
-            <div class="select-show">
-				<span>Show:<span>
-				<select name="countRow" id="count-row">
-					<c:forTokens var="show_page" items="10,20" delims=",">
-                        <option value="${show_page}" <c:if test="${show_page eq countRow}">selected</c:if> >${show_page}</option>
-                    </c:forTokens>
-				</select>
-            </div>
         </div>
 
-        <%@ include file="contact_table.jsp"%>
+        <%@ include file="contact_table_search.jsp"%>
     </section>
 
 </div>

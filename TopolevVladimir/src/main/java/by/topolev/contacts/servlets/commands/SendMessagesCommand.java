@@ -15,6 +15,8 @@ import org.stringtemplate.v4.ST;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,11 +45,11 @@ public class SendMessagesCommand implements Command {
 
         LOG.debug(req.getParameter("message"));
 
-        final String subject = req.getParameter("subject");
+        final String subject = new String(req.getParameter("subject").getBytes("ISO-8859-1"), StandardCharsets.UTF_8);
 
         ExecutorService exec = Executors.newCachedThreadPool();
         for(Contact contact : contacts){
-            ST template = new ST(req.getParameter("message"),'$','$');
+            ST template = new ST(new String (req.getParameter("message").getBytes("ISO-8859-1"),StandardCharsets.UTF_8),'$','$');
             template.add("u", contact);
             final String text = template.render();
 

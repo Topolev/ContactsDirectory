@@ -3,6 +3,7 @@ package by.topolev.contacts.dao;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.orm.tools.EntityManager;
 import by.topolev.contacts.orm.tools.EntityManagerFactory;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,25 +48,50 @@ public class ContactDaoJDBC implements ContactDao {
 	}
 
 	@Override
-	public List<Contact> getSearchContact(Map<String, String> valueFields) {
-
-		if (valueFields != null && !valueFields.isEmpty()){
-			LOG.debug("Map of search fields: {}", valueFields.toString());
+	public int getCountSearchContact(Map<String, String> valueFields){
+		if (CollectionUtils.isNotEmpty(valueFields.entrySet())) {
 			StringBuilder query = new StringBuilder();
-			query.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ");
+			query.append("SELECT COUNT(*) FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ");
 			for (Map.Entry<String,String> entry : valueFields.entrySet()){
 				query.append(entry.getKey()).append("='").append(entry.getValue()).append("' AND ");
 			}
 			query.delete(query.length()-5, query.length());
+			return em.getCountRows(query.toString(), Contact.class);
+		} else {
+			return em.getCountRows("SELECT COUNT(*) FROM contact", Contact.class);
+		}
+	}
 
-			LOG.debug("Search query: {}", query.toString());
-
+	@Override
+	public List<Contact> getSearchContact(Map<String, String> valueFields, int beginRow, int countRow){
+		if (CollectionUtils.isNotEmpty(valueFields.entrySet())) {
+			StringBuilder query = new StringBuilder();
+			query.append(createQueryForSearchContact(valueFields))
+					.append(" LIMIT ")
+					.append(beginRow)
+					.append(",")
+					.append(countRow);
+			LOG.debug("Search query: {}", query);
 			return em.getListEntity(query.toString(), Contact.class);
+		} else{
+			LOG.debug(String.format("Search query: SELECT * FROM contact LIMIT %d, %d", beginRow, countRow));
+			return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class);
+		}
+	}
+
+
+
+
+	@Override
+	public List<Contact> getSearchContact(Map<String, String> valueFields) {
+		if (CollectionUtils.isNotEmpty(valueFields.entrySet())){
+			String query = createQueryForSearchContact(valueFields);
+			LOG.debug("Search query: {}", query);
+			return em.getListEntity(query, Contact.class);
 		} else{
 			LOG.debug("Search query: SELECT * FROM contact");
 			return em.getListEntity("SELECT * FROM contact", Contact.class);
 		}
-
 	}
 
 	@Override
@@ -94,7 +120,15 @@ public class ContactDaoJDBC implements ContactDao {
 		
 	}
 
-
+	private String createQueryForSearchContact(Map<String, String> valueFields){
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ");
+		for (Map.Entry<String,String> entry : valueFields.entrySet()){
+			query.append(entry.getKey()).append("='").append(entry.getValue()).append("' AND ");
+		}
+		query.delete(query.length()-5, query.length());
+		return query.toString();
+	}
 	public static void main(String[] args) {
 		ContactDao contactDao = new ContactDaoJDBC();
 		for (Contact contact : contactDao.getContactList()) {
