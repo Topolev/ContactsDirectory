@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
  
 
 <!DOCTYPE html>
@@ -34,8 +35,8 @@
 		<h3>Contact list</h3>
 		<div class="control-panel">
 			<a href="${root_directory}contactnew" class="btn btn-default">Create new contact</a>
-			<a href="" class="btn btn-default" id="show-delete-popup">Delete selected contacts</a>
-			<a href="" class="btn btn-default" id="send-messages">Send email to selected contacts</a>
+			<a href="" class="btn btn-default" id="show-delete-popup">Delete contacts</a>
+			<a href="" class="btn btn-default" id="send-messages">Send email</a>
 			<div class="select-show">
 				<span>Show:<span>
 				<select name="countRow" id="count-row">
@@ -51,7 +52,10 @@
 	</section>
 </div>
 
-
+<script>
+	var page = ${page};
+	var countRow = ${countRow};
+</script>
 
 <script src="${root_for_js}/main.js"></script>
 <script src="${root_for_js}/table.js"></script>

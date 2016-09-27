@@ -7,7 +7,7 @@ import java.util.List;
  */
 public interface EntityManager {
     <T> void updateEntity(T entity);
-    <T> List<T> getListEntity(String query, Class<T> clazz);
+    <T> List<T> getListEntity(String query, Class<T> clazz, boolean lazyLoad);
     <T> T getEntity(String query, Class<T> clazz);
     <T> List<T> getEntitiesById(Class<T> clazz, Integer... idList);
     <T> void deleteEntity(Class<T> clazz, Integer... idList);

@@ -32,7 +32,7 @@ public class RequestHelper {
         mapResources.put(new MetaRequest("/searchform", GET), new SearchFormPostCommand());
         mapResources.put(new MetaRequest("/searchform", POST), new SearchFormPostCommand());
         mapResources.put(new MetaRequest("/uploadfile", GET), new UploadFileCommand());
-        mapResources.put(new MetaRequest("/sendmessage", GET), new ShowSendMessageFormCommand());
+        mapResources.put(new MetaRequest("/sendmessage", GET), new ShowSendMessageFormCommand(servletContext));
         mapResources.put(new MetaRequest("/sendmessage", POST), new SendMessagesCommand());
 
     }

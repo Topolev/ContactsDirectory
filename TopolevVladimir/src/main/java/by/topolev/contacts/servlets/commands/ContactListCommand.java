@@ -32,15 +32,29 @@ public class ContactListCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
-        int count = contactService.getCountContacts();
 
-        int page = getRequestParameter(req, "page", int.class, 0);
-        int countRow = getRequestParameter(req, "countRow", int.class, 10);
+        Integer count = contactService.getCountContacts();
+        Integer page = getRequestParameter(req, "page", Integer.class, 0);
+        Integer countRow = getRequestParameter(req, "countRow", Integer.class, 10);
         Integer sortField = getRequestParameter(req, "sortField", Integer.class, null);
         String sortType = getRequestParameter(req, "sortType", String.class, null);
+        Integer countPage = (int) Math.ceil((double)count/countRow);
 
         List<InfoSortField> sortFields = getDefaultSortFields();
 
+        req.setAttribute("contactList", getSortedContactList(sortField, sortType, page,countRow, sortFields));
+        req.setAttribute("count", count);
+        req.setAttribute("page", page);
+        req.setAttribute("countRow", countRow);
+        req.setAttribute("sortField", sortField);
+        req.setAttribute("sortType", sortType);
+        req.setAttribute("paginator", createPaginator(page, countPage));
+        req.setAttribute("sortFields", sortFields);
+
+        return "contact_list.jsp";
+    }
+
+    private List<Contact> getSortedContactList(Integer sortField, String sortType, Integer page,Integer countRow,  List<InfoSortField> sortFields){
         List<Contact> contactList;
         if ((sortField == null) || (sortType == null)){
             contactList = contactService.getLimitContactList(page, countRow);
@@ -48,26 +62,10 @@ public class ContactListCommand implements Command {
             sortFields.get(sortField).setChoosenField(true);
             if (sortType.equals("ASC")) sortFields.get(sortField).setSortType("DESC");
             else sortFields.get(sortField).setSortType("ASC");
-
             contactList = contactService.getLimitContactList(page, countRow, sortFields.get(sortField).getNameSortField(), sortType);
         }
-
-        int countPage = (int) Math.ceil((double)count/countRow);
-
-        Paginator paginator = createPaginator(page, countPage);
-
-        req.setAttribute("contactList", contactList);
-        req.setAttribute("count", count);
-        req.setAttribute("page", page);
-        req.setAttribute("countRow", countRow);
-        req.setAttribute("sortField", sortField);
-        req.setAttribute("sortType", sortType);
-        req.setAttribute("paginator", paginator);
-        req.setAttribute("sortFields", sortFields);
-
-        return "contact_list.jsp";
+        return contactList;
     }
-
 
     private List<InfoSortField> getDefaultSortFields(){
         List<InfoSortField> sortFields = new ArrayList<>();

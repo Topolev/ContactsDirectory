@@ -19,17 +19,17 @@ public class ContactDaoJDBC implements ContactDao {
 
 	@Override
 	public List<Contact> getContactList() {
-		return em.getListEntity("SELECT * FROM contact", Contact.class);
+		return em.getListEntity("SELECT * FROM contact", Contact.class, true);
 	}
 
 	@Override
 	public List<Contact> getContactListAccordingQuery(String query){
-		return em.getListEntity(query, Contact.class);
+		return em.getListEntity(query, Contact.class, true);
 	}
 
 	@Override
 	public List<Contact> getLimitContactList(int beginRow, int countRow) {
-		return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class);
+		return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class, true);
 	}
 	
 	@Override
@@ -37,14 +37,13 @@ public class ContactDaoJDBC implements ContactDao {
 		
 		String query;
 		if ("address".equals(sortField)){
-			query = String.format("SELECT contact.* FROM contact, address addr "
-					            + "WHERE contact.id=addr.contact_id "
+			query = String.format("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id "
 					            + "ORDER BY country %s,city %s,street %s LIMIT %d,%d", sortType,sortType, sortType, beginRow, countRow); 
 		} else{
 			query = String.format("SELECT * FROM contact ORDER BY %s %s LIMIT %d, %d", sortField, sortType, beginRow, countRow);
 		}
 		System.out.println(query);
-		return em.getListEntity(query, Contact.class);
+		return em.getListEntity(query, Contact.class,true);
 	}
 
 	@Override
@@ -72,10 +71,10 @@ public class ContactDaoJDBC implements ContactDao {
 					.append(",")
 					.append(countRow);
 			LOG.debug("Search query: {}", query);
-			return em.getListEntity(query.toString(), Contact.class);
+			return em.getListEntity(query.toString(), Contact.class,true);
 		} else{
 			LOG.debug(String.format("Search query: SELECT * FROM contact LIMIT %d, %d", beginRow, countRow));
-			return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class);
+			return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class,true);
 		}
 	}
 
@@ -87,10 +86,10 @@ public class ContactDaoJDBC implements ContactDao {
 		if (CollectionUtils.isNotEmpty(valueFields.entrySet())){
 			String query = createQueryForSearchContact(valueFields);
 			LOG.debug("Search query: {}", query);
-			return em.getListEntity(query, Contact.class);
+			return em.getListEntity(query, Contact.class,true);
 		} else{
 			LOG.debug("Search query: SELECT * FROM contact");
-			return em.getListEntity("SELECT * FROM contact", Contact.class);
+			return em.getListEntity("SELECT * FROM contact", Contact.class,true);
 		}
 	}
 

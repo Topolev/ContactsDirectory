@@ -62,14 +62,17 @@
                     <div class="col-sm-10">
                         <select name="template" id="template">
                             <option value="withouttemplate">Without template</option>
-                            <option value="template1">Template 01</option>
-                            <option value="template2">Template 02</option>
+
+                            <c:forEach items="${templates.entrySet()}" var="entry">
+                                <option value="${entry.key}">${entry.key}</option>
+                            </c:forEach>
                         </select>
 
 
                         <input type="hidden" name="withouttemplate" value=""/>
-                        <input type="hidden" name="template1" value="Hello, $u.firstname$.&#13;&#10;We glad to see you in our site!&#13;&#10;Regards!"/>
-                        <input type="hidden" name="template2" value="Hello, $u.lastname$" />
+                        <c:forEach items="${templates.entrySet()}" var="entry">
+                            <input type="hidden" name="${entry.key}" value="${entry.value}"/>
+                        </c:forEach>
 
 
                     </div>

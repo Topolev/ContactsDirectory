@@ -7,12 +7,14 @@ import by.topolev.contacts.dao.PhoneDaoFactory;
 import by.topolev.contacts.entity.Attachment;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.*;
+import by.topolev.contacts.servlets.formdata.Error;
 import by.topolev.contacts.servlets.frontcontroller.Command;
 import by.topolev.contacts.servlets.utils.EntityFromFormUtil;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import static by.topolev.contacts.servlets.utils.ServletUtil.getFileItemParametr;
+import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -59,80 +63,59 @@ public class ContactCreateUpdateCommand implements Command {
 
         // Create a new file upload handler
         upload = new ServletFileUpload(factory);
+        upload.setSizeMax(1000000);
     }
 
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        LOG.debug("Update/Create contact");
+
 
         List<FileItem> items = getFileItemList(req);
+
         if (items != null) {
-            String idStr = getFieldValue(ID, items);
-            if (isNotEmpty(idStr)) {
-                try{
-                    Integer.valueOf(idStr);
-                }catch(NumberFormatException e){
-                    LOG.debug("Someone attempts to apply huck related to SQL Injection");
-                    resp.sendRedirect(req.getContextPath() + "/contactlist");
-                    return null;
-                }
-            }
 
+           /* String idStr = getFieldValue(ID, items);
+            if (!StringUtils.isNumeric(idStr)) {
+                LOG.debug("Someone attempts to apply huck related to SQL Injection");
+                resp.sendRedirect(req.getContextPath() + "/contactlist");
+                return null;
+            }*/
 
-			/*Extract entity from form*/
+			/*Extract entity from form and update*/
             Contact contact = EntityFromFormUtil.createEntityFromRequest(items, Contact.class);
 
-			/*Save profile image*/
-            FileItem photoItem = getFileItemByName(UPLOADPHOTO, items);
-
-
-            if (photoItem != null && isNotEmpty(photoItem.getName())){
-                contact.setPhoto(uploadImageService.saveImage(photoItem));
-            }
-
-
-			/*Save attachments*/
-            String listAttachments = getFieldValue(ATTACHMENT_INDEXES,items);
-            Integer[] listAttachmentsId = getArrayFromString(listAttachments);
-
-            List<Attachment> attachment = contact.getAttachmentList();
-
-            if (attachment != null) {
-                Iterator<Attachment> iterator = attachment.iterator();
-
-                for (Integer i : listAttachmentsId) {
-                    FileItem fileItem = getFileItemByName(FILE + i, items);
-                    String nameFile = uploadFileService.saveFile(fileItem);
-                    Attachment currentAttachment = iterator.next();
-                    if (nameFile != null) {
-                        currentAttachment.setNameFileInSystem(nameFile);
-                    }
-                }
-            }
+            updatePhoto(contact, items);
+            updateAttachments(contact, items);
 
             contactService.updateContact(contact);
 
+            /*Delete phones and attachments*/
+            deletePhones(items);
+            deleteAttachments(items);
 
-
-            /*Delete phones*/
-            String listDeletePhoneIdStr = getFieldValue("phone.delete",items);
-            Integer[] listDeletePhoneId = getArrayFromString(listDeletePhoneIdStr);
-            phoneDao.deletePhones(listDeletePhoneId);
-
-			/*Delete attachtments*/
-            String listDeleteAttachmentIdStr = getFieldValue("attachment.delete",items);
-            Integer[] listDeleteAttachmentId = getArrayFromString(listDeleteAttachmentIdStr);
-            attachmentDao.deleteAttachment(listDeleteAttachmentId);
 
             int count = contactService.getCountContacts();
-            resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double)count/10)-1));
-
-            return null;
-
+            if (contact.getId() == null){
+                LOG.debug("Creating of new contact was successful.");
+                LOG.info("Creating of new contact was successful.");
+                resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double) count / 10) - 1));
+                return null;
+            } else{
+                LOG.debug("Updating of contact with id={} was successful.", contact.getId());
+                LOG.info("Updating of contact with id={} was successful.", contact.getId());
+                resp.sendRedirect(req.getContextPath()
+                        + "/contactlist?page=" +  getFileItemParametr(items, "page", Integer.class, 0)
+                        + "&countRow=" +  getFileItemParametr(items, "countRow", Integer.class, 10));
+                return null;
+            }
+        } else {
+            LOG.debug("User sends form without data or form doesn't have enctype=\"multipart/form-data\" or size of file is too large.");
+            Error error = new Error();
+            error.addError("You can choose one contact at least for sending message via email. ");
+            req.setAttribute("errors", error);
+            return "/error.jsp";
         }
-        LOG.debug("User sends form without data or form doesn't have enctype=\"multipart/form-data\"");
-        return null;
     }
 
     private List<FileItem> getFileItemList(HttpServletRequest req) {
@@ -146,13 +129,55 @@ public class ContactCreateUpdateCommand implements Command {
                 items = upload.parseRequest(req);
             } catch (FileUploadException e) {
                 LOG.info("Problems with parsing request to FileItem", e);
+                return null;
             }
         }
         return items;
     }
 
-    private FileItem getFileItemByName(String nameField, List<FileItem> items){
-        for (FileItem item : items){
+    private void updatePhoto(Contact contact, List<FileItem> items){
+        FileItem photoItem = getFileItemByName(UPLOADPHOTO, items);
+
+        if (photoItem != null && isNotEmpty(photoItem.getName())) {
+            contact.setPhoto(uploadImageService.saveImage(photoItem));
+        }
+    }
+
+    private void updateAttachments(Contact contact, List<FileItem> items){
+        /*Save attachments*/
+        String listAttachments = getFieldValue(ATTACHMENT_INDEXES, items);
+        Integer[] listAttachmentsId = getArrayFromString(listAttachments);
+
+        List<Attachment> attachment = contact.getAttachmentList();
+
+        if (attachment != null) {
+            Iterator<Attachment> iterator = attachment.iterator();
+
+            for (Integer i : listAttachmentsId) {
+                FileItem fileItem = getFileItemByName(FILE + i, items);
+                String nameFile = uploadFileService.saveFile(fileItem);
+                Attachment currentAttachment = iterator.next();
+                if (nameFile != null) {
+                    currentAttachment.setNameFileInSystem(nameFile);
+                }
+            }
+        }
+    }
+
+    private void deletePhones(List<FileItem> items){
+        String listDeletePhoneIdStr = getFieldValue("phone.delete", items);
+        Integer[] listDeletePhoneId = getArrayFromString(listDeletePhoneIdStr);
+        phoneDao.deletePhones(listDeletePhoneId);
+    }
+
+    private void deleteAttachments(List<FileItem> items){
+        String listDeleteAttachmentIdStr = getFieldValue("attachment.delete", items);
+        Integer[] listDeleteAttachmentId = getArrayFromString(listDeleteAttachmentIdStr);
+        attachmentDao.deleteAttachment(listDeleteAttachmentId);
+    }
+
+    private FileItem getFileItemByName(String nameField, List<FileItem> items) {
+        for (FileItem item : items) {
             if (item.getFieldName().equals(nameField)) {
                 return item;
             }
@@ -160,7 +185,7 @@ public class ContactCreateUpdateCommand implements Command {
         return null;
     }
 
-    private String getFieldValue(String nameField, List<FileItem> items){
+    private String getFieldValue(String nameField, List<FileItem> items) {
         Optional<String> first = items.stream()
                 .filter(item -> item.isFormField())
                 .filter(item -> item.getFieldName().equals(nameField))
@@ -169,7 +194,6 @@ public class ContactCreateUpdateCommand implements Command {
 
         return first.isPresent() ? first.get() : null;
     }
-
 
 
     private Integer[] getArrayFromString(String arrayStr) {

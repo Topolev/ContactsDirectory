@@ -1,4 +1,14 @@
-<table class="table">
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<c:if test="${count == 0}">
+    <div class="alert alert-warning">There aren't contacts. You can create the first one.</div>
+</c:if>
+<c:if test="${(fn:length(contactList) == 0) and (count != 0)}">
+    <div class="alert alert-warning">Unfortunetly, the requested page doesn't exist! Please, don't enter data in current URL and use paginator on the bottom of table. It allows to avoid errors in the future.</div>
+</c:if>
+
+<c:if test="${fn:length(contactList) != 0}">
+    <table class="table">
     <thead>
     <tr>
         <th>
@@ -9,8 +19,6 @@
         </th>
 
         <th>First name, last name
-
-
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=0&sortType=${sortFields.get(0).sortType}">
                 <c:if test="${!sortFields.get(0).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -76,7 +84,7 @@
                 <div>
         </td>
         <td>
-            <a href="<c:url value="/contact?id=${contact.id}"/>">
+            <a href="<c:url value="/contact?id=${contact.id}&page=${page}&countRow=${countRow}"/>">
                     ${contact.firstname} ${contact.lastname}
             </a>
         </td>
@@ -87,10 +95,17 @@
                 ${contact.address.street},${contact.address.build}-${contact.address.flat}
             </c:if>
             <c:if test="${!((contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null))}">
-            User hasn't entered full address.
+            n/a
             </c:if>
         </td>
-        <td>${contact.workplace}</td>
+        <td>
+            <c:if test="${(contact.workplace == null) or (contact.workplace.trim()=='')}">
+                n/a
+            </c:if>
+            <c:if test="${!((contact.workplace == null) or (contact.workplace.trim()==''))}">
+                ${contact.workplace}
+            </c:if>
+        </td>
         </c:forEach>
     </tbody>
 </table>
@@ -157,3 +172,4 @@
         </div>
     </div>
 </div>
+</c:if>

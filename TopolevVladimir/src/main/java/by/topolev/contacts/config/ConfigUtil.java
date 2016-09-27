@@ -18,9 +18,11 @@ public class ConfigUtil {
     public static final String DATABASE_PASSWORD = "database.password";
     public static final String PATH_UPLOAD_PROFILE_IMAGE = "path.upload.profile.image";
     public static final String PATH_UPLOAD_PROFILE_FILES = "path.upload.profile.files";
+
     public static final String GMAIL_USERNAME = "gmail.username";
     public static final String GMAIL_PASSWORD = "gmail.password";
     public static final String MAIL_ADMINISTRATOR = "mail.administrator";
+    public static final String PATH_EMAIL_TEMPLATE = "path.email.template";
 
     private static Properties properties;
 
@@ -69,6 +71,10 @@ public class ConfigUtil {
 
     public static String getMailAdministrator() {
         return properties.getProperty(MAIL_ADMINISTRATOR);
+    }
+
+    public static String getPathEmailTemplate() {
+        return properties.getProperty(PATH_EMAIL_TEMPLATE);
     }
 
 

@@ -105,7 +105,7 @@ public class EntityManagerJDBC implements EntityManager {
     }
 
     @Override
-    public <T> List<T> getListEntity(String query, Class<T> clazz) {
+    public <T> List<T> getListEntity(String query, Class<T> clazz, boolean lazyLoad) {
         List<T> entityList = new ArrayList<T>();
         Connection connection = null;
         PreparedStatement statment = null;
@@ -115,7 +115,7 @@ public class EntityManagerJDBC implements EntityManager {
             statment = connection.prepareStatement(query);
             ResultSet result = statment.executeQuery();
             while (result.next()) {
-                entityList.add(getEntityFromResultSet(result, clazz));
+                entityList.add(getEntityFromResultSet(result, clazz, lazyLoad));
             }
         } catch (SQLException e) {
             LOG.debug("Problem with getting of entity list", e);
@@ -153,7 +153,7 @@ public class EntityManagerJDBC implements EntityManager {
             ResultSet result = statment.executeQuery();
             if (!result.next())
                 return null;
-            entity = getEntityFromResultSet(result, clazz);
+            entity = getEntityFromResultSet(result, clazz,false);
         } catch (SQLException e) {
             LOG.debug("Problem with getting of entity list", e);
         } finally {
@@ -174,7 +174,7 @@ public class EntityManagerJDBC implements EntityManager {
         query.append("SELECT * FROM " + metaEntity.getTable().name() + " WHERE");
         query.append(getSectionQueryIdConnectedWithOr(idList));
 
-        return getListEntity(query.toString(), clazz);
+        return getListEntity(query.toString(), clazz, true);
     }
 
     @Override
@@ -306,7 +306,7 @@ public class EntityManagerJDBC implements EntityManager {
     }
 
 
-    private <T> T getEntityFromResultSet(ResultSet result, Class<T> clazz) {
+    private <T> T getEntityFromResultSet(ResultSet result, Class<T> clazz, boolean lazyLoad) {
         try {
             T entity = clazz.newInstance();
             MetaEntity metaEntity = metaEntityList.get(clazz);
@@ -324,9 +324,11 @@ public class EntityManagerJDBC implements EntityManager {
                     setValueField(entity, entry.getKey(), getEntity(query, entry.getKey().getType()));
                 }
 
-                for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()) {
-                    String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), entry.getValue().foreignkey(), id);
-                    setValueField(entity, entry.getKey(), getListEntity(query, getGenericTypeOfField(entry.getKey())));
+                if (!lazyLoad) {
+                    for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()) {
+                        String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), entry.getValue().foreignkey(), id);
+                        setValueField(entity, entry.getKey(), getListEntity(query, getGenericTypeOfField(entry.getKey()),lazyLoad));
+                    }
                 }
             }
             return entity;

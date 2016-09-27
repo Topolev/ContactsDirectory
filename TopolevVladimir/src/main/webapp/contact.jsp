@@ -35,6 +35,8 @@
 
 <div id="wrap-content" class="user-container">
 	<form method="post"  action="/contactnew" enctype="multipart/form-data">
+		<input type="hidden" name="page" value="${page}">
+		<input type="hidden" name="countPage" value="${countPage}">
 		<input type="hidden" name="id" value="<c:out value="${contact.id}"/>">
 		<section>
 			<h3>Contact Details</h3>

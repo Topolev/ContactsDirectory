@@ -38,7 +38,7 @@ function getCheckedId() {
 document.getElementById("delete-contact").onclick = function(event) {
     var checkedId = getCheckedId();
     window.location.replace(rootPath + "/contactdelete?delete="
-        + JSON.stringify(checkedId) + "&page=${page}&countRow=${countRow}" );
+        + JSON.stringify(checkedId) + "&page=" + page + "&countRow=" + countRow);
 
     return false;
 };

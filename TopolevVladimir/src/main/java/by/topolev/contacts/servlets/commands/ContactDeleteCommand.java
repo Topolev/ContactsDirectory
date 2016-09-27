@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
+
 /**
  * Created by Vladimir on 18.09.2016.
  */
@@ -23,7 +25,10 @@ public class ContactDeleteCommand implements Command{
         Integer[] idList = map.readValue(req.getParameter("delete"), Integer[].class);
         contactService.deleteContact(idList);
 
-        resp.sendRedirect(req.getContextPath() + "/contactlist?page=" + req.getParameter("page") + "&countRow=" + req.getParameter("countRow"));
+
+        resp.sendRedirect(req.getContextPath()
+                + "/contactlist?page=" + getRequestParameter(req, "page", Integer.class, 0)
+                + "&countRow=" + getRequestParameter(req, "countRow", Integer.class, 10));
         return null;
     }
 }

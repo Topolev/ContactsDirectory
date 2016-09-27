@@ -1,10 +1,13 @@
 package by.topolev.contacts.servlets.commands;
 
 import by.topolev.contacts.servlets.frontcontroller.Command;
+import by.topolev.contacts.servlets.utils.ServletUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
 
 /**
  * Created by Vladimir on 18.09.2016.
