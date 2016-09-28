@@ -63,7 +63,7 @@ public class ContactCreateUpdateCommand implements Command {
 
         // Create a new file upload handler
         upload = new ServletFileUpload(factory);
-        upload.setSizeMax(1000000);
+        upload.setSizeMax(100*1024*1024);
     }
 
 

@@ -37,12 +37,12 @@
 <div id="wrap-content" class="user-container">
 
     <section>
-        <h3>Send messages via email</h3>
+        <h3>${resourceBundle.getString("sendmessageviaemail")}</h3>
         <div class="block-input">
             <form method="post"  action="/sendmessage" class="form-horizontal" >
 
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Send to: </label>
+                    <label class="col-sm-2 control-label">${resourceBundle.getString("sendto")}: </label>
                     <div class="col-sm-10">
                         <c:forEach items="${contacts}" var="item">
                             <span class="email">${item.email}</span>
@@ -51,14 +51,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="subject">Subject: </label>
+                    <label class="col-sm-2 control-label" for="subject">${resourceBundle.getString("subject")}: </label>
                     <div class="col-sm-10">
                         <input type="text" name="subject" class="form-control" id="subject" placeholder="Subject email">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="subject">Template: </label>
+                    <label class="col-sm-2 control-label" for="subject">${resourceBundle.getString("template")}: </label>
                     <div class="col-sm-10">
                         <select name="template" id="template">
                             <option value="withouttemplate">Without template</option>
@@ -79,23 +79,24 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="message">Message: </label>
+                    <label class="col-sm-2 control-label" for="message">${resourceBundle.getString("message")}: </label>
                     <div class="col-sm-10">
                         <div class="alert alert-warning">
-                            If you want You can use private information for each contact. Availabale expression:
+                            ${resourceBundle.getString("senddescription")}
+                            <!--If you want You can use private information for each contact. Availabale expression:
                             <div>First name: $u.firstname$</div>
                             <div>Last name: $u.lastname$</div>
                             <div>Middle name:$u.middlename$</div>
                             <div>City: $u.address.city$</div>
-                            <div>Country: $u.address.country$</div>
+                            <div>Country: $u.address.country$</div>-->
                         </div>
                         <textarea class="form-control" id="message" name="message">
                         </textarea>
                     </div>
                 </div>
                 <input type="hidden" value=${sendto} name="sendto">
-                <input type="submit" value="Send messages" class="btn btn-default">
-                <a href="${root_directory}contactlist" class="btn btn-default">Cancel</a>
+                <input type="submit" value="${resourceBundle.getString("sendmessage")}" class="btn btn-default">
+                <a href="${root_directory}contactlist" class="btn btn-default">${resourceBundle.getString("cancel")}</a>
 
             </form>
         </div>

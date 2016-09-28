@@ -6,8 +6,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +52,17 @@ public class ServletUtil {
     }
 
 
+    public static String getCookieValue(HttpServletRequest req){
+        Cookie[] cookie = req.getCookies();
+
+        if (cookie == null) return null;
+        Optional<String> first =  Arrays.stream(cookie)
+                .filter(item -> "lan".equals(item.getName()))
+                .map(Cookie::getValue)
+                .findFirst();
+
+        return  first.isPresent() ? first.get() : null;
+    }
 
     public static Paginator createPaginator(int page, int countPage){
         Paginator paginator = new Paginator();

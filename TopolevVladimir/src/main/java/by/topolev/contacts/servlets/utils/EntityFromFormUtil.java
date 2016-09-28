@@ -154,7 +154,7 @@ public class EntityFromFormUtil {
     }
 
     private static Object getDate(String value) {
-        DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             return format.parse(value);
         } catch (ParseException e) {

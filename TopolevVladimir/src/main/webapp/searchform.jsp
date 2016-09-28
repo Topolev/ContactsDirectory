@@ -38,26 +38,26 @@
 <div id="wrap-content" class="user-container">
 
         <section>
-            <h3>Search form</h3>
+            <h3>${resourceBundle.getString("searchform")}</h3>
             <div class="block-input">
                 <form method="post"  action="/searchform" class="form-horizontal" >
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="firstname">First name</label>
+                        <label class="col-sm-2 control-label" for="firstname">${resourceBundle.getString("firstname")}</label>
                         <div class="col-sm-10">
                             <input type="text" name="first_name" class="form-control" id="firstname" placeholder="First name">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="lastname">Last name</label>
+                        <label class="col-sm-2 control-label" for="lastname">${resourceBundle.getString("lastname")}</label>
                         <div class="col-sm-10">
                             <input type="text" name="last_name" class="form-control" id="lastname" placeholder="Last name">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="middlename">Middle name</label>
+                        <label class="col-sm-2 control-label" for="middlename">${resourceBundle.getString("middlename")}</label>
 
                         <div class="col-sm-10">
                             <input type="text" name="middle_name" class="form-control" id="middlename" placeholder="Middle name">
@@ -65,57 +65,57 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="male">Sex:</label>
+                        <label class="col-sm-2 control-label" for="male">${resourceBundle.getString("sex")}:</label>
                         <div class="col-sm-10">
                             <input type="radio" name="sex" class="radio" id="male" value="Male">
-                            <label for="male" class="sex"><span class="icon">Ù</span>Male</label>
+                            <label for="male" class="sex"><span class="icon">Ù</span>${resourceBundle.getString("male")}</label>
 
                             <input type="radio" name="sex" class="radio" id="female" value="Female">
-                            <label for="female" class="sex"><span class="icon">Ú</span>Female</label>
+                            <label for="female" class="sex"><span class="icon">Ú</span>${resourceBundle.getString("female")}</label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="single">Marital status:</label>
+                        <label class="col-sm-2 control-label" for="single">${resourceBundle.getString("maritalstatus")}:</label>
                         <div class="col-sm-10">
                             <input type="radio" name="marital_status" class="radio" id="single" value="Single">
-                            <label for="single" class="sex"><span class="icon">Ù</span>Single</label>
+                            <label for="single" class="sex"><span class="icon">Ù</span>${resourceBundle.getString("single")}</label>
 
                             <input type="radio" name="marital_status" class="radio" id="married" value="Married">
-                            <label for="married" class="sex"><span class="icon">ÙÙ</span>Married</label>
+                            <label for="married" class="sex"><span class="icon">ÙÙ</span>${resourceBundle.getString("married")}</label>
                         </div>
 
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="nationality">Nationality</label>
+                        <label class="col-sm-2 control-label" for="nationality">${resourceBundle.getString("nationality")}</label>
                         <div class="col-sm-10">
                             <input type="text" name="nationality" class="form-control" id="nationality" placeholder="Nationality">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="country">Country</label>
+                        <label class="col-sm-2 control-label" for="country">${resourceBundle.getString("country")}</label>
                         <div class="col-sm-10">
                             <input type="text" name="country" class="form-control" id="country" placeholder="Country">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="city">City</label>
+                        <label class="col-sm-2 control-label" for="city">${resourceBundle.getString("city")}</label>
                         <div class="col-sm-10">
-                            <input type="text" name="city" class="form-control" id="city" placeholder="Country">
+                            <input type="text" name="city" class="form-control" id="city" placeholder="City">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="street">Street</label>
+                        <label class="col-sm-2 control-label" for="street">${resourceBundle.getString("street")}</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="street" placeholder="Country">
+                            <input type="text" class="form-control" id="street" placeholder="Street">
                         </div>
                     </div>
 
-                    <input type="submit" class="btn btn-default" value="Search">
+                    <input type="submit" class="btn btn-default" value="${resourceBundle.getString("search")}">
 
                 </form>
             </div>

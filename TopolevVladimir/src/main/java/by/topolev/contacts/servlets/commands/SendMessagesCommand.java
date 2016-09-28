@@ -51,10 +51,10 @@ public class SendMessagesCommand implements Command {
         List<Contact> contacts = contactService.getContactById(convertStringInIntArray(req.getParameter("sendto")));
 
         if (CollectionUtils.isNotEmpty(contacts)) {
-            final String subject = new String(req.getParameter("subject").getBytes("ISO-8859-1"), StandardCharsets.UTF_8);
+            final String subject = req.getParameter("subject")/*.getBytes("ISO-8859-1"), StandardCharsets.UTF_8)*/;
 
             for (Contact contact : contacts) {
-                ST template = new ST(new String(req.getParameter("message").getBytes("ISO-8859-1"), StandardCharsets.UTF_8), '$', '$');
+                ST template = new ST(req.getParameter("message")/*.getBytes("ISO-8859-1"), StandardCharsets.UTF_8)*/, '$', '$');
                 template.add("u", contact);
                 final String text = template.render();
 

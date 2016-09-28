@@ -36,10 +36,10 @@ public class SearchFormPostCommand implements Command {
         for (String field : listFields){
             String value = getPostParameter(field, req);
             if (value != null){
-                value = new String(value.getBytes(ISO_8859_1), StandardCharsets.UTF_8);
+                //value = new String(value.getBytes(ISO_8859_1), StandardCharsets.UTF_8);
                 valueFields.put(field,value);
                 req.setAttribute(field, value);
-                listFieldsForGet.append(field).append("=").append(new String(value.getBytes("UTF-8"), StandardCharsets.ISO_8859_1)).append("&");
+                listFieldsForGet.append(field).append("=").append(value/*new String(value.getBytes("UTF-8"), StandardCharsets.ISO_8859_1)*/).append("&");
             }
         }
         if (listFieldsForGet.length() >=1) {

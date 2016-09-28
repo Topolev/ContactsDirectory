@@ -1,5 +1,6 @@
 package by.topolev.contacts.servlets.frontcontroller;
 
+import by.topolev.contacts.servlets.commands.ChangeLanguageCommand;
 import by.topolev.contacts.servlets.commands.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class RequestHelper {
         mapResources.put(new MetaRequest("/uploadfile", GET), new UploadFileCommand());
         mapResources.put(new MetaRequest("/sendmessage", GET), new ShowSendMessageFormCommand(servletContext));
         mapResources.put(new MetaRequest("/sendmessage", POST), new SendMessagesCommand());
-
+        mapResources.put(new MetaRequest("/changelan", GET), new ChangeLanguageCommand());
     }
 
     private HttpServletRequest request;

@@ -251,7 +251,7 @@ public class EntityManagerJDBC implements EntityManager {
                 return "'" + value.toString() + "'";
             }
             if (field.getType() == Date.class) {
-                DateFormat format = new SimpleDateFormat("yyyy-dd-mm");
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 return "'" + format.format((Date) value) + "'";
             }
             return value.toString();

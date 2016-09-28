@@ -4,7 +4,7 @@
     <div class="alert alert-warning">There aren't contacts. You can create the first one.</div>
 </c:if>
 <c:if test="${(fn:length(contactList) == 0) and (count != 0)}">
-    <div class="alert alert-warning">Unfortunetly, the requested page doesn't exist! Please, don't enter data in current URL and use paginator on the bottom of table. It allows to avoid errors in the future.</div>
+    <div class="alert alert-warning">${resourceBundle.getString("isntexistpageforpaginator")}</div>
 </c:if>
 
 <c:if test="${fn:length(contactList) != 0}">
@@ -18,7 +18,7 @@
                 <div>
         </th>
 
-        <th>First name, last name
+        <th>${resourceBundle.getString("firstnamelastname")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=0&sortType=${sortFields.get(0).sortType}">
                 <c:if test="${!sortFields.get(0).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -33,7 +33,7 @@
 
         </th>
 
-        <th>Birthday
+        <th>${resourceBundle.getString("birthday")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=1&sortType=${sortFields.get(1).sortType}">
                 <c:if test="${!sortFields.get(1).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -46,7 +46,7 @@
                 </c:if>
             </a>
         </th>
-        <th>Address
+        <th>${resourceBundle.getString("address")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=2&sortType=${sortFields.get(2).sortType}">
                 <c:if test="${!sortFields.get(2).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -59,7 +59,7 @@
                 </c:if>
             </a>
         </th>
-        <th>Work place
+        <th>${resourceBundle.getString("workplace")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=3&sortType=${sortFields.get(3).sortType}">
                 <c:if test="${!sortFields.get(3).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -95,12 +95,12 @@
                 ${contact.address.street},${contact.address.build}-${contact.address.flat}
             </c:if>
             <c:if test="${!((contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null))}">
-            n/a
+                ${resourceBundle.getString("notavailable")}
             </c:if>
         </td>
         <td>
             <c:if test="${(contact.workplace == null) or (contact.workplace.trim()=='')}">
-                n/a
+                ${resourceBundle.getString("notavailable")}
             </c:if>
             <c:if test="${!((contact.workplace == null) or (contact.workplace.trim()==''))}">
                 ${contact.workplace}

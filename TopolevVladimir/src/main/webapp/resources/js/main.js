@@ -23,8 +23,8 @@ for (var i in a_lang){
     a_lang[i].onclick = function(event){
         choose_lang.innerHTML = this.innerHTML;
         lang.style.overflow = "hidden";
-        event.stopPropagation()
-        return false;
+        //event.stopPropagation()
+        //return false;
     }
 }
 

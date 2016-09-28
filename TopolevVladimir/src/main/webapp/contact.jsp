@@ -39,7 +39,7 @@
 		<input type="hidden" name="countPage" value="${countPage}">
 		<input type="hidden" name="id" value="<c:out value="${contact.id}"/>">
 		<section>
-			<h3>Contact Details</h3>
+			<h3>${resourceBundle.getString("contactdetails")}</h3>
 
 			<div class="row">
 				<div class="col-md-3 col-md-push-9 col-sm-4 col-sm-push-8" id="wrap-photo">
@@ -56,7 +56,7 @@
 
 						<div id="choose-photo">
 							<input type="file" name="uploadphoto" />
-							<button class="btn btn-default">Choose new image</button>
+							<button class="btn btn-default">${resourceBundle.getString("choosenewimage")}</button>
 						</div>
 					</div>
 				</div>
@@ -66,7 +66,7 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="firstname" class="control-label">First name</label>
+								<label for="firstname" class="control-label">${resourceBundle.getString("firstname")}</label>
 								<input type="text"
 									   class="form-control"
 									   id="firstname"
@@ -80,7 +80,7 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="lastname" class="control-label">Last name</label>
+								<label for="lastname" class="control-label">${resourceBundle.getString("lastname")}</label>
 								<input type="text"
 									   class="form-control"
 									   id="lastname"
@@ -94,7 +94,7 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="middlename">Middle name</label>
+								<label for="middlename">${resourceBundle.getString("middlename")}</label>
 								<input type="text" class="form-control" id="middlename" placeholder="Enter middle name" name="middlename" value="<c:out value="${contact.middlename}"/>" >
 							</div>
 						</div>
@@ -103,7 +103,7 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="birthday" class="control-label">Birthday</label>
+								<label for="birthday" class="control-label">${resourceBundle.getString("birthday")}</label>
 								<input type="date" class="form-control"
 									   id="birthday" placeholder="Choose birthday"
 									   name="birthday"
@@ -115,7 +115,7 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="nationality">Nationality</label>
+								<label for="nationality">${resourceBundle.getString("nationality")}</label>
 								<input type="text" class="form-control" id="nationality" placeholder="Enter nationality" name="nationality" value="<c:out value="${contact.nationality}"/>">
 							</div>
 						</div>
@@ -126,25 +126,25 @@
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="male" class="block">Sex:</label>
+								<label for="male" class="block">${resourceBundle.getString("sex")}:</label>
 
 								<input type="radio" name="sex" class="radio" id="male" value="Male" <c:if test="${(contact.sex ==null) or (contact.sex eq 'Male')}">checked</c:if> />
-								<label for="male" class="sex"><span class="icon">Ù</span>Male</label>
+								<label for="male" class="sex"><span class="icon">Ù</span>${resourceBundle.getString("male")}</label>
 
 								<input type="radio" name="sex" class="radio" id="female" value="Female" <c:if test="${contact.sex eq 'Female'}">checked</c:if> />
-								<label for="female" class="sex"><span class="icon">Ú</span>Female</label>
+								<label for="female" class="sex"><span class="icon">Ú</span>${resourceBundle.getString("female")}</label>
 								<div class="clear"></div>
 							</div>
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="single" class="block">Marital status:</label>
+								<label for="single" class="block">${resourceBundle.getString("maritalstatus")}:</label>
 
 								<input type="radio" name="maritalStatus" class="radio" id="single" value="Single" <c:if test="${(contact.maritalStatus == null) or (contact.maritalStatus eq 'Single')}">checked</c:if> />
-								<label for="single" class="sex"><span class="icon">Ù</span>Single</label>
+								<label for="single" class="sex"><span class="icon">Ù</span>${resourceBundle.getString("single")}</label>
 
 								<input type="radio" name="maritalStatus" class="radio" id="married" value="Married" <c:if test="${contact.maritalStatus eq 'Married'}">checked</c:if>/>
-								<label for="married" class="sex"><span class="icon">ÙÙ</span>Married</label>
+								<label for="married" class="sex"><span class="icon">ÙÙ</span>${resourceBundle.getString("married")}</label>
 								<div class="clear"></div>
 							</div>
 						</div>
@@ -155,13 +155,13 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="website">Website</label>
+								<label for="website">${resourceBundle.getString("website")}</label>
 								<input type="text" class="form-control" id="website" name="website" placeholder="Enter website" value="${contact.website}">
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="email" class="control-label">Email</label>
+								<label for="email" class="control-label">${resourceBundle.getString("email")}</label>
 								<input type="text"
 									   class="form-control"
 									   id="email" name="email"
@@ -174,7 +174,7 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="workplace">Current work place</label>
+								<label for="workplace">${resourceBundle.getString("workplace")}</label>
 								<input type="text" class="form-control" id="workplace" name="workplace" placeholder="Enter your current work place" value="${contact.workplace}">
 							</div>
 						</div>
@@ -191,12 +191,12 @@
 
 			<div class="row">
 				<div class="big-block">
-					<h2>Address</h2>
+					<h2>${resourceBundle.getString("address")}</h2>
 					<input type="hidden" name="address.id" value="<c:out value="${contact.address.id}"/>">
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="index" class="control-label">Index</label>
+								<label for="index" class="control-label">${resourceBundle.getString("ind")}</label>
 								<input type="text"
 									   class="form-control"
 									   id="index" placeholder="Index"
@@ -208,13 +208,13 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="country">Country</label>
+								<label for="country">${resourceBundle.getString("country")}</label>
 								<input type="text" class="form-control" id="country" placeholder="Country" name="address.country" value="${contact.address.country}">
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="city">City</label>
+								<label for="city">${resourceBundle.getString("city")}</label>
 								<input type="text" class="form-control" id="city" placeholder="City" name="address.city" value="${contact.address.city}">
 							</div>
 						</div>
@@ -224,13 +224,13 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="street">Street</label>
+								<label for="street">${resourceBundle.getString("street")}</label>
 								<input type="text" class="form-control" id="street" placeholder="Street" name="address.street" value="${contact.address.street}">
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="build" class="control-label">Build</label>
+								<label for="build" class="control-label">${resourceBundle.getString("build")}</label>
 								<input type="text"
 									   class="form-control"
 									   id="build" placeholder="Build"
@@ -242,7 +242,7 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label for="flat" class="control-label">Flat</label>
+								<label for="flat" class="control-label">${resourceBundle.getString("flat")}</label>
 								<input type="text"
 									   class="form-control"
 									   id="flat"
@@ -263,11 +263,11 @@
 				<div class="big-block" id="phone">
 					<input type="hidden" id="phone-indexes" name="phone.indexes" value="">
 					<input type="hidden" id="phone-delete" name="phone.delete" value="">
-					<h2>Phones
+					<h2>${resourceBundle.getString("phones")}
 						<div class="control-panel">
-							<a href="" class="btn btn-default create-new-row" >Create</a>
-							<a href="" class="btn btn-default edit-row">Edit</a>
-							<a href="" class="btn btn-default delete-rows">Delete</a>
+							<a href="" class="btn btn-default create-new-row" >${resourceBundle.getString("create")}</a>
+							<a href="" class="btn btn-default edit-row">${resourceBundle.getString("edit")}</a>
+							<a href="" class="btn btn-default delete-rows">${resourceBundle.getString("delete")}</a>
 						</div>
 					</h2>
 					<table class="table">
@@ -279,9 +279,9 @@
 										<label></label>
 									</div>
 								</th>
-								<th>Phone</th>
-								<th>Type</th>
-								<th>Description</th>
+								<th>${resourceBundle.getString("phone")}</th>
+								<th>${resourceBundle.getString("type")}</th>
+								<th>${resourceBundle.getString("description")}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -326,11 +326,11 @@
 				<div class="big-block" id="attachment">
 					<input type="hidden" id="attachment-indexes" name="attachment.indexes" value="">
 					<input type="hidden" id="attachment-delete" name="attachment.delete" value="">
-					<h2>Attachments
+					<h2>${resourceBundle.getString("attachments")}
 						<div class="control-panel">
-							<a href="" class="btn btn-default create-new-row" >Create</a>
-							<a href="" class="btn btn-default edit-row">Edit</a>
-							<a href="" class="btn btn-default delete-rows">Delete</a>
+							<a href="" class="btn btn-default create-new-row" >${resourceBundle.getString("create")}</a>
+							<a href="" class="btn btn-default edit-row">${resourceBundle.getString("edit")}</a>
+							<a href="" class="btn btn-default delete-rows">${resourceBundle.getString("delete")}</a>
 						</div>
 					</h2>
 					<table class="table">
@@ -342,9 +342,9 @@
 										<label></label>
 									</div>
 								</th>
-								<th>File name</th>
-								<th>Upload date</th>
-								<th>Comment</th>
+								<th>${resourceBundle.getString("filename")}</th>
+								<th>${resourceBundle.getString("uploaddate")}</th>
+								<th>${resourceBundle.getString("comment")}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -376,7 +376,7 @@
 			</div>
 			<!--End list of attachments-->
 
-			<input type="submit" id="submit" class="btn btn-default" value="Save contact"/>
+			<input type="submit" id="submit" class="btn btn-default" value="${resourceBundle.getString("savecontact")}"/>
 		</section>
 	</form>
 </div>
@@ -385,10 +385,10 @@
 <!--Popup for creating new phone-->
 <div class="popup-overlay" id="phone-modal">
 	<div class = "modal-window">
-		<h5>Create/edit phone</h5>
+		<h5>${resourceBundle.getString("createeditphone")}</h5>
 		<div class="container-fluid">
 			<div class="form-group">
-				<label for="country-code" class="control-label">Country code</label>
+				<label for="country-code" class="control-label">${resourceBundle.getString("countrycode")}</label>
 				<input type="text"
 					   class="form-control"
 					   id="country-code"
@@ -399,7 +399,7 @@
 				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
-				<label for="operator-code" class="control-label">Operator code</label>
+				<label for="operator-code" class="control-label">${resourceBundle.getString("operatorcode")}</label>
 				<input type="text"
 					   class="form-control"
 					   id="operator-code"
@@ -410,7 +410,7 @@
 				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
-				<label for="phone-number" class="control-label">Number</label>
+				<label for="phone-number" class="control-label">${resourceBundle.getString("number")}</label>
 				<input type="text"
 					   class="form-control"
 					   id="phone-number"
@@ -421,25 +421,25 @@
 				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
-				<label for="home">Type phone</label>
+				<label for="home">${resourceBundle.getString("typephone")}</label>
 
 				<div class="wrap-phone">
 				<input type="radio" name="typePhone" value="Home" class="radio phone-radio" id="home"/>
-				<label for="home" class="phone"><i class="fa fa-phone" aria-hidden="true"></i><span>Home</span></label>
+				<label for="home" class="phone"><i class="fa fa-phone" aria-hidden="true"></i><span>${resourceBundle.getString("home")}</span></label>
 
 				<input type="radio" name="typePhone" value="Mobile" class="radio phone-radio" id="mobile"/>
-				<label for="mobile" class="phone"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile</label>
+				<label for="mobile" class="phone"><i class="fa fa-mobile" aria-hidden="true"></i>${resourceBundle.getString("mobile")}</label>
 				</div>
 
 			</div>
 			<div class="form-group">
-				<label for="description">Description</label>
+				<label for="description">${resourceBundle.getString("description")}</label>
 				<input type="text" class="form-control" id="description" placeholder="Enter email">
 			</div>
 		</div>
 		<div class="modal-buttons">
-			<a href="#" class="btn btn-default create-edit" id="save-phone">Save</a>
-			<a href="#" class="btn btn-default close-modal">Cancel</a>
+			<a href="#" class="btn btn-default create-edit" id="save-phone">${resourceBundle.getString("save")}</a>
+			<a href="#" class="btn btn-default close-modal">${resourceBundle.getString("cancel")}</a>
 		</div>
 	</div>
 </div>
@@ -449,10 +449,10 @@
 <!--Popup for creating new attachment-->
 <div class="popup-overlay" id="attachment-modal">
 	<div class = "modal-window">
-		<h5>Create/edit attachtment</h5>
+		<h5>${resourceBundle.getString("createeditattachment")}</h5>
 		<div class="container-fluid">
 			<div class="form-group">
-				<label for="name-file" class="control-label">Name file</label>
+				<label for="name-file" class="control-label">${resourceBundle.getString("filename")}</label>
 				<input type="text"
 					   class="form-control"
 					   id="name-file"
@@ -463,20 +463,20 @@
 				<div class="warn-message"></div>
 			</div>
 			<div class="form-group">
-				<label for="comment-file">Comment</label>
+				<label for="comment-file">${resourceBundle.getString("comment")}</label>
 				<input type="text" class="form-control" id="comment-file" name="commentFile" placeholder="Comment">
 			</div>
 			<div class="form-group">
-				<label class="block">Choosen file: </label>
+				<label class="block">${resourceBundle.getString("choosenfile")}: </label>
 				<span id="choosen-file" class="block" onchange="validate.validateField(event,['isChoosenFile'],'save-attachment')"></span>
 				<div class="warn-message"></div>
-				<button class="btn btn-default" id="upload-file" onclick="tableAttachment.chooseFile()">Choose new image</button>
+				<button class="btn btn-default" id="upload-file" onclick="tableAttachment.chooseFile()">${resourceBundle.getString("choosenewfile")}</button>
 
 			</div>
 		</div>
 		<div class="modal-buttons">
-			<a href="#" class="btn btn-default create-edit" id="save-attachment">Save</a>
-			<a href="#" class="btn btn-default close-modal">Cancel</a>
+			<a href="#" class="btn btn-default create-edit" id="save-attachment">${resourceBundle.getString("save")}</a>
+			<a href="#" class="btn btn-default close-modal">${resourceBundle.getString("cancel")}</a>
 		</div>
 	</div>
 </div>

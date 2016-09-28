@@ -349,7 +349,7 @@ var callBackCreateAttachmentTr = function(tr, increment){
     var day = (parseInt(date.getDate(), 10) < 10 ) ? ('0'+date.getDate()) : (date.getDate());
     var month = (parseInt(date.getMonth() + 1, 10) < 10 ) ? ('0' + (date.getMonth() + 1)) : (date.getMonth() + 1);
 
-    var dateStr =  date.getFullYear() + "-" + day+ "-" + month;
+    var dateStr =  date.getFullYear() + "-" + month+ "-" + day;
 
     tr.innerHTML += "<td>" + namefile+ "</td>";
     tr.innerHTML += "<td>" + dateStr + "</td>";

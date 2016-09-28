@@ -35,16 +35,9 @@
 
 <div id="wrap-content" class="user-container">
     <section>
-        <h3>Introduction</h3>
+        <h3>${resourceBundle.getString("introduction")}</h3>
         <div class="block-input">
-            <div>Student: Topolev Vladimir</div>
-            <div>Project: Contact book</div>
-            <div>Start developing: 05 Spt 2016</div>
-            <div>Finish developing: </div>
-            <div>Stack technologies: Java 8, Java 2 EE (Servlets/JSP), JavaScript, Twitter Bootstrap  </div>
-            <div>Applied patterns: Front Controller, Command, DAO, Factory </div>
-            <div>RDBMS: MySQL 5.5  </div>
-            <div>VCS: Git  </div>
+            ${resourceBundle.getString("index")}
         </div>
     </section>
 </div>

@@ -32,13 +32,13 @@
 
 <div id="wrap-content" class="user-container">
 	<section>
-		<h3>Contact list</h3>
+		<h3>${resourceBundle.getString("contactlist")}</h3>
 		<div class="control-panel">
-			<a href="${root_directory}contactnew" class="btn btn-default">Create new contact</a>
-			<a href="" class="btn btn-default" id="show-delete-popup">Delete contacts</a>
-			<a href="" class="btn btn-default" id="send-messages">Send email</a>
+			<a href="${root_directory}contactnew" class="btn btn-default">${resourceBundle.getString("createnewcontact")}</a>
+			<a href="" class="btn btn-default" id="show-delete-popup">${resourceBundle.getString("deletecontact")}</a>
+			<a href="" class="btn btn-default" id="send-messages">${resourceBundle.getString("sendmessage")}</a>
 			<div class="select-show">
-				<span>Show:<span>
+				<span>${resourceBundle.getString("show")}:<span>
 				<select name="countRow" id="count-row">
 					<c:forTokens var="show_page" items="10,20" delims=",">
 						<option value="${show_page}" <c:if test="${show_page eq countRow}">selected</c:if> >${show_page}</option>
