@@ -210,3 +210,5 @@ tr.checked {
     white-space: normal;
   }
 }
+.error {
+  border-color: #ff0000;}

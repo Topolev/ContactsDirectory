@@ -1,5 +1,10 @@
 package by.topolev.contacts.servlets.utils;
 
+import by.topolev.contacts.servlets.formdata.ErrorForm;
+import by.topolev.contacts.servlets.utils.validation.TypeValidator;
+import by.topolev.contacts.servlets.utils.validation.Validation;
+import by.topolev.contacts.servlets.utils.validation.Validator;
+import by.topolev.contacts.servlets.utils.validation.ValidatorFactory;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +29,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import by.topolev.contacts.servlets.formdata.Error;
 
 public class EntityFromFormUtil {
     private static final Logger LOG = LoggerFactory.getLogger(EntityFromFormUtil.class);
@@ -31,39 +37,39 @@ public class EntityFromFormUtil {
 
     private static ObjectMapper map = new ObjectMapper();
 
-    public static <ENTITY> ENTITY createEntityFromRequest(List<FileItem> list, Class<ENTITY> clazz) {
+    public static <ENTITY> ENTITY createEntityFromRequest(List<FileItem> list, Class<ENTITY> clazz, ErrorForm error) {
         ENTITY entity = null;
         try {
             entity = clazz.newInstance();
-            createEntityFromRequest(list, EMPTY, entity);
+            createEntityFromRequest(list, EMPTY, entity, error);
         } catch (InstantiationException | IllegalAccessException e) {
             LOG.debug("Can not create new entity of {}.", clazz.getName(), e);
         }
         return entity;
     }
 
-    private static <ENTITY> void createEntityFromRequest(List<FileItem> list, String rootClass, ENTITY entity) throws InstantiationException, IllegalAccessException {
+    private static <ENTITY> void createEntityFromRequest(List<FileItem> list, String rootClass, ENTITY entity, ErrorForm error) throws InstantiationException, IllegalAccessException {
         Field[] fields = entity.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (isSimpleField(field)) {
-                setField(entity, field, getValueFromForm(list, field, rootClass));
+                setField(entity, field, getValueFromForm(list, field, rootClass, error));
             } else {
                 if (isListField(field)) {
-                    setListField(entity, field, list, rootClass);
+                    setListField(entity, field, list, rootClass, error);
                 } else {
-                    setObjectField(entity, field, list);
+                    setObjectField(entity, field, list, error);
                 }
             }
         }
     }
 
-    private static <ENTITY> void setObjectField(ENTITY entity, Field field, List<FileItem> list) throws InstantiationException, IllegalAccessException {
+    private static <ENTITY> void setObjectField(ENTITY entity, Field field, List<FileItem> list, ErrorForm error) throws InstantiationException, IllegalAccessException {
         Object innerEntity = field.getType().newInstance();
         setField(entity, field, innerEntity);
-        createEntityFromRequest(list, field.getName() + POINT, innerEntity);
+        createEntityFromRequest(list, field.getName() + POINT, innerEntity, error);
     }
 
-    private static <ENTITY> void setListField(ENTITY entity, Field field, List<FileItem> list, String rootClass) throws InstantiationException, IllegalAccessException {
+    private static <ENTITY> void setListField(ENTITY entity, Field field, List<FileItem> list, String rootClass, ErrorForm error) throws InstantiationException, IllegalAccessException {
         final Class<?> typeElementsOfList = getGenericTypeOfField(field);
         if (typeElementsOfList != null) {
             String nameInnerEntity = typeElementsOfList.getSimpleName().toLowerCase();
@@ -75,7 +81,7 @@ public class EntityFromFormUtil {
 
                 for (Integer index : array) {
                     Object innerEntity = typeElementsOfList.newInstance();
-                    createEntityFromRequest(list, nameInnerEntity + index + ".", innerEntity);
+                    createEntityFromRequest(list, nameInnerEntity + index + ".", innerEntity, error);
                     listOfEntity.add(innerEntity);
                 }
                 setField(entity, field, listOfEntity);
@@ -122,7 +128,7 @@ public class EntityFromFormUtil {
     }
 
     private static Predicate<FileItem> byFieldName(String anObject) {
-        return entry -> StringUtils.equals(entry.getFieldName(),anObject);
+        return entry -> StringUtils.equals(entry.getFieldName(), anObject);
     }
 
     private static Predicate<FileItem> isFormField() {
@@ -130,10 +136,13 @@ public class EntityFromFormUtil {
     }
 
 
-    private static Object getValueFromForm(List<FileItem> list, Field field, String rootClass) {
+    private static Object getValueFromForm(List<FileItem> list, Field field, String rootClass, ErrorForm error) {
         FileItem item = getFileItem(list, field, rootClass);
         if (item != null) {
             String value = new String(item.get(), UTF_8);
+
+            validField(value, field, error);
+
             if (isEmpty(value.trim())) {
                 return null;
             }
@@ -151,6 +160,20 @@ public class EntityFromFormUtil {
             }
         }
         return null;
+    }
+
+    private static void validField(String value, Field field, ErrorForm error) {
+
+        Validation validation = field.getAnnotation(Validation.class);
+        if (validation != null) {
+            TypeValidator[] listValidator =  validation.listValidator();
+            for (TypeValidator typeValidator : listValidator){
+                Validator validator = ValidatorFactory.getValidator(typeValidator);
+                if (!validator.test(value)) {
+                    error.addError(field.getName(), validator.getMessageError());
+                }
+            }
+        }
     }
 
     private static Object getDate(String value) {

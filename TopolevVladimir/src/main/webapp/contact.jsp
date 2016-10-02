@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="cf" uri="/WEB-INF/functions.tld"%>
 
 
 <!DOCTYPE html>
@@ -34,7 +35,7 @@
 <jsp:include page="header.jsp"/>
 
 <div id="wrap-content" class="user-container">
-	<form method="post"  action="/contactnew" enctype="multipart/form-data">
+	<form method="post"  action="/contactsave" enctype="multipart/form-data">
 		<input type="hidden" name="page" value="${page}">
 		<input type="hidden" name="countPage" value="${countPage}">
 		<input type="hidden" name="id" value="<c:out value="${contact.id}"/>">
@@ -65,7 +66,7 @@
 					<div class="block-input">
 					<div class="row">
 						<div class="col-md-4">
-							<div class="form-group">
+							<div class="form-group ${cf:hasError(error.errors, 'firstname') ? 'has-error': ''}">
 								<label for="firstname" class="control-label">${resourceBundle.getString("firstname")}</label>
 								<input type="text"
 									   class="form-control"
@@ -75,11 +76,11 @@
 									   value="<c:out value="${contact.firstname}"/>"
 									   onchange = "validate.validateField(event,['isNotEmpty'],'submit')"
 									   onblur = "validate.validateField(event,['isNotEmpty'],'submit')">
-								<div class="warn-message">This field must not be empty. This field must not be empty.</div>
+								<div class="warn-message">${cf:getMessage(error.errors,'firstname')}</div>
 							</div>
 						</div>
 						<div class="col-md-4">
-							<div class="form-group">
+							<div class="form-group ${cf:hasError(error.errors, 'lastname') ? 'has-error': ''}">
 								<label for="lastname" class="control-label">${resourceBundle.getString("lastname")}</label>
 								<input type="text"
 									   class="form-control"
@@ -89,7 +90,7 @@
 									   value="<c:out value="${contact.lastname}"/>"
 									   onchange = "validate.validateField(event,['isNotEmpty'],'submit')"
 									   onblur = "validate.validateField(event,['isNotEmpty'],'submit')" >
-								<div class="warn-message"></div>
+								<div class="warn-message">${cf:getMessage(error.errors,'lastname')}</div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -160,7 +161,7 @@
 							</div>
 						</div>
 						<div class="col-md-4">
-							<div class="form-group">
+							<div class="form-group ${cf:hasError(error.errors, 'email') ? 'has-error': ''}">
 								<label for="email" class="control-label">${resourceBundle.getString("email")}</label>
 								<input type="text"
 									   class="form-control"
@@ -169,7 +170,7 @@
 									   value="${contact.email}"
 									   onchange = "validate.validateField(event,['isNotEmpty','isEmail'],'submit')"
 									   onblur = "validate.validateField(event,['isNotEmpty','isEmail'],'submit')" >
-								<div class="warn-message"></div>
+								<div class="warn-message">${cf:getMessage(error.errors,'email')}</div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -229,7 +230,7 @@
 							</div>
 						</div>
 						<div class="col-md-4">
-							<div class="form-group">
+							<div class="form-group ${cf:hasError(error.errors, 'build') ? 'has-error': ''}">
 								<label for="build" class="control-label">${resourceBundle.getString("build")}</label>
 								<input type="text"
 									   class="form-control"
@@ -237,11 +238,11 @@
 									   name="address.build" value="${contact.address.build}"
 									   onchange = "validate.validateField(event,['isNumber'],'submit')"
 									   onblur = "validate.validateField(event,['isNumber'],'submit')">
-								<div class="warn-message"></div>
+								<div class="warn-message">${cf:getMessage(error.errors,'build')}</div>
 							</div>
 						</div>
 						<div class="col-md-4">
-							<div class="form-group">
+							<div class="form-group ${cf:hasError(error.errors, 'flat') ? 'has-error': ''}">
 								<label for="flat" class="control-label">${resourceBundle.getString("flat")}</label>
 								<input type="text"
 									   class="form-control"
@@ -250,7 +251,7 @@
 									   name="address.flat" value="${contact.address.flat}"
 									   onchange = "validate.validateField(event,['isNumber'],'submit')"
 									   onblur = "validate.validateField(event,['isNumber'],'submit')">
-								<div class="warn-message"></div>
+								<div class="warn-message">${cf:getMessage(error.errors,'flat')}</div>
 							</div>
 						</div>
 					</div>
@@ -508,7 +509,7 @@
 
 
 
-
+/*
 	var validate = new Validate();
 
 	var mapValidateMainForm = [
@@ -527,7 +528,7 @@
 	}
 
 
-
+*/
 
 
 

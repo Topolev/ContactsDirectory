@@ -8,6 +8,7 @@ import by.topolev.contacts.entity.Attachment;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.*;
 import by.topolev.contacts.servlets.formdata.Error;
+import by.topolev.contacts.servlets.formdata.ErrorForm;
 import by.topolev.contacts.servlets.frontcontroller.Command;
 import by.topolev.contacts.servlets.utils.EntityFromFormUtil;
 import org.apache.commons.fileupload.FileItem;
@@ -83,7 +84,18 @@ public class ContactCreateUpdateCommand implements Command {
             }*/
 
 			/*Extract entity from form and update*/
-            Contact contact = EntityFromFormUtil.createEntityFromRequest(items, Contact.class);
+			ErrorForm error = new ErrorForm();
+            Contact contact = EntityFromFormUtil.createEntityFromRequest(items, Contact.class, error);
+
+            if (!error.isValid()){
+                LOG.debug("Can not save/update contact. User entered invalid data");
+
+                req.setAttribute("contact", contact);
+                req.setAttribute("page",getFileItemParametr(items, "page", Integer.class, 0) );
+                req.setAttribute("countRow", getFileItemParametr(items, "countRow", Integer.class, 10));
+                req.setAttribute("error", error);
+                return "/contact.jsp";
+            }
 
             updatePhoto(contact, items);
             updateAttachments(contact, items);
@@ -96,19 +108,18 @@ public class ContactCreateUpdateCommand implements Command {
 
 
             int count = contactService.getCountContacts();
+
             if (contact.getId() == null){
                 LOG.debug("Creating of new contact was successful.");
-                LOG.info("Creating of new contact was successful.");
-                resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=" + (int) (Math.ceil((double) count / 10) - 1));
-                return null;
             } else{
                 LOG.debug("Updating of contact with id={} was successful.", contact.getId());
-                LOG.info("Updating of contact with id={} was successful.", contact.getId());
-                resp.sendRedirect(req.getContextPath()
-                        + "/contactlist?page=" +  getFileItemParametr(items, "page", Integer.class, 0)
-                        + "&countRow=" +  getFileItemParametr(items, "countRow", Integer.class, 10));
-                return null;
             }
+
+            resp.sendRedirect(req.getContextPath()
+                    + "/contactlist?page=" +  getFileItemParametr(items, "page", Integer.class, contact.getId() == null ?(int) (Math.ceil((double) count / 10) - 1) : 0 )
+                    + "&countRow=" +  getFileItemParametr(items, "countRow", Integer.class, 10));
+            return null;
+
         } else {
             LOG.debug("User sends form without data or form doesn't have enctype=\"multipart/form-data\" or size of file is too large.");
             Error error = new Error();

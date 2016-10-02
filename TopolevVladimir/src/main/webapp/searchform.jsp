@@ -95,6 +95,16 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="birthdaymore">${resourceBundle.getString("birthday")}</label>
+                        <div class="col-sm-5">
+                             раньше <input type="date" name="birthdaymore" class="form-control" id="birthdaymore" >
+                        </div>
+                        <div class="col-sm-5">
+                            позже <input type="date" name="birthdayless" class="form-control" id="birthdayless" >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-sm-2 control-label" for="country">${resourceBundle.getString("country")}</label>
                         <div class="col-sm-10">
                             <input type="text" name="country" class="form-control" id="country" placeholder="Country">
@@ -125,3 +135,16 @@
 <script src="${root_for_js}/main.js"></script>
 </body>
 </html>
+
+<script>
+    document.getElementById("birthdaymore").onchange = function(){
+        var date1 = new Date(this.value);
+        var date2Str = document.getElementById("birthdayless").value;
+        if (date2Str != ""){
+            date2 = new Date(date2Str);
+            alert(date1 > date2);
+        }
+
+
+    }
+</script>

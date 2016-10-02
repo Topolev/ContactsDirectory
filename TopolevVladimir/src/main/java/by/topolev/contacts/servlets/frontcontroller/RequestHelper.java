@@ -27,7 +27,8 @@ public class RequestHelper {
         mapResources.put(new MetaRequest("/contactdelete", GET), new ContactDeleteCommand());
         mapResources.put(new MetaRequest("/contact", GET), new ContactShowCommand());
         mapResources.put(new MetaRequest("/contactnew", GET), new ContactGetFormCommand());
-        mapResources.put(new MetaRequest("/contactnew", POST), new ContactCreateUpdateCommand(servletContext));
+        mapResources.put(new MetaRequest("/contactnew", POST), new ContactGetFormCommand());
+        mapResources.put(new MetaRequest("/contactsave", POST), new ContactCreateUpdateCommand(servletContext));
         mapResources.put(new MetaRequest("/showimage", GET), new ShowImageCommand());
         mapResources.put(new MetaRequest("/showsearchform", GET), new SearchFormGetCommand());
         mapResources.put(new MetaRequest("/searchform", GET), new SearchFormPostCommand());
@@ -48,7 +49,7 @@ public class RequestHelper {
         String currentURI = this.request.getRequestURI().toLowerCase();
         String currentMethod = this.request.getMethod().toLowerCase();
 
-        LOG.debug("Current URI: {} ; Current methos: {}",currentURI, currentMethod);
+        LOG.debug("Current URI: {} ; Current method: {}",currentURI, currentMethod);
         MetaRequest metaRequest = new MetaRequest(currentURI,currentMethod);
 
         return mapResources.get(metaRequest);

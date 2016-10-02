@@ -3,6 +3,8 @@ package by.topolev.contacts.entity;
 import by.topolev.contacts.orm.annotation.Column;
 import by.topolev.contacts.orm.annotation.Id;
 import by.topolev.contacts.orm.annotation.Table;
+import by.topolev.contacts.servlets.utils.validation.TypeValidator;
+import by.topolev.contacts.servlets.utils.validation.Validation;
 
 @Table(name="address")
 public class Address {
@@ -19,12 +21,15 @@ public class Address {
 	private String street;
 	
 	@Column(name="build")
+	@Validation(nameField = "Build", listValidator = {TypeValidator.IS_NUMBER})
 	private Integer build;
 	
 	@Column(name="flat")
+	@Validation(nameField = "Flat", listValidator = {TypeValidator.IS_NUMBER})
 	private Integer flat;
 	
 	@Column(name="ind")
+	@Validation(nameField = "Index", listValidator = {TypeValidator.IS_NUMBER})
 	private Integer ind;
 
 	@Column(name="contact_id")

@@ -123,7 +123,13 @@ public class ContactDaoJDBC implements ContactDao {
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ");
 		for (Map.Entry<String,String> entry : valueFields.entrySet()){
-			query.append(entry.getKey()).append("='").append(entry.getValue()).append("' AND ");
+			if ("birthdaymore".equals(entry.getKey())){
+				query.append("birthday >= {d '").append(entry.getValue()).append("'} AND ");
+			} else if ("birthdayless".equals(entry.getKey())){
+				query.append("birthday <= {d '").append(entry.getValue()).append("'} AND ");
+			} else{
+				query.append(entry.getKey()).append(" LIKE '%").append(entry.getValue()).append("%' AND ");
+			}
 		}
 		query.delete(query.length()-5, query.length());
 		return query.toString();

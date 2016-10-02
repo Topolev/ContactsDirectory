@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static by.topolev.contacts.servlets.utils.ServletUtil.createPaginator;
+
 /**
  * Created by Vladimir on 18.09.2016.
  */
@@ -22,7 +24,7 @@ public class SearchFormPostCommand implements Command {
     private static final Logger LOG = LoggerFactory.getLogger(SearchFormPostCommand.class);
     public static final String ISO_8859_1 = "ISO-8859-1";
 
-    private List<String> listFields = new ArrayList<String>(Arrays.asList("first_name","last_name","middle_name","sex","marital_status","nationality", "country", "city"));
+    private List<String> listFields = new ArrayList<String>(Arrays.asList("first_name","last_name","middle_name","sex","marital_status","nationality", "country", "city", "birthdaymore", "birthdayless"));
 
     private ContactService contactService = ContactServiceFactory.getContactService();
 
@@ -30,22 +32,22 @@ public class SearchFormPostCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        Map<String, String> valueFields = new HashMap<>();
-        StringBuilder listFieldsForGet = new StringBuilder();
+        Map<String, String> valueFields = getValueFields(req);
+        LOG.debug(valueFields.toString());
+        /*StringBuilder listFieldsForGet = new StringBuilder();
 
         for (String field : listFields){
             String value = getPostParameter(field, req);
             if (value != null){
-                //value = new String(value.getBytes(ISO_8859_1), StandardCharsets.UTF_8);
                 valueFields.put(field,value);
                 req.setAttribute(field, value);
-                listFieldsForGet.append(field).append("=").append(value/*new String(value.getBytes("UTF-8"), StandardCharsets.ISO_8859_1)*/).append("&");
+                listFieldsForGet.append(field).append("=").append(value).append("&");
             }
         }
         if (listFieldsForGet.length() >=1) {
             listFieldsForGet.delete(listFieldsForGet.length() - 1, listFieldsForGet.length());
         }
-        LOG.debug(listFieldsForGet.toString());
+        LOG.debug(listFieldsForGet.toString());*/
 
         int count = contactService.getCountSearchContact(valueFields);
         int countRow = ServletUtil.getRequestParameter(req, "countRow", int.class, 10);
@@ -55,29 +57,46 @@ public class SearchFormPostCommand implements Command {
         List<Contact> contactList = contactService.getSearchContact(valueFields, page, countRow);
 
 
-        Paginator paginator = ServletUtil.createPaginator(page,countPage);
 
-
-        req.setAttribute("paginator",paginator);
+        req.setAttribute("paginator", createPaginator(page,countPage));
         req.setAttribute("countRow", countRow);
         req.setAttribute("page",page);
         req.setAttribute("count", count);
         req.setAttribute("contactList", contactList);
-        req.setAttribute("listFields", listFieldsForGet.toString());
+        req.setAttribute("listFields", getListFieldForGet(valueFields));
 
-
-
-
-
-        /*req.setAttribute("count", count);
-        req.setAttribute("page", page);
-        req.setAttribute("countRow", countRow);
-        req.setAttribute("sortType", sortType);
-        req.setAttribute("paginator", paginator);
-        */
 
 
         return "/searchformwithresult.jsp";
+    }
+
+    private Map<String, String> getValueFields(HttpServletRequest req){
+        Map<String, String> valueFields = new HashMap<>();
+        //StringBuilder listFieldsForGet = new StringBuilder();
+
+        for (String field : listFields){
+            String value = getPostParameter(field, req);
+            if (value != null){
+                valueFields.put(field,value);
+                req.setAttribute(field, value);
+                //listFieldsForGet.append(field).append("=").append(value).append("&");
+            }
+        }
+        /*if (listFieldsForGet.length() >=1) {
+            listFieldsForGet.delete(listFieldsForGet.length() - 1, listFieldsForGet.length());
+        }*/
+        return valueFields;
+    }
+
+    private String getListFieldForGet(Map<String, String> valueFileds){
+        StringBuilder listFieldsForGet = new StringBuilder();
+        for (Map.Entry<String,String> entry : valueFileds.entrySet()){
+            listFieldsForGet.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+        }
+        if (listFieldsForGet.length() >=1) {
+            listFieldsForGet.delete(listFieldsForGet.length() - 1, listFieldsForGet.length());
+        }
+        return listFieldsForGet.toString();
     }
 
     private String getPostParameter(String nameField, HttpServletRequest req){
@@ -85,4 +104,5 @@ public class SearchFormPostCommand implements Command {
         if (value==null || "".equals(value)) return null;
         return value;
     }
+
 }
