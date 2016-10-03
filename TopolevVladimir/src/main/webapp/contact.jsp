@@ -103,7 +103,7 @@
 
 					<div class="row">
 						<div class="col-md-4">
-							<div class="form-group">
+							<div class="form-group  ${cf:hasError(error.errors, 'birthday') ? 'has-error': ''}">
 								<label for="birthday" class="control-label">${resourceBundle.getString("birthday")}</label>
 								<input type="date" class="form-control"
 									   id="birthday" placeholder="Choose birthday"
@@ -111,7 +111,7 @@
 									   value="<c:out value="${contact.birthday}"/>"
 									   onchange = "validate.validateField(event,['isDate'],'submit')"
 									   onblur = "validate.validateField(event,['isDate'],'submit')">
-								<div class="warn-message"></div>
+								<div class="warn-message">${cf:getMessage(error.errors,'birthday')}</div>
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -509,7 +509,7 @@
 
 
 
-/*
+
 	var validate = new Validate();
 
 	var mapValidateMainForm = [
@@ -528,7 +528,7 @@
 	}
 
 
-*/
+
 
 
 

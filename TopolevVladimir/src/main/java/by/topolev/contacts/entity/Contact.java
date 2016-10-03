@@ -43,6 +43,7 @@ public class Contact {
 	private String workplace;
 
 	@Column(name = "birthday")
+	@Validation(nameField = "Date", listValidator = {TypeValidator.IS_NOT_EMPTY, TypeValidator.IS_DATE})
 	private Date birthday;
 	
 	@Column(name="photo")

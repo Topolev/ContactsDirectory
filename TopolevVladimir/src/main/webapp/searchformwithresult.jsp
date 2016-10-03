@@ -88,6 +88,17 @@
 
                 </div>
 
+                <div class="form-group" id="birthday">
+                    <label class="col-sm-2 control-label" for="birthdaymore">${resourceBundle.getString("birthday")}</label>
+                    <div class="col-sm-5">
+                        <span>раньше</span> <input type="date" name="birthdaymore" class="form-control" id="birthdaymore" value="${birthdaymore}">
+                        <div class="warn-message">Date of this field have to be less or equal to date in the next field.</div>
+                    </div>
+                    <div class="col-sm-5">
+                        <span>позже</span> <input type="date" name="birthdayless" class="form-control" id="birthdayless" value="${birthdayless}">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="nationality">Nationality</label>
                     <div class="col-sm-10">

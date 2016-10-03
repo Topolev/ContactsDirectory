@@ -94,13 +94,14 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="birthday">
                         <label class="col-sm-2 control-label" for="birthdaymore">${resourceBundle.getString("birthday")}</label>
                         <div class="col-sm-5">
-                             раньше <input type="date" name="birthdaymore" class="form-control" id="birthdaymore" >
+                             <span>раньше</span> <input type="date" name="birthdaymore" class="form-control" id="birthdaymore" >
+                                 <div class="warn-message">Date of this field have to be less or equal to date in the next field.</div>
                         </div>
                         <div class="col-sm-5">
-                            позже <input type="date" name="birthdayless" class="form-control" id="birthdayless" >
+                            <span>позже</span> <input type="date" name="birthdayless" class="form-control" id="birthdayless" >
                         </div>
                     </div>
 
@@ -125,7 +126,7 @@
                         </div>
                     </div>
 
-                    <input type="submit" class="btn btn-default" value="${resourceBundle.getString("search")}">
+                    <input type="submit" class="btn btn-default" value="${resourceBundle.getString("search")}" id="search">
 
                 </form>
             </div>
@@ -133,18 +134,50 @@
 
 </div>
 <script src="${root_for_js}/main.js"></script>
+
 </body>
 </html>
 
 <script>
-    document.getElementById("birthdaymore").onchange = function(){
+   document.getElementById("birthdaymore").onchange = function(){
         var date1 = new Date(this.value);
         var date2Str = document.getElementById("birthdayless").value;
         if (date2Str != ""){
             date2 = new Date(date2Str);
-            alert(date1 > date2);
+            if (date1 > date2){
+                this.parentNode.parentNode.classList.add("has-error");
+            } else{
+                this.parentNode.parentNode.classList.remove("has-error");
+            }
+        }
+    }
+
+    document.getElementById("birthdayless").onchange = function(){
+        var date1 = new Date(this.value);
+        var date2Str = document.getElementById("birthdaymore").value;
+        if (date2Str != ""){
+            date2 = new Date(date2Str);
+            if (date1 < date2){
+                this.parentNode.parentNode.classList.add("has-error");
+            } else{
+                this.parentNode.parentNode.classList.remove("has-error");
+            }
+        }
+    }
+
+    document.getElementById("search").onclick = function(){
+        var date1Str = document.getElementById("birthdaymore").value;
+        var date2Str = document.getElementById("birthdayless").value;
+        if (date1Str != "" && date2Str !=""){
+            date1 = new Date(date1Str);
+            date2 = new Date(date2Str);
+            if (date1 > date2){
+                document.getElementById("birthday").classList.add("has-error")
+                return false;
+            }
         }
 
-
     }
+
+
 </script>

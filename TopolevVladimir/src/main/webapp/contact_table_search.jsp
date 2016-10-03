@@ -1,6 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 
+
+<c:if test="${count == 0}">
+    <div class="alert alert-warning">There aren't contacts appropriated current search query.</div>
+</c:if>
+<c:if test="${(fn:length(contactList) == 0) and (count != 0)}">
+    <div class="alert alert-warning">${resourceBundle.getString("isntexistpageforpaginator")}</div>
+</c:if>
+
+<c:if test="${fn:length(contactList) != 0}">
 <table class="table">
     <thead>
     <tr>
@@ -33,10 +42,23 @@
             </a>
         </td>
         <td>${contact.birthday}</td>
-        <td>${contact.address.country},${contact.address.city},
-                ${contact.address.street},
-                ${contact.address.build}-${contact.address.flat}</td>
-        <td>${contact.workplace}</td>
+        <td>
+            <c:if test="${(contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null)}">
+                ${contact.address.country},${contact.address.city},
+                ${contact.address.street},${contact.address.build}-${contact.address.flat}
+            </c:if>
+            <c:if test="${!((contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null))}">
+                ${resourceBundle.getString("notavailable")}
+            </c:if>
+        </td>
+        <td>
+            <c:if test="${(contact.workplace == null) or (contact.workplace.trim()=='')}">
+                ${resourceBundle.getString("notavailable")}
+            </c:if>
+            <c:if test="${!((contact.workplace == null) or (contact.workplace.trim()==''))}">
+                ${contact.workplace}
+            </c:if>
+        </td>
         </c:forEach>
     </tbody>
 </table>
@@ -104,3 +126,5 @@
         </div>
     </div>
 </div>
+
+    </c:if>
