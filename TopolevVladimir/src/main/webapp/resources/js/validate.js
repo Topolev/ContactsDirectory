@@ -4,7 +4,8 @@ function Validate(){
         isNumber : {func: isNumber, message: "Field must consist of numbers only."},
         isEmail : {func: isEmail, message: "Invalid format email."},
         isDate : {func: isDate, message: "Invalid format date."},
-        isChoosenFile: {func: isChoosenFile, message: "You must choose file."}
+        isChoosenFile: {func: isChoosenFile, message: "You must choose file."},
+        isMaxLength: {func: isMaxLength, message: "Maximum length of field is 25 simbol."}
     };
 
     var isEmailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -17,19 +18,21 @@ function Validate(){
 
     function isEmail(value){
         if (value.trim() == "") return true;
-        return isEmailRE.test(value);
+        return isEmailRE.test(value.trim());
     }
     function isNumber(value){
         if (value.trim() == "") return true;
         return isNumberRE.test(value);
     }
     function isUrl(value){
-        return isUrlRE.test(value);
+        return isUrlRE.test(value.trim());
     }
     function isDate(value){
         return  !(value.trim() == "");
     }
-
+    function isMaxLength(value){
+        return (value.trim().length < 25);
+    }
     function isChoosenFile(value){
         return (value != "File isn't choosen");
     }

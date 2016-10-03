@@ -85,8 +85,9 @@ public class FrontControllerFilter implements Filter{
         } else{
             if ("ru".equals(lan)){
                 locale = new Locale("ru", "RU");
-            }
-            if ("en".equals(lan)){
+            }else if ("en".equals(lan)){
+                locale = new Locale("en", "EN");
+            } else{
                 locale = new Locale("en", "EN");
             }
         }

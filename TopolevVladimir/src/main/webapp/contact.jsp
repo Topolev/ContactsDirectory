@@ -74,8 +74,8 @@
 									   placeholder="Enter your first name"
 									   name="firstname"
 									   value="<c:out value="${contact.firstname}"/>"
-									   onchange = "validate.validateField(event,['isNotEmpty'],'submit')"
-									   onblur = "validate.validateField(event,['isNotEmpty'],'submit')">
+									   onchange = "validate.validateField(event,['isNotEmpty', 'isMaxLength'],'submit')"
+									   onblur = "validate.validateField(event,['isNotEmpty', 'isMaxLength'],'submit')">
 								<div class="warn-message">${cf:getMessage(error.errors,'firstname')}</div>
 							</div>
 						</div>
@@ -88,8 +88,8 @@
 									   placeholder="Enter last name"
 									   name="lastname"
 									   value="<c:out value="${contact.lastname}"/>"
-									   onchange = "validate.validateField(event,['isNotEmpty'],'submit')"
-									   onblur = "validate.validateField(event,['isNotEmpty'],'submit')" >
+									   onchange = "validate.validateField(event,['isNotEmpty', 'isMaxLength'],'submit')"
+									   onblur = "validate.validateField(event,['isNotEmpty', 'isMaxLength'],'submit')" >
 								<div class="warn-message">${cf:getMessage(error.errors,'lastname')}</div>
 							</div>
 						</div>
@@ -513,8 +513,8 @@
 	var validate = new Validate();
 
 	var mapValidateMainForm = [
-		{id: "firstname", validators : ['isNotEmpty']},
-		{id: "lastname", validators: ['isNotEmpty']},
+		{id: "firstname", validators : ['isNotEmpty', 'isMaxLength']},
+		{id: "lastname", validators: ['isNotEmpty', 'isMaxLength']},
 		{id: "birthday", validators: ['isDate']},
 		{id: "email", validators: ['isNotEmpty', 'isEmail']},
 		{id: "index", validators: ['isNumber']},

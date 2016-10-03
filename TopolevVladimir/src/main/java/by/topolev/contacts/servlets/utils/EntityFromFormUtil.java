@@ -141,13 +141,13 @@ public class EntityFromFormUtil {
         if (item != null) {
             String value = new String(item.get(), UTF_8);
 
-            validField(value, field, error);
+            validField(value.trim(), field, error);
 
             if (isEmpty(value.trim())) {
                 return null;
             }
             if (field.getType() == String.class) {
-                return value;
+                return value.trim();
             }
             if (field.getType() == int.class || field.getType() == Integer.class) {
                 return getInteger(value);
