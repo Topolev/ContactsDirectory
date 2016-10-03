@@ -103,6 +103,10 @@ public class FrontControllerFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        try {
+            JobsFactory.destroyJobs();
+        } catch (SchedulerException e) {
+            LOG.error("Cannot destroy birthday notification job.");
+        }
     }
 }

@@ -18,15 +18,14 @@ public class JobsFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsFactory.class);
 
+    private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    private static Scheduler sched;
+
     public static void initJobs()  throws SchedulerException{
         LOG.debug("initJobs()");
 
-        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-
-        Scheduler sched = schedulerFactory.getScheduler();
-
+        sched = schedulerFactory.getScheduler();
         sched.start();
-
 
         JobDetail job = newJob(SendBirthdayListViaEmailJob.class)
                 .withIdentity("sendBirthdayListViaEmail","group1")
@@ -41,6 +40,17 @@ public class JobsFactory {
                 .build();
 
         sched.scheduleJob(job, trigger);
+    }
+
+    public static void destroyJobs() throws SchedulerException {
+        if(sched != null) {
+            LOG.info("Start stopping the birthday notification job.");
+            sched.shutdown(true);
+            LOG.info("The birthday notification job is stopped.");
+        } else {
+            LOG.error("No running birthday notification job.");
+        }
+
     }
 
 }
