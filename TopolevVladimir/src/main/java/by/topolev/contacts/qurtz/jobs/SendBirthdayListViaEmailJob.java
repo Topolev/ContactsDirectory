@@ -1,10 +1,12 @@
 package by.topolev.contacts.qurtz.jobs;
 
+import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.ContactService;
 import by.topolev.contacts.services.ContactServiceFactory;
 import by.topolev.contacts.services.SendEmailService;
 import by.topolev.contacts.services.SendEmailServiceFactory;
+import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -38,15 +40,20 @@ public class SendBirthdayListViaEmailJob implements Job{
                 .append("List of contacts who're celebraiting today own Birthday.\n");
 
         List<Contact> listContacts = contactService.getContactListWhoTodayCelebrateBirthday();
-        for(Contact contact : listContacts){
-            sb.append(contact.getFirstname()).append(" ")
-                    .append(contact.getLastname()).append(" ")
-                    .append(" birthday: ").append(dateFormat.format(contact.getBirthday())).append("\n");
+        if (CollectionUtils.isEmpty(listContacts)){
+            sb.append("List is empty.");
+        } else{
+            for(Contact contact : listContacts){
+                sb.append(contact.getFirstname()).append(" ")
+                        .append(contact.getLastname()).append(" ")
+                        .append(" birthday: ").append(dateFormat.format(contact.getBirthday())).append("\n");
+            }
         }
+
 
         LOG.debug(sb.toString());
 
-        //sendEmailService.sendMessage(ConfigUtil.getGmailUsername(), ConfigUtil.getMailAdministrator(), "subject", sb.toString());
+        sendEmailService.sendMessage(ConfigUtil.getGmailUsername(), ConfigUtil.getMailAdministrator(), "subject", sb.toString());
 
 
 

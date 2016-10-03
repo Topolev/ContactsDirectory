@@ -2,8 +2,11 @@ package by.topolev.contacts.servlets.frontcontroller;
 
 import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.orm.tools.EntityManagerFactory;
+import by.topolev.contacts.qurtz.JobsFactory;
 import by.topolev.contacts.servlets.utils.ServletUtil;
 import org.apache.commons.fileupload.FileItem;
+import org.quartz.SchedulerException;
+import org.quartz.spi.JobFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,12 @@ public class FrontControllerFilter implements Filter{
         ServletContext servletContext = filterConfig.getServletContext();
 
         ConfigUtil.init(servletContext);
+
+        try {
+            JobsFactory.initJobs();
+        } catch (SchedulerException e) {
+            LOG.debug("Can't run jobs.", e);
+        }
 
         EntityManagerFactory.getEntityManager();
         RequestHelper.init(servletContext);

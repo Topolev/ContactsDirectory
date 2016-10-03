@@ -36,7 +36,7 @@ public class JobsFactory {
                 .withIdentity("once_a_day_every_day","group1")
                 .startNow()
                 .withSchedule(simpleSchedule()
-                        .withIntervalInSeconds(10)
+                        .withIntervalInSeconds(24*60*60)
                         .repeatForever())
                 .build();
 
