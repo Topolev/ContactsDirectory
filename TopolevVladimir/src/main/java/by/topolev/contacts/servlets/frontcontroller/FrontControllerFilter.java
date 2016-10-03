@@ -83,6 +83,7 @@ public class FrontControllerFilter implements Filter{
         if (lan == null){
             locale = req.getLocale();
         } else{
+            lan = lan.trim();
             if ("ru".equals(lan)){
                 locale = new Locale("ru", "RU");
             }else if ("en".equals(lan)){
