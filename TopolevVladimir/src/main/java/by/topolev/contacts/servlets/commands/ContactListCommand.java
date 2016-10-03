@@ -6,7 +6,7 @@ import by.topolev.contacts.services.ContactServiceFactory;
 import by.topolev.contacts.servlets.formdata.InfoSortField;
 import by.topolev.contacts.servlets.formdata.Paginator;
 import by.topolev.contacts.servlets.frontcontroller.Command;
-import org.codehaus.jackson.map.ObjectMapper;
+import by.topolev.contacts.servlets.utils.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.topolev.contacts.servlets.utils.ServletUtil.*;
+import static by.topolev.contacts.servlets.utils.ServletUtil.createPaginator;
+import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
 
 /**
  * Created by Vladimir on 17.09.2016.
@@ -26,21 +27,34 @@ public class ContactListCommand implements Command {
 
     private ContactService contactService = ContactServiceFactory.getContactService();
 
-    private static ObjectMapper map = new ObjectMapper();
 
     public ContactListCommand(){};
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
-        int count = contactService.getCountContacts();
 
-        int page = getRequestParametr(req, "page", int.class, 0);
-        int countRow = getRequestParametr(req, "countRow", int.class, 10);
-        Integer sortField = getRequestParametr(req, "sortField", Integer.class, null);
-        String sortType = getRequestParametr(req, "sortType", String.class, null);
+        Integer count = contactService.getCountContacts();
+        Integer page = getRequestParameter(req, "page", Integer.class, 0);
+        Integer countRow = getRequestParameter(req, "countRow", Integer.class, 10);
+        Integer sortField = getRequestParameter(req, "sortField", Integer.class, null);
+        String sortType = getRequestParameter(req, "sortType", String.class, null);
+        Integer countPage = (int) Math.ceil((double)count/countRow);
 
         List<InfoSortField> sortFields = getDefaultSortFields();
 
+        req.setAttribute("contactList", getSortedContactList(sortField, sortType, page,countRow, sortFields));
+        req.setAttribute("count", count);
+        req.setAttribute("page", page);
+        req.setAttribute("countRow", countRow);
+        req.setAttribute("sortField", sortField);
+        req.setAttribute("sortType", sortType);
+        req.setAttribute("paginator", createPaginator(page, countPage));
+        req.setAttribute("sortFields", sortFields);
+
+        return "contact_list.jsp";
+    }
+
+    private List<Contact> getSortedContactList(Integer sortField, String sortType, Integer page,Integer countRow,  List<InfoSortField> sortFields){
         List<Contact> contactList;
         if ((sortField == null) || (sortType == null)){
             contactList = contactService.getLimitContactList(page, countRow);
@@ -48,26 +62,10 @@ public class ContactListCommand implements Command {
             sortFields.get(sortField).setChoosenField(true);
             if (sortType.equals("ASC")) sortFields.get(sortField).setSortType("DESC");
             else sortFields.get(sortField).setSortType("ASC");
-
             contactList = contactService.getLimitContactList(page, countRow, sortFields.get(sortField).getNameSortField(), sortType);
         }
-
-        int countPage = (int) Math.ceil((double)count/countRow);
-
-        Paginator paginator = createPaginator(page, countPage);
-
-        req.setAttribute("contactList", contactList);
-        req.setAttribute("count", count);
-        req.setAttribute("page", page);
-        req.setAttribute("countRow", countRow);
-        req.setAttribute("sortField", sortField);
-        req.setAttribute("sortType", sortType);
-        req.setAttribute("paginator", paginator);
-        req.setAttribute("sortFields", sortFields);
-
-        return "contact_list.jsp";
+        return contactList;
     }
-
 
     private List<InfoSortField> getDefaultSortFields(){
         List<InfoSortField> sortFields = new ArrayList<>();
@@ -78,29 +76,4 @@ public class ContactListCommand implements Command {
         return sortFields;
     }
 
-    private Paginator createPaginator(int page, int countPage){
-        Paginator paginator = new Paginator();
-        paginator.setButtonNext((page+1) < countPage);
-        paginator.setButtonPrev(page != 0);
-
-
-        if (page < 2) {
-            addSequencyNumberInCollection(paginator.getListPages(), 0, Math.min(5, countPage-1));
-        } else if (page < countPage - 2){
-            addSequencyNumberInCollection(paginator.getListPages(), page-1, page+1);
-        } else {
-            addSequencyNumberInCollection(paginator.getListPages(), Math.max(0, countPage - 5), countPage-1);
-        }
-
-        paginator.setSkipLeft(paginator.getListPages().get(0) != 0);
-        paginator.setSkipRight((paginator.getListPages().get(paginator.getListPages().size()-1)) != (countPage-1));
-
-        return paginator;
-    }
-
-    private void addSequencyNumberInCollection(List<Integer> list, int begin, int end){
-        for (int i = begin; i <= end; i++){
-            list.add(i);
-        }
-    }
 }

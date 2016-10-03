@@ -3,7 +3,6 @@ package by.topolev.contacts.orm.tools;
 import by.topolev.contacts.orm.annotation.*;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

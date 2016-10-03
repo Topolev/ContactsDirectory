@@ -26,12 +26,7 @@
     <link href="${root_for_css}/style-common.css" rel="stylesheet">
     <link href="${root_for_css}/style-contact.css" rel="stylesheet">
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
-    <script src="${root_for_js}/jquery-1.12.3.min.js"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${root_for_js}/bootstrap.js"></script>
 </head>
 <body>
 
@@ -40,16 +35,9 @@
 
 <div id="wrap-content" class="user-container">
     <section>
-        <h3>Introduction</h3>
+        <h3>${resourceBundle.getString("introduction")}</h3>
         <div class="block-input">
-            <div>Student: Topolev Vladimir</div>
-            <div>Project: Contact book</div>
-            <div>Start developing: 05 Spt 2016</div>
-            <div>Finish developing: </div>
-            <div>Stack technologies: Java 8, Java 2 EE (Servlets/JSP), JavaScript, Twitter Bootstrap  </div>
-            <div>Applied patterns: Front Controller, Command, DAO, Factory </div>
-            <div>RDBMS: MySQL 5.5  </div>
-            <div>VCS: Git  </div>
+            ${resourceBundle.getString("index")}
         </div>
     </section>
 </div>

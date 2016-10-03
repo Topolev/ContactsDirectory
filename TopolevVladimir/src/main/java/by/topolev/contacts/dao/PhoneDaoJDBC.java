@@ -1,8 +1,8 @@
 package by.topolev.contacts.dao;
 
-import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.entity.Phone;
 import by.topolev.contacts.orm.tools.EntityManager;
+import by.topolev.contacts.orm.tools.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ public class PhoneDaoJDBC implements PhoneDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContactDaoJDBC.class);
 
-    private EntityManager em = new EntityManager();
+    private EntityManager em = EntityManagerFactory.getEntityManager();
     @Override
     public void deletePhones(Integer... idList) {
         em.deleteEntity(Phone.class, idList);

@@ -8,54 +8,49 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DataSourceJDBC implements DataSource {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(DataSourceJDBC.class);
-	
-	private String driverClassName;
-	private String url;
-	private String username;
-	private String password;
-	
-	@Override
-	public Connection getConnection() throws SQLException {
-		try {
-			Class.forName(driverClassName);
-		} catch (ClassNotFoundException e) {
-			throw new SQLException("JDBC driver isn't found", e);
-		}
-		return DriverManager.getConnection(url, username, password);
-	}
 
-	public String getDriverClassName() {
-		return driverClassName;
-	}
+    private static final Logger LOG = LoggerFactory.getLogger(DataSourceJDBC.class);
 
-	public void setDriverClassName(String driverClassName) {
-		this.driverClassName = driverClassName;
-	}
+    private String driverClassName;
+    private String url;
+    private String username;
+    private String password;
 
-	public String getUrl() {
-		return url;
-	}
+    public DataSourceJDBC(String driverClassName, String url, String username, String password) {
+        this.driverClassName = driverClassName;
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+        try {
+            Class.forName(driverClassName);
+        } catch (ClassNotFoundException e) {
+            LOG.error("JDBC driver isn't found");
+            throw new RuntimeException(e);
+        }
 
-	public String getUsername() {
-		return username;
-	}
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
 
-	public String getPassword() {
-		return password;
-	}
+    @Override
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, username, password);
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
 }

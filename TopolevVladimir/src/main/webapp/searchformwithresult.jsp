@@ -27,12 +27,7 @@
     <link href="${root_for_css}/style-contact.css" rel="stylesheet">
     <link href="${root_for_css}/style-contact-list.css" rel="stylesheet">
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
-    <script src="${root_for_js}/jquery-1.12.3.min.js"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${root_for_js}/bootstrap.js"></script>
 
 
 </head>
@@ -46,7 +41,7 @@
     <section>
         <h3>Search form</h3>
         <div class="block-input">
-            <form method="post"  action="/searchform" class="form-horizontal" >
+            <form method="post"  action="/searchform" class="form-horizontal" accept-charset="UTF-8">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="firstname">First name</label>
@@ -93,6 +88,17 @@
 
                 </div>
 
+                <div class="form-group" id="birthday">
+                    <label class="col-sm-2 control-label" for="birthdaymore">${resourceBundle.getString("birthday")}</label>
+                    <div class="col-sm-5">
+                        <span>раньше</span> <input type="date" name="birthdaymore" class="form-control" id="birthdaymore" value="${birthdaymore}">
+                        <div class="warn-message">Date of this field have to be less or equal to date in the next field.</div>
+                    </div>
+                    <div class="col-sm-5">
+                        <span>позже</span> <input type="date" name="birthdayless" class="form-control" id="birthdayless" value="${birthdayless}">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="nationality">Nationality</label>
                     <div class="col-sm-10">
@@ -126,20 +132,12 @@
             </form>
         </div>
 
-
+        <div>Search <strong>${count}</strong> contacts</div>
         <div class="control-panel">
             <a href="" class="btn btn-default" id="show-delete-popup">Delete selected contacts</a>
-            <div class="select-show">
-				<span>Show:<span>
-				<select name="countRow" id="count-row">
-					<c:forTokens var="show_page" items="10,20" delims=",">
-                        <option value="${show_page}" <c:if test="${show_page eq countRow}">selected</c:if> >${show_page}</option>
-                    </c:forTokens>
-				</select>
-            </div>
         </div>
 
-        <%@ include file="contact_table.jsp"%>
+        <%@ include file="contact_table_search.jsp"%>
     </section>
 
 </div>

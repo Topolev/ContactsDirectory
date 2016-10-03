@@ -1,17 +1,14 @@
 package by.topolev.contacts.services;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.dao.ContactDao;
 import by.topolev.contacts.dao.ContactDaoFactory;
 import by.topolev.contacts.entity.Contact;
 
 import javax.servlet.ServletException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class ContactServiceImpl implements ContactService{
 	
@@ -49,6 +46,16 @@ public class ContactServiceImpl implements ContactService{
 	@Override
 	public List<Contact> getSearchContact(Map<String, String> valueFields) {
 		return contactDao.getSearchContact(valueFields);
+	}
+
+	@Override
+	public List<Contact> getSearchContact(Map<String, String> valueFields, int page, int countRow) {
+		return contactDao.getSearchContact(valueFields,page*countRow, countRow);
+	}
+
+	@Override
+	public int getCountSearchContact(Map<String, String> valueFields){
+		return contactDao.getCountSearchContact(valueFields);
 	}
 
 	@Override

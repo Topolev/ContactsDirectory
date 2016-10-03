@@ -11,9 +11,11 @@ public interface ContactDao {
 	List<Contact> getLimitContactList(int beginRow, int countRow);
 	List<Contact> getLimitContactList(int beginRow, int countRow, String sortField, String sortType);
 	List<Contact> getSearchContact(Map<String, String> valueFields);
+	List<Contact> getSearchContact(Map<String, String> valueFields, int beginRow, int countRow);
 	void updateContact(Contact contact);
 	Contact getContactById(int id);
-	public List<Contact> getContactById(Integer... idList);
+	List<Contact> getContactById(Integer... idList);
 	int getCountContacts();
+	int getCountSearchContact(Map<String, String> valueFields);
 	void deleteContacts(Integer...id);
 }

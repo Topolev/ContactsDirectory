@@ -38,14 +38,18 @@ function getCheckedId() {
 document.getElementById("delete-contact").onclick = function(event) {
     var checkedId = getCheckedId();
     window.location.replace(rootPath + "/contactdelete?delete="
-        + JSON.stringify(checkedId) + "&page=${page}&countRow=${countRow}" );
+        + JSON.stringify(checkedId) + "&page=" + page + "&countRow=" + countRow);
 
     return false;
 };
 
 document.getElementById("send-messages").onclick = function(){
     var checkedId = getCheckedId();
-    window.location.replace(rootPath + "/sendmessage?sendto=" + JSON.stringify(checkedId));
+    if (checkedId.length > 0){
+        window.location.replace(rootPath + "/sendmessage?sendto=" + JSON.stringify(checkedId));
+    } else{
+        alert("You have to choose one contact at least.")
+    }
     return false;
 }
 

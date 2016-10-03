@@ -3,6 +3,7 @@ package by.topolev.contacts.entity;
 import by.topolev.contacts.orm.annotation.Column;
 import by.topolev.contacts.orm.annotation.Id;
 import by.topolev.contacts.orm.annotation.Table;
+import by.topolev.contacts.servlets.utils.validation.Validation;
 
 /**
  * Created by Vladimir on 11.09.2016.

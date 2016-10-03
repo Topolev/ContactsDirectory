@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import by.topolev.contacts.orm.annotation.*;
+import by.topolev.contacts.servlets.utils.validation.TypeValidator;
+import by.topolev.contacts.servlets.utils.validation.Validation;
 
 @Table(name = "contact")
 public class Contact {
@@ -11,9 +13,11 @@ public class Contact {
 	private Integer id;
 
 	@Column(name = "first_name")
+	@Validation(nameField = "First name", listValidator = {TypeValidator.IS_NOT_EMPTY})
 	private String firstname;
 
 	@Column(name = "last_name")
+	@Validation(nameField = "Last name", listValidator = {TypeValidator.IS_NOT_EMPTY})
 	private String lastname;
 
 	@Column(name = "middle_name")
@@ -32,12 +36,14 @@ public class Contact {
 	private String website;
 
 	@Column(name = "email")
+	@Validation(nameField = "Email", listValidator = {TypeValidator.IS_NOT_EMPTY, TypeValidator.IS_EMAIL})
 	private String email;
 
 	@Column(name = "work_place")
 	private String workplace;
 
 	@Column(name = "birthday")
+	@Validation(nameField = "Date", listValidator = {TypeValidator.IS_NOT_EMPTY, TypeValidator.IS_DATE})
 	private Date birthday;
 	
 	@Column(name="photo")
@@ -174,6 +180,7 @@ public class Contact {
 	}
 
 	public String toString() {
+
 		StringBuilder str = new StringBuilder();
 		str.append(" id: " + id);
 		str.append(" first name: " + firstname);

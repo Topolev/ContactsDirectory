@@ -23,7 +23,22 @@ for (var i in a_lang){
     a_lang[i].onclick = function(event){
         choose_lang.innerHTML = this.innerHTML;
         lang.style.overflow = "hidden";
-        event.stopPropagation()
-        return false;
+        //event.stopPropagation()
+        //return false;
     }
+}
+
+
+var showNavbar = true;
+document.getElementById("header-button").onclick = function(){
+    var navbar =  document.getElementById("main-navbar");
+    if (showNavbar){
+        navbar.className += " in";
+        showNavbar = false;
+    } else{
+        navbar.classList.remove("in");
+        showNavbar = true;
+    }
+
+
 }

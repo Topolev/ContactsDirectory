@@ -1,6 +1,5 @@
 package by.topolev.contacts.qurtz.jobs;
 
-import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.ContactService;
 import by.topolev.contacts.services.ContactServiceFactory;

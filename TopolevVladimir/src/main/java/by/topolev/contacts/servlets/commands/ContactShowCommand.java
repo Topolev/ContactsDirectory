@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
+
 /**
  * Created by Vladimir on 18.09.2016.
  */
@@ -39,6 +41,9 @@ public class ContactShowCommand implements Command{
         }
 
         req.setAttribute("contact", contact);
+        req.setAttribute("page", getRequestParameter(req, "page", Integer.class, 0));
+        req.setAttribute("countPage", getRequestParameter(req, "countRow", Integer.class, 10));
+
         return "/contact.jsp";
     }
 }

@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page isELIgnored="false"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
  
 
 <!DOCTYPE html>
@@ -21,12 +22,7 @@
 <link href="${root_for_css}/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
-<script src="${root_for_js}/jquery-1.12.3.min.js"></script>
 
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="${root_for_js}/bootstrap.js"></script>
 
 
 </head>
@@ -36,13 +32,13 @@
 
 <div id="wrap-content" class="user-container">
 	<section>
-		<h3>Contact list</h3>
+		<h3>${resourceBundle.getString("contactlist")}</h3>
 		<div class="control-panel">
-			<a href="${root_directory}contactnew" class="btn btn-default">Create new contact</a>
-			<a href="" class="btn btn-default" id="show-delete-popup">Delete selected contacts</a>
-			<a href="" class="btn btn-default" id="send-messages">Send email to selected contacts</a>
+			<a href="${root_directory}contactnew" class="btn btn-default">${resourceBundle.getString("createnewcontact")}</a>
+			<a href="" class="btn btn-default" id="show-delete-popup">${resourceBundle.getString("deletecontact")}</a>
+			<a href="" class="btn btn-default" id="send-messages">${resourceBundle.getString("sendmessage")}</a>
 			<div class="select-show">
-				<span>Show:<span>
+				<span>${resourceBundle.getString("show")}:<span>
 				<select name="countRow" id="count-row">
 					<c:forTokens var="show_page" items="10,20" delims=",">
 						<option value="${show_page}" <c:if test="${show_page eq countRow}">selected</c:if> >${show_page}</option>
@@ -56,7 +52,10 @@
 	</section>
 </div>
 
-
+<script>
+	var page = ${page};
+	var countRow = ${countRow};
+</script>
 
 <script src="${root_for_js}/main.js"></script>
 <script src="${root_for_js}/table.js"></script>

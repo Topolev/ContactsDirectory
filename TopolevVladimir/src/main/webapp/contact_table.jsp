@@ -1,4 +1,14 @@
-<table class="table">
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<c:if test="${count == 0}">
+    <div class="alert alert-warning">There aren't contacts. You can create the first one.</div>
+</c:if>
+<c:if test="${(fn:length(contactList) == 0) and (count != 0)}">
+    <div class="alert alert-warning">${resourceBundle.getString("isntexistpageforpaginator")}</div>
+</c:if>
+
+<c:if test="${fn:length(contactList) != 0}">
+    <table class="table">
     <thead>
     <tr>
         <th>
@@ -8,9 +18,7 @@
                 <div>
         </th>
 
-        <th>First name, last name
-
-
+        <th>${resourceBundle.getString("firstnamelastname")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=0&sortType=${sortFields.get(0).sortType}">
                 <c:if test="${!sortFields.get(0).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -25,7 +33,7 @@
 
         </th>
 
-        <th>Birthday
+        <th>${resourceBundle.getString("birthday")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=1&sortType=${sortFields.get(1).sortType}">
                 <c:if test="${!sortFields.get(1).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -38,7 +46,7 @@
                 </c:if>
             </a>
         </th>
-        <th>Address
+        <th>${resourceBundle.getString("address")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=2&sortType=${sortFields.get(2).sortType}">
                 <c:if test="${!sortFields.get(2).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -51,7 +59,7 @@
                 </c:if>
             </a>
         </th>
-        <th>Work place
+        <th>${resourceBundle.getString("workplace")}
             <a href="${root_directory}contactlist?countRow=${countRow}&sortField=3&sortType=${sortFields.get(3).sortType}">
                 <c:if test="${!sortFields.get(3).choosenField}">
                     <i class="fa fa-sort" aria-hidden="true"></i>
@@ -76,15 +84,28 @@
                 <div>
         </td>
         <td>
-            <a href="<c:url value="/contact?id=${contact.id}"/>">
+            <a href="<c:url value="/contact?id=${contact.id}&page=${page}&countRow=${countRow}"/>">
                     ${contact.firstname} ${contact.lastname}
             </a>
         </td>
         <td>${contact.birthday}</td>
-        <td>${contact.address.country},${contact.address.city},
-                ${contact.address.street},
-                ${contact.address.build}-${contact.address.flat}</td>
-        <td>${contact.workplace}</td>
+        <td>
+            <c:if test="${(contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null)}">
+                ${contact.address.country},${contact.address.city},
+                ${contact.address.street},${contact.address.build}-${contact.address.flat}
+            </c:if>
+            <c:if test="${!((contact.address.country != null) and (contact.address.city != null) and (contact.address.street != null) and (contact.address.build != null) and (contact.address.flat != null))}">
+                ${resourceBundle.getString("notavailable")}
+            </c:if>
+        </td>
+        <td>
+            <c:if test="${(contact.workplace == null) or (contact.workplace.trim()=='')}">
+                ${resourceBundle.getString("notavailable")}
+            </c:if>
+            <c:if test="${!((contact.workplace == null) or (contact.workplace.trim()==''))}">
+                ${contact.workplace}
+            </c:if>
+        </td>
         </c:forEach>
     </tbody>
 </table>
@@ -103,6 +124,11 @@
             </li>
         </c:if>
         <c:if test="${paginator.skipLeft}">
+            <li>
+                <a href="<c:url value="/contactlist?page=0&countRow=${countRow}&sortField=${sortField}&sortType=${sortType}" />">
+                    1
+                </a>
+            </li>
             <li class="not-link"><span>...</span></li>
         </c:if>
 
@@ -116,7 +142,13 @@
 
 
         <c:if test="${paginator.skipRight}">
+
             <li class="not-link"><span>...</span></li>
+            <li>
+                <a href="<c:url value="/contactlist?page=${paginator.countPage - 1}&countRow=${countRow}&sortField=${sortField}&sortType=${sortType}" />">
+                        ${paginator.countPage}
+                </a>
+            </li>
         </c:if>
         <c:if test="${paginator.buttonNext}">
             <li>
@@ -140,3 +172,4 @@
         </div>
     </div>
 </div>
+</c:if>
