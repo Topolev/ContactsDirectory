@@ -24,6 +24,8 @@ import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter
 public class ContactListCommand implements Command {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContactListCommand.class);
+    public static final String ASC = "ASC";
+    public static final String DESC = "DESC";
 
     private ContactService contactService = ContactServiceFactory.getContactService();
 
@@ -37,7 +39,7 @@ public class ContactListCommand implements Command {
         Integer page = getRequestParameter(req, "page", Integer.class, 0);
         Integer countRow = getRequestParameter(req, "countRow", Integer.class, 10);
         Integer sortField = getRequestParameter(req, "sortField", Integer.class, null);
-        String sortType = getRequestParameter(req, "sortType", String.class, null);
+        String sortType = getValidSortType(req);
         Integer countPage = (int) Math.ceil((double)count/countRow);
 
         List<InfoSortField> sortFields = getDefaultSortFields();
@@ -54,14 +56,24 @@ public class ContactListCommand implements Command {
         return "contact_list.jsp";
     }
 
+    private String getValidSortType(HttpServletRequest req) {
+        String sortType = getRequestParameter(req, "sortType", String.class, null);
+        boolean isNotValid = !ASC.equalsIgnoreCase(sortType) && !DESC.equalsIgnoreCase(sortType);
+        return isNotValid ? ASC : sortType;
+    }
+
     private List<Contact> getSortedContactList(Integer sortField, String sortType, Integer page,Integer countRow,  List<InfoSortField> sortFields){
         List<Contact> contactList;
         if ((sortField == null) || (sortType == null)){
             contactList = contactService.getLimitContactList(page, countRow);
         } else {
             sortFields.get(sortField).setChoosenField(true);
-            if (sortType.equals("ASC")) sortFields.get(sortField).setSortType("DESC");
-            else sortFields.get(sortField).setSortType("ASC");
+            if (sortType.equals(ASC)) {
+                sortFields.get(sortField).setSortType(DESC);
+            }
+            else {
+                sortFields.get(sortField).setSortType(ASC);
+            }
             contactList = contactService.getLimitContactList(page, countRow, sortFields.get(sortField).getNameSortField(), sortType);
         }
         return contactList;

@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 /**
  * Created by Vladimir on 18.09.2016.
  */
-public class FrontControllerFilter implements Filter{
+public class FrontControllerFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(FrontControllerFilter.class);
 
