@@ -26,9 +26,18 @@ public class ContactDeleteCommand implements Command{
         contactService.deleteContact(idList);
 
 
+        Integer countRow = getRequestParameter(req, "countRow", Integer.class, 10);
+        Integer count = contactService.getCountContacts();
+        Integer page = getRequestParameter(req, "page", Integer.class, 0);
+
+        if (((int )Math.ceil((double)count / countRow) -1) < page) {
+            page--;
+        }
+
+
         resp.sendRedirect(req.getContextPath()
-                + "/contactlist?page=" + getRequestParameter(req, "page", Integer.class, 0)
-                + "&countRow=" + getRequestParameter(req, "countRow", Integer.class, 10));
+                + "/contactlist?page=" + page
+                + "&countRow=" + countRow);
         return null;
     }
 }

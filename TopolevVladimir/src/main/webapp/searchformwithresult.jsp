@@ -127,7 +127,7 @@
                     </div>
                 </div>
 
-                <input type="submit" class="btn btn-default" value="Search">
+                <input type="submit" class="btn btn-default" value="${resourceBundle.getString("search")}" id="search">
 
             </form>
         </div>
@@ -141,5 +141,6 @@
 </div>
 <script src="${root_for_js}/main.js"></script>
 <script src="${root_for_js}/table_search.js"></script>
+<script src="${root_for_js}/search.js"></script>
 </body>
 </html>
