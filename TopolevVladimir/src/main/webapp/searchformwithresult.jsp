@@ -133,9 +133,7 @@
         </div>
 
         <div>Search <strong>${count}</strong> contacts</div>
-        <div class="control-panel">
-            <a href="" class="btn btn-default" id="show-delete-popup">Delete selected contacts</a>
-        </div>
+
 
         <%@ include file="contact_table_search.jsp"%>
     </section>

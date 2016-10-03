@@ -19,7 +19,7 @@ public class ChangeLanguageCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        LOG.debug("Cahnge language");
+        LOG.debug("Change language locale");
         Cookie cookie = new Cookie("lan", ServletUtil.getRequestParameter(req,"lan",String.class,"en"));
         cookie.setMaxAge(24*60*60);
         resp.addCookie(cookie);

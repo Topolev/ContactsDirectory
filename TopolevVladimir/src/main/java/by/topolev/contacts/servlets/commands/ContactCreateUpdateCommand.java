@@ -20,14 +20,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
+import java.util.*;
 
 import static by.topolev.contacts.servlets.utils.ServletUtil.getFileItemParametr;
 import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
@@ -76,12 +78,12 @@ public class ContactCreateUpdateCommand implements Command {
 
         if (items != null) {
 
-           /* String idStr = getFieldValue(ID, items);
-            if (!StringUtils.isNumeric(idStr)) {
+           String idStr = getFieldValue(ID, items);
+            if (StringUtils.isNotEmpty(idStr) && !StringUtils.isNumeric(idStr)) {
                 LOG.debug("Someone attempts to apply huck related to SQL Injection");
                 resp.sendRedirect(req.getContextPath() + "/contactlist");
                 return null;
-            }*/
+            }
 
 			/*Extract entity from form and update*/
 			ErrorForm error = new ErrorForm();
@@ -122,10 +124,10 @@ public class ContactCreateUpdateCommand implements Command {
 
         } else {
             LOG.debug("User sends form without data or form doesn't have enctype=\"multipart/form-data\" or size of file is too large.");
-            Error error = new Error();
-            error.addError("You can choose one contact at least for sending message via email. ");
-            req.setAttribute("errors", error);
-            return "/error.jsp";
+            LOG.debug(req.getContextPath() + "/contactlist");
+            resp.sendRedirect(req.getContextPath() + "/contactlist");
+            //return "/error.jsp";
+            return null;
         }
     }
 

@@ -13,12 +13,7 @@
 <table class="table">
     <thead>
     <tr>
-        <th>
-            <div class="wrap-checkbox">
-                <input type="checkbox" id="delete-all">
-                <label></label>
-                <div>
-        </th>
+
 
         <th>First name, last name</th>
         <th>Birthday</th>
@@ -30,12 +25,7 @@
 
     <c:forEach var="contact" items="${contactList}">
     <tr>
-        <td>
-            <div class="wrap-checkbox">
-                <input type="checkbox" name="delete" class="delete-by-id" value="${contact.id}">
-                <label></label>
-                <div>
-        </td>
+
         <td>
             <a href="<c:url value="/contact?id=${contact.id}"/>">
                     ${contact.firstname} ${contact.lastname}

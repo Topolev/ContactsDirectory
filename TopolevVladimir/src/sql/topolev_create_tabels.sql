@@ -8,7 +8,7 @@ GRANT ALL PRIVILEGES ON * . * TO 'topolev'@'localhost';
 
 # create scheme
 CREATE DATABASE IF NOT EXISTS `topolev`;
-USE `topolev_test`;
+USE `topolev`;
 
 
 # Table contact
