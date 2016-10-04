@@ -168,7 +168,7 @@ public class ContactCreateUpdateCommand implements Command {
 
             for (Integer i : listAttachmentsId) {
                 FileItem fileItem = getFileItemByName(FILE + i, items);
-                String nameFile = uploadFileService.saveFile(fileItem);
+                String nameFile = uploadFileService.saveFile(fileItem, contact.getId());
                 Attachment currentAttachment = iterator.next();
                 if (nameFile != null) {
                     currentAttachment.setNameFileInSystem(nameFile);

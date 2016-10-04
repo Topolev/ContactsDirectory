@@ -59,6 +59,9 @@
 							<input type="file" name="uploadphoto" />
 							<button class="btn btn-default">${resourceBundle.getString("choosenewimage")}</button>
 						</div>
+						<div id="delete-photo">
+							<a href="" class="btn btn-default" id="delete-photo-href">${resourceBundle.getString("deleteimage")}</a>
+						</div>
 					</div>
 				</div>
 
@@ -109,8 +112,8 @@
 									   id="birthday" placeholder="Choose birthday"
 									   name="birthday"
 									   value="<c:out value="${contact.birthday}"/>"
-									   onchange = "validate.validateField(event,['isDate'],'submit')"
-									   onblur = "validate.validateField(event,['isDate'],'submit')">
+									   onchange = "validate.validateField(event,['isDate', 'isDateLessThenTodayDate'],'submit')"
+									   onblur = "validate.validateField(event,['isDate', 'isDateLessThenTodayDate'],'submit')">
 								<div class="warn-message">${cf:getMessage(error.errors,'birthday')}</div>
 							</div>
 						</div>
@@ -359,7 +362,7 @@
                                         <label></label>
                                     </div>
                                 </td>
-                                <td><a href="${root_directory}uploadfile?file=${item.nameFileInSystem}">${item.nameFile}</a></td>
+                                <td><a href="${root_directory}uploadfile?file=${item.nameFileInSystem}" target="_blank">${item.nameFile}</a></td>
                                 <td>${item.dateFile}</td>
                                 <td>${item.commentFile}</td>
                                 <input type="hidden" name="attachment${status.count}.id" value="${item.id}">
@@ -378,6 +381,7 @@
 			<!--End list of attachments-->
 
 			<input type="submit" id="submit" class="btn btn-default" value="${resourceBundle.getString("savecontact")}"/>
+			<a href="${root_directory}contactlist" class="btn btn-default">${resourceBundle.getString("cancel")}</a>
 		</section>
 	</form>
 </div>
@@ -435,7 +439,7 @@
 			</div>
 			<div class="form-group">
 				<label for="description">${resourceBundle.getString("description")}</label>
-				<input type="text" class="form-control" id="description" placeholder="Enter email">
+				<input type="text" class="form-control" id="description" placeholder="Enter description">
 			</div>
 		</div>
 		<div class="modal-buttons">
@@ -508,6 +512,13 @@
 
 
 
+	var root_for_image = "${root_for_img}";
+
+	document.getElementById("delete-photo-href").onclick = function(){
+		document.getElementById("profile-photo").setAttribute("src", root_for_image + "/no-profile-photo.png");
+
+		return false;
+	}
 
 
 	var validate = new Validate();
@@ -515,7 +526,7 @@
 	var mapValidateMainForm = [
 		{id: "firstname", validators : ['isNotEmpty', 'isMaxLength']},
 		{id: "lastname", validators: ['isNotEmpty', 'isMaxLength']},
-		{id: "birthday", validators: ['isDate']},
+		{id: "birthday", validators: ['isDate', 'isDateLessThenTodayDate']},
 		{id: "email", validators: ['isNotEmpty', 'isEmail']},
 		{id: "index", validators: ['isNumber']},
 		{id: "build", validators: ['isNumber']},

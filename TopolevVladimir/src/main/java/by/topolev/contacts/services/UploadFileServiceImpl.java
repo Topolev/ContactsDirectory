@@ -16,32 +16,48 @@ public class UploadFileServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(UploadImageServiceImpl.class);
 
 
-    public String saveFile(FileItem item) {
-        LOG.debug("Save profile file");
-        createUploadDirIfNotExist();
-        if (item == null || item.getName() == null || "".equals(item.getName())) return null;
+    public String saveFile(FileItem item, Integer contactId) {
+        LOG.debug("Save attachment for user id = {}", contactId);
+
+        if (item == null || item.getName() == null || "".equals(item.getName())) {
+            LOG.debug("User can not attach file");
+            return null;
+        }
+
+        if (!createUploadDirIfNotExist(contactId)) {
+            LOG.debug("Can not save attachment, because can not create nessacary folders.");
+            return null;
+        }
+
 
         String fileName = getUniqueFileName(item.getName());
-        File file = new File(ConfigUtil.getPathUploadProfileFiles() + fileName);
+        File file = new File(ConfigUtil.getPathUploadProfileFiles() + contactId.toString() + "/" + fileName);
         try {
             item.write(file);
-            LOG.debug(String.format("File upload is success, file path = %s", file.getAbsolutePath()));
-            return fileName;
+            LOG.debug(String.format("File uploading is success, file path = %s", file.getAbsolutePath()));
+            return (contactId.toString() + "/" + fileName);
         } catch (Exception e) {
-            LOG.debug("Problem with upload file", e);
+            LOG.debug("Problem with uploading file", e);
         }
         return null;
     }
 
 
-    private void createUploadDirIfNotExist() {
-        File file = new File(ConfigUtil.getPathUploadProfileFiles());
-        if (!file.exists()) {
-            if (file.mkdir()) {
-                LOG.debug("Create folder for uploading files: {}", file.getAbsolutePath());
-            } else{
-                LOG.debug("Can't create folder for upload files", file.getAbsolutePath());
+    private boolean createUploadDirIfNotExist(Integer contactId) {
+        return (createDirectory(ConfigUtil.getPathUploadProfileFiles()) && createDirectory(ConfigUtil.getPathUploadProfileFiles() + contactId.toString() + "/"));
+    }
+
+    private boolean createDirectory(String nameDirectory) {
+        File directory = new File(nameDirectory);
+        if (!directory.exists()) {
+            if (directory.mkdir()) {
+                return true;
+            } else {
+                LOG.debug("Can not create directory '{}'", directory.getAbsolutePath());
+                return false;
             }
+        } else {
+            return true;
         }
     }
 

@@ -5,7 +5,8 @@ function Validate(){
         isEmail : {func: isEmail, message: "Invalid format email."},
         isDate : {func: isDate, message: "Invalid format date."},
         isChoosenFile: {func: isChoosenFile, message: "You must choose file."},
-        isMaxLength: {func: isMaxLength, message: "Maximum length of field is 25 simbol."}
+        isMaxLength: {func: isMaxLength, message: "Maximum length of field is 25 simbol."},
+        isDateLessThenTodayDate:{func: isDateLessThenTodayDate, message: "Birthday can be less that today date."}
     };
 
     var isEmailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -29,6 +30,13 @@ function Validate(){
     }
     function isDate(value){
         return  !(value.trim() == "");
+    }
+    function isDateLessThenTodayDate(value){
+        if (value.trim() != ""){
+            var date = new Date(value.trim());
+            var now = new Date();
+            return (date <= now);
+        } else return true;
     }
     function isMaxLength(value){
         return (value.trim().length < 25);
