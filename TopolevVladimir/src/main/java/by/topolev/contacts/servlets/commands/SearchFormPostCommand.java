@@ -3,16 +3,15 @@ package by.topolev.contacts.servlets.commands;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.ContactService;
 import by.topolev.contacts.services.ContactServiceFactory;
-import by.topolev.contacts.servlets.formdata.Paginator;
 import by.topolev.contacts.servlets.frontcontroller.Command;
 import by.topolev.contacts.servlets.utils.ServletUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static by.topolev.contacts.servlets.utils.ServletUtil.createPaginator;
@@ -21,8 +20,15 @@ import static by.topolev.contacts.servlets.utils.ServletUtil.createPaginator;
  * Created by Vladimir on 18.09.2016.
  */
 public class SearchFormPostCommand implements Command {
+
     private static final Logger LOG = LoggerFactory.getLogger(SearchFormPostCommand.class);
-    public static final String ISO_8859_1 = "ISO-8859-1";
+
+    public static final String COUNT_ROW = "countRow";
+    public static final String PAGE = "page";
+    public static final String PAGINATOR = "paginator";
+    public static final String COUNT = "count";
+    public static final String CONTACT_LIST = "contactList";
+    public static final String LIST_FIELDS = "listFields";
 
     private List<String> listFields = new ArrayList<String>(Arrays.asList("first_name","last_name","middle_name","sex","marital_status","nationality", "country", "city", "birthdaymore", "birthdayless"));
 
@@ -34,75 +40,48 @@ public class SearchFormPostCommand implements Command {
 
         Map<String, String> valueFields = getValueFields(req);
         LOG.debug(valueFields.toString());
-        /*StringBuilder listFieldsForGet = new StringBuilder();
-
-        for (String field : listFields){
-            String value = getPostParameter(field, req);
-            if (value != null){
-                valueFields.put(field,value);
-                req.setAttribute(field, value);
-                listFieldsForGet.append(field).append("=").append(value).append("&");
-            }
-        }
-        if (listFieldsForGet.length() >=1) {
-            listFieldsForGet.delete(listFieldsForGet.length() - 1, listFieldsForGet.length());
-        }
-        LOG.debug(listFieldsForGet.toString());*/
-
-        int count = contactService.getCountSearchContact(valueFields);
-        int countRow = ServletUtil.getRequestParameter(req, "countRow", int.class, 10);
-        int page = ServletUtil.getRequestParameter(req, "page", int.class, 0);
-        int countPage = (int) Math.ceil((double)count/countRow);
-
-        List<Contact> contactList = contactService.getSearchContact(valueFields, page, countRow);
 
 
+        int numberOfSearchedContacts = contactService.getCountSearchContact(valueFields);
+        int numberOfContactsOnPage = ServletUtil.getRequestParameter(req, COUNT_ROW, int.class, 10);
+        int page = ServletUtil.getRequestParameter(req, PAGE, int.class, 0);
+        int numberOfPages = (int) Math.ceil((double)numberOfSearchedContacts/numberOfContactsOnPage);
 
-        req.setAttribute("paginator", createPaginator(page,countPage));
-        req.setAttribute("countRow", countRow);
-        req.setAttribute("page",page);
-        req.setAttribute("count", count);
-        req.setAttribute("contactList", contactList);
-        req.setAttribute("listFields", getListFieldForGet(valueFields));
-
-
+        List<Contact> contactList = contactService.getSearchContact(valueFields, page, numberOfContactsOnPage);
+        
+        req.setAttribute(PAGINATOR, createPaginator(page,numberOfPages));
+        req.setAttribute(COUNT_ROW, numberOfContactsOnPage);
+        req.setAttribute(PAGE,page);
+        req.setAttribute(COUNT, numberOfSearchedContacts);
+        req.setAttribute(CONTACT_LIST, contactList);
+        req.setAttribute(LIST_FIELDS, getListOfValuesForFormFields(valueFields));
 
         return "/searchformwithresult.jsp";
     }
 
     private Map<String, String> getValueFields(HttpServletRequest req){
         Map<String, String> valueFields = new HashMap<>();
-        //StringBuilder listFieldsForGet = new StringBuilder();
-
-        for (String field : listFields){
-            String value = getPostParameter(field, req);
+        for (String nameField : listFields){
+            String value = ServletUtil.getPostParameter(nameField, req);
             if (value != null){
-                valueFields.put(field,value);
-                req.setAttribute(field, value);
-                //listFieldsForGet.append(field).append("=").append(value).append("&");
+                valueFields.put(nameField, value.trim());
+                req.setAttribute(nameField, value.trim());
             }
         }
-        /*if (listFieldsForGet.length() >=1) {
-            listFieldsForGet.delete(listFieldsForGet.length() - 1, listFieldsForGet.length());
-        }*/
         return valueFields;
     }
 
-    private String getListFieldForGet(Map<String, String> valueFileds){
-        StringBuilder listFieldsForGet = new StringBuilder();
-        for (Map.Entry<String,String> entry : valueFileds.entrySet()){
-            listFieldsForGet.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+    private String getListOfValuesForFormFields(Map<String, String> valueFields){
+        StringBuilder listOfValues = new StringBuilder();
+        Iterator<Map.Entry<String, String>> iterator = valueFields.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String, String> entry = iterator.next();
+            listOfValues.append(entry.getKey()).append("=");
+            if (iterator.hasNext()){
+                listOfValues.append("&");
+            }
         }
-        if (listFieldsForGet.length() >=1) {
-            listFieldsForGet.delete(listFieldsForGet.length() - 1, listFieldsForGet.length());
-        }
-        return listFieldsForGet.toString();
-    }
-
-    private String getPostParameter(String nameField, HttpServletRequest req){
-        String value = req.getParameter(nameField);
-        if (value==null || "".equals(value)) return null;
-        return value;
+        return listOfValues.toString();
     }
 
 }

@@ -7,7 +7,7 @@ import by.topolev.contacts.entity.Contact;
 
 public interface ContactDao {
 	List<Contact> getContactList();
-	List<Contact> getContactListAccordingQuery(String query);
+	List<Contact> getContactListAccordingQuery(String templateQuery, Map<String,Object> map);
 	List<Contact> getLimitContactList(int beginRow, int countRow);
 	List<Contact> getLimitContactList(int beginRow, int countRow, String sortField, String sortType);
 	List<Contact> getSearchContact(Map<String, String> valueFields);

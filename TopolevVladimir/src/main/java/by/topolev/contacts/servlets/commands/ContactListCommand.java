@@ -27,6 +27,15 @@ public class ContactListCommand implements Command {
     public static final String ASC = "ASC";
     public static final String DESC = "DESC";
 
+    public static final String PAGE = "page";
+    public static final String COUNT_ROW = "countRow";
+    public static final String SORT_FIELD = "sortField";
+    public static final String COUNT = "count";
+    public static final String CONTACT_LIST = "contactList";
+    public static final String SORT_TYPE = "sortType";
+    public static final String PAGINATOR = "paginator";
+    public static final String SORT_FIELDS = "sortFields";
+
     private ContactService contactService = ContactServiceFactory.getContactService();
 
 
@@ -35,29 +44,33 @@ public class ContactListCommand implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) {
 
-        Integer count = contactService.getCountContacts();
-        Integer page = getRequestParameter(req, "page", Integer.class, 0);
-        Integer countRow = getRequestParameter(req, "countRow", Integer.class, 10);
-        Integer sortField = getRequestParameter(req, "sortField", Integer.class, null);
+        LOG.debug("Show list of contacts");
+
+        Integer numberOfContacts = contactService.getCountContacts();
+        Integer page = getRequestParameter(req, PAGE, Integer.class, 0);
+        Integer numberOfContactsOnPage = getRequestParameter(req, COUNT_ROW, Integer.class, 10);
+        Integer numberOfPages = (int) Math.ceil((double)numberOfContacts/numberOfContactsOnPage);
+
+
+        Integer sortField = getRequestParameter(req, SORT_FIELD, Integer.class, null);
         String sortType = getValidSortType(req);
-        Integer countPage = (int) Math.ceil((double)count/countRow);
 
         List<InfoSortField> sortFields = getDefaultSortFields();
 
-        req.setAttribute("contactList", getSortedContactList(sortField, sortType, page,countRow, sortFields));
-        req.setAttribute("count", count);
-        req.setAttribute("page", page);
-        req.setAttribute("countRow", countRow);
-        req.setAttribute("sortField", sortField);
-        req.setAttribute("sortType", sortType);
-        req.setAttribute("paginator", createPaginator(page, countPage));
-        req.setAttribute("sortFields", sortFields);
+        req.setAttribute(CONTACT_LIST, getSortedContactList(sortField, sortType, page,numberOfContactsOnPage, sortFields));
+        req.setAttribute(COUNT, numberOfContacts);
+        req.setAttribute(PAGE, page);
+        req.setAttribute(COUNT_ROW, numberOfContactsOnPage);
+        req.setAttribute(SORT_FIELD, sortField);
+        req.setAttribute(SORT_TYPE, sortType);
+        req.setAttribute(PAGINATOR, createPaginator(page, numberOfPages));
+        req.setAttribute(SORT_FIELDS, sortFields);
 
         return "contact_list.jsp";
     }
 
     private String getValidSortType(HttpServletRequest req) {
-        String sortType = getRequestParameter(req, "sortType", String.class, null);
+        String sortType = getRequestParameter(req, SORT_TYPE, String.class, null);
         boolean isNotValid = !ASC.equalsIgnoreCase(sortType) && !DESC.equalsIgnoreCase(sortType);
         return isNotValid ? ASC : sortType;
     }

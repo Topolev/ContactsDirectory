@@ -7,7 +7,6 @@ import by.topolev.contacts.dao.PhoneDaoFactory;
 import by.topolev.contacts.entity.Attachment;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.*;
-import by.topolev.contacts.servlets.formdata.Error;
 import by.topolev.contacts.servlets.formdata.ErrorForm;
 import by.topolev.contacts.servlets.frontcontroller.Command;
 import by.topolev.contacts.servlets.utils.EntityFromFormUtil;
@@ -20,19 +19,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.*;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
 import java.util.*;
 
-import static by.topolev.contacts.servlets.utils.ServletUtil.getFileItemParametr;
-import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
+import static by.topolev.contacts.servlets.utils.ServletUtil.getFileItemParameter;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -72,7 +65,7 @@ public class ContactCreateUpdateCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
+        LOG.debug("Update/create contact");
 
         List<FileItem> items = getFileItemList(req);
 
@@ -93,8 +86,8 @@ public class ContactCreateUpdateCommand implements Command {
                 LOG.debug("Can not save/update contact. User entered invalid data");
 
                 req.setAttribute("contact", contact);
-                req.setAttribute("page",getFileItemParametr(items, "page", Integer.class, 0) );
-                req.setAttribute("countRow", getFileItemParametr(items, "countRow", Integer.class, 10));
+                req.setAttribute("page", getFileItemParameter(items, "page", Integer.class, 0) );
+                req.setAttribute("countRow", getFileItemParameter(items, "countRow", Integer.class, 10));
                 req.setAttribute("error", error);
                 return "/contact.jsp";
             }
@@ -118,8 +111,8 @@ public class ContactCreateUpdateCommand implements Command {
             }
 
             resp.sendRedirect(req.getContextPath()
-                    + "/contactlist?page=" +  getFileItemParametr(items, "page", Integer.class, contact.getId() == null ?(int) (Math.ceil((double) count / 10) - 1) : 0 )
-                    + "&countRow=" +  getFileItemParametr(items, "countRow", Integer.class, 10));
+                    + "/contactlist?page=" +  getFileItemParameter(items, "page", Integer.class, contact.getId() == null ?(int) (Math.ceil((double) count / 10) - 1) : 0 )
+                    + "&countRow=" +  getFileItemParameter(items, "countRow", Integer.class, 10));
             return null;
 
         } else {

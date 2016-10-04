@@ -49,7 +49,7 @@ public class RequestHelper {
         String currentURI = this.request.getRequestURI().toLowerCase();
         String currentMethod = this.request.getMethod().toLowerCase();
 
-        LOG.debug("Current URI: {} ; Current method: {}",currentURI, currentMethod);
+        //LOG.debug("Current URI: {} ; Current method: {}",currentURI, currentMethod);
         MetaRequest metaRequest = new MetaRequest(currentURI,currentMethod);
 
         return mapResources.get(metaRequest);

@@ -9,6 +9,7 @@ import by.topolev.contacts.orm.annotation.OneToMany;
 import by.topolev.contacts.orm.annotation.OneToOne;
 import by.topolev.contacts.orm.annotation.Table;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class EntityManagerJDBC implements EntityManager {
 
     private static volatile EntityManager instance;
 
-    private Map<Class<?>, MetaEntity> metaEntityList = new HashMap<>();
+    private Map<Class<?>, MetaEntity> metaEntityList = new LinkedHashMap<>();
     private List<Class<?>> classEntity = new ArrayList<>();
     private MetaEntityReader metaEntityReader = new MetaEntityReader();
 
@@ -59,28 +60,28 @@ public class EntityManagerJDBC implements EntityManager {
         return localInstance;
     }
 
+
     @Override
     public <T> void updateEntity(T entity) {
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
         Integer id = getIdEntity(entity);
         StringBuilder query = new StringBuilder();
+        Map<String, Object> map = getMapForEntity(entity);
 
         if (id == null) {
             query.append(String.format("INSERT INTO %s SET ", metaEntity.getTable().name()))
-                    .append(getSetSectionQuery(entity));
-            id = executeQueryInsertUpdateRow(query.toString());
+                    .append(getTemplateSetSection(entity));
+            id = executeQueryInsertUpdateRow(query.toString(), map);
         } else {
             query.append(String.format("UPDATE %s SET ", metaEntity.getTable().name()))
-                    .append(getSetSectionQuery(entity))
-                    .append(" WHERE id=")
-                    .append(id);
-            executeQueryInsertUpdateRow(query.toString());
+                    .append(getTemplateSetSection(entity))
+                    .append(" WHERE id= ?");
+
+            map.put("id", id);
+            executeQueryInsertUpdateRow(query.toString(), map);
         }
 
-        LOG.debug(query.toString());
-
         if (id != null) {
-
             for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
                 Object currentObject = getValueField(entity, entry.getKey());
                 Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
@@ -105,22 +106,26 @@ public class EntityManagerJDBC implements EntityManager {
     }
 
     @Override
-    public <T> List<T> getListEntity(String query, Class<T> clazz, boolean lazyLoad) {
+    public <T> List<T> getListEntity(String templateQuery, Map<String, Object> map, Class<T> clazz, boolean lazyLoad) {
         List<T> entityList = new ArrayList<T>();
         Connection connection = null;
-        PreparedStatement statment = null;
+        PreparedStatement statement = null;
 
         try {
             connection = dataSource.getConnection();
-            statment = connection.prepareStatement(query);
-            ResultSet result = statment.executeQuery();
+            statement = connection.prepareStatement(templateQuery);
+            statement = insertValueInPrepareStatement(statement, map);
+
+            LOG.debug("Query: " + statement.toString());
+
+            ResultSet result = statement.executeQuery();
             while (result.next()) {
                 entityList.add(getEntityFromResultSet(result, clazz, lazyLoad));
             }
         } catch (SQLException e) {
             LOG.debug("Problem with getting of entity list", e);
         } finally {
-            closeConnection(connection, statment);
+            closeConnection(connection, statement);
         }
 
         return entityList;
@@ -140,24 +145,28 @@ public class EntityManagerJDBC implements EntityManager {
     }
 
 
-
     @Override
-    public <T> T getEntity(String query, Class<T> clazz) {
+    public <T> T getEntity(String templateQuery, Map<String, Object> map, Class<T> clazz) {
         T entity = null;
-        Connection connection = null;
-        PreparedStatement statment = null;
 
+        Connection connection = null;
+        PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statment = connection.prepareStatement(query);
-            ResultSet result = statment.executeQuery();
+
+            statement = connection.prepareStatement(templateQuery);
+            statement = insertValueInPrepareStatement(statement, map);
+
+            LOG.debug("Query: " + statement.toString());
+
+            ResultSet result = statement.executeQuery();
             if (!result.next())
                 return null;
-            entity = getEntityFromResultSet(result, clazz,false);
+            entity = getEntityFromResultSet(result, clazz, false);
         } catch (SQLException e) {
-            LOG.debug("Problem with getting of entity list", e);
+            LOG.debug("Problem with getting of entity", e);
         } finally {
-            closeConnection(connection, statment);
+            closeConnection(connection, statement);
         }
         return entity;
     }
@@ -168,55 +177,62 @@ public class EntityManagerJDBC implements EntityManager {
 
         if (ArrayUtils.isEmpty(idList)) return null;
 
-        StringBuilder query = new StringBuilder();
+        StringBuilder queryTemplate = new StringBuilder();
         MetaEntity metaEntity = metaEntityList.get(clazz);
 
-        query.append("SELECT * FROM " + metaEntity.getTable().name() + " WHERE");
-        query.append(getSectionQueryIdConnectedWithOr(idList));
-
-        return getListEntity(query.toString(), clazz, true);
+        queryTemplate.append("SELECT * FROM " + metaEntity.getTable().name() + " WHERE ")
+                .append(getTemplateSectionIdConnectedWithOr(idList));
+        Map<String, Object> map = getMapFromArray(idList);
+        return getListEntity(queryTemplate.toString(), map, clazz, true);
     }
 
     @Override
     public <T> void deleteEntity(Class<T> clazz, Integer... idList) {
         if (ArrayUtils.isEmpty(idList)) return;
 
-        StringBuilder query = new StringBuilder();
+        StringBuilder queryTemplate = new StringBuilder();
         MetaEntity metaEntity = metaEntityList.get(clazz);
 
-        query.append("DELETE FROM " + metaEntity.getTable().name() + " WHERE");
-        query.append(getSectionQueryIdConnectedWithOr(idList));
+        queryTemplate.append("DELETE FROM " + metaEntity.getTable().name() + " WHERE ")
+                .append(getTemplateSectionIdConnectedWithOr(idList));
+        Map<String, Object> map = getMapFromArray(idList);
 
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeUpdate(query.toString());
+            statement = connection.prepareStatement(queryTemplate.toString());
+            statement = insertValueInPrepareStatement(statement, map);
+
+            LOG.debug("Query: " + statement.toString());
+
+            statement.executeUpdate();
         } catch (SQLException e) {
             LOG.debug("Problem with delete", e);
         } finally {
             closeConnection(connection, statement);
         }
 
-        LOG.debug("Complete query: {}", query);
     }
 
     @Override
-    public int getCountRows(String query, Class<?> clazz){
+    public int getCountRows(String templateQuery, Map<String, Object> map, Class<?> clazz) {
         Table table = clazz.getAnnotation(Table.class);
         Connection connection = null;
         PreparedStatement statement = null;
-        try{
+        try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement(query);
+            statement = connection.prepareStatement(templateQuery);
+            statement = insertValueInPrepareStatement(statement, map);
+
+            LOG.debug("Query: " + statement.toString());
+
             ResultSet result = statement.executeQuery();
             result.next();
             return result.getInt(1);
-        } catch(SQLException e){
-            LOG.debug("Can get numbers of rows with query {}", query, e);
-        }
-        finally{
+        } catch (SQLException e) {
+            LOG.debug("Can not get numbers of rows ", e);
+        } finally {
             closeConnection(connection, statement);
         }
         return 0;
@@ -225,17 +241,78 @@ public class EntityManagerJDBC implements EntityManager {
     @Override
     public int getCountAllEntity(Class<?> clazz) {
         Table table = clazz.getAnnotation(Table.class);
-        return getCountRows("SELECT COUNT(*) FROM " + table.name(), clazz);
+        return getCountRows("SELECT COUNT(*) FROM " + table.name(), null, clazz);
+    }
+
+    private <T> String getTemplateSetSection(T entity) {
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        StringBuilder template = new StringBuilder();
+
+        Iterator<Map.Entry<Field, Column>> iterator = metaEntity.getFieldsColumn().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Field, Column> entry = iterator.next();
+            template.append(String.format(" %s = ? ", entry.getValue().name()));
+            if (iterator.hasNext()) {
+                template.append(",");
+            }
+        }
+
+        return template.toString();
+    }
+
+    private <T> Map<String, Object> getMapForEntity(T entity) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        MetaEntity metaEntity = metaEntityList.get(entity.getClass());
+        for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
+            map.put(entry.getValue().name(), getObjectField(entity, entry.getKey()));
+        }
+        return map;
     }
 
 
-    private String getSectionQueryIdConnectedWithOr(Integer... idList) {
+    private String getTemplateSectionIdConnectedWithOr(Integer... idList) {
+        StringBuilder query = new StringBuilder();
+
+        if (idList != null) {
+            Iterator<Integer> iterator = Arrays.asList(idList).iterator();
+            while (iterator.hasNext()) {
+                iterator.next();
+                query.append(" id = ? ");
+                if (iterator.hasNext()) {
+                    query.append(" OR ");
+                }
+            }
+        }
+        return query.toString();
+    }
+
+    private Map<String, Object> getMapFromArray(Integer... idList) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        for (Integer i = 0; i < idList.length; i++) {
+            map.put(i.toString(), idList[i]);
+        }
+        return map;
+    }
+
+   /* private String getSectionQueryIdConnectedWithOr(Integer... idList) {
         StringBuilder query = new StringBuilder();
         for (Integer id : idList) {
             query.append(" id = " + id + " OR");
         }
         query.delete(query.length() - 3, query.length());
         return query.toString();
+    }*/
+
+    private Object getObjectField(Object obj, Field field) {
+        field.setAccessible(true);
+        Object value;
+        try {
+            value = field.get(obj);
+            field.setAccessible(false);
+            return value;
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            return null;
+        }
     }
 
     private String getStringValue(Object obj, Field field) {
@@ -267,7 +344,7 @@ public class EntityManagerJDBC implements EntityManager {
     }
 
 
-    private <T> String getSetSectionQuery(T entity) {
+    /*private <T> String getSetSectionQuery(T entity) {
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
         StringBuilder query = new StringBuilder();
         for (Map.Entry<Field, Column> entry : metaEntity.getFieldsColumn().entrySet()) {
@@ -275,22 +352,39 @@ public class EntityManagerJDBC implements EntityManager {
         }
         query.delete(query.length() - 1, query.length()); // delete the last comma
         return query.toString();
+    }*/
+
+
+    private PreparedStatement insertValueInPrepareStatement(PreparedStatement statement, Map<String, Object> map) throws SQLException {
+        if (map != null) {
+            Integer i = 0;
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                statement.setObject(++i, entry.getValue());
+            }
+        }
+        return statement;
     }
 
-    private Integer executeQueryInsertUpdateRow(String query) {
+
+    private Integer executeQueryInsertUpdateRow(String template, Map<String, Object> map) {
+
         Connection connection = null;
         PreparedStatement statement = null;
 
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement = connection.prepareStatement(template, Statement.RETURN_GENERATED_KEYS);
+            statement = insertValueInPrepareStatement(statement, map);
+
+            LOG.debug("Query: " + statement.toString());
+
             statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 return generatedKeys.getInt(1);
             }
         } catch (SQLException e) {
-            LOG.debug("Can not insert or update row. Query: {}", query);
+            LOG.debug("Can not insert or update row. Query: {}", statement.toString());
         } finally {
             closeConnection(connection, statement);
         }
@@ -320,14 +414,20 @@ public class EntityManagerJDBC implements EntityManager {
 
             if (id != null) {
                 for (Map.Entry<Field, OneToOne> entry : metaEntity.getFieldsOneToOne().entrySet()) {
-                    String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), entry.getValue().foreignkey(), id);
-                    setValueField(entity, entry.getKey(), getEntity(query, entry.getKey().getType()));
+                    String templateQuery = String.format("SELECT * FROM %s WHERE %s = ?", entry.getValue().table(), entry.getValue().foreignkey());
+
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("foreignKey", id);
+
+                    setValueField(entity, entry.getKey(), getEntity(templateQuery, map, entry.getKey().getType()));
                 }
 
                 if (!lazyLoad) {
                     for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()) {
-                        String query = String.format("SELECT * FROM %s WHERE %s=%d", entry.getValue().table(), entry.getValue().foreignkey(), id);
-                        setValueField(entity, entry.getKey(), getListEntity(query, getGenericTypeOfField(entry.getKey()),lazyLoad));
+                        String templateQuery = String.format("SELECT * FROM %s WHERE %s = ?", entry.getValue().table(), entry.getValue().foreignkey());
+                        Map<String, Object> map = new LinkedHashMap<>();
+                        map.put("id", id);
+                        setValueField(entity, entry.getKey(), getListEntity(templateQuery, map, getGenericTypeOfField(entry.getKey()), lazyLoad));
                     }
                 }
             }

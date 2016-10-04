@@ -4,11 +4,14 @@ import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.orm.tools.EntityManager;
 import by.topolev.contacts.orm.tools.EntityManagerFactory;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class ContactDaoJDBC implements ContactDao {
     private static final Logger LOG = LoggerFactory.getLogger(ContactDaoJDBC.class);
@@ -19,31 +22,36 @@ public class ContactDaoJDBC implements ContactDao {
 
     @Override
     public List<Contact> getContactList() {
-        return em.getListEntity("SELECT * FROM contact", Contact.class, true);
+        return em.getListEntity("SELECT * FROM contact",null, Contact.class, true);
     }
 
     @Override
-    public List<Contact> getContactListAccordingQuery(String query) {
-        return em.getListEntity(query, Contact.class, true);
+    public List<Contact> getContactListAccordingQuery(String templateQuery, Map<String, Object> map) {
+        return em.getListEntity(templateQuery, map, Contact.class, true);
     }
 
     @Override
     public List<Contact> getLimitContactList(int beginRow, int countRow) {
-        return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class, true);
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("begin", beginRow);
+        map.put("count", countRow);
+
+        return em.getListEntity("SELECT * FROM contact LIMIT ?, ?", map, Contact.class, true);
     }
 
     @Override
     public List<Contact> getLimitContactList(int beginRow, int countRow, String sortField, String sortType) {
-
-        String query;
+        String templateQuery;
+        Map<String, Object> map = new LinkedHashMap<>();
         if ("address".equals(sortField)) {
-            query = String.format("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id "
-                    + "ORDER BY country %s,city %s,street %s LIMIT %d,%d", sortType, sortType, sortType, beginRow, countRow);
+            templateQuery = String.format("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id "
+                    + "ORDER BY country %s,city %s,street %s LIMIT ?,?", sortType, sortType, sortType);
         } else {
-            query = String.format("SELECT * FROM contact ORDER BY %s %s LIMIT %d, %d", sortField, sortType, beginRow, countRow);
+            templateQuery = String.format("SELECT * FROM contact ORDER BY %s %s LIMIT ?, ?", sortField, sortType);
         }
-        System.out.println(query);
-        return em.getListEntity(query, Contact.class, true);
+        map.put("begin", beginRow);
+        map.put("count", countRow);
+        return em.getListEntity(templateQuery, map, Contact.class, true);
     }
 
     @Override
@@ -52,27 +60,33 @@ public class ContactDaoJDBC implements ContactDao {
             StringBuilder query = new StringBuilder();
             query.append("SELECT COUNT(*) FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ")
                     .append(createQuerySectionForSearchContact(valueFields));
-            return em.getCountRows(query.toString(), Contact.class);
+            Map<String, Object> map = createMapForSearchContact(valueFields);
+
+            return em.getCountRows(query.toString(), map, Contact.class);
         } else {
-            return em.getCountRows("SELECT COUNT(*) FROM contact", Contact.class);
+            return em.getCountRows("SELECT COUNT(*) FROM contact", null, Contact.class);
         }
     }
 
     @Override
     public List<Contact> getSearchContact(Map<String, String> valueFields, int beginRow, int countRow) {
         if (CollectionUtils.isNotEmpty(valueFields.entrySet())) {
-            StringBuilder query = new StringBuilder();
-            query.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ")
+            StringBuilder templateQuery = new StringBuilder();
+
+            templateQuery.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ")
                     .append(createQuerySectionForSearchContact(valueFields))
-                    .append(" LIMIT ")
-                    .append(beginRow)
-                    .append(",")
-                    .append(countRow);
-            LOG.debug("Search query: {}", query);
-            return em.getListEntity(query.toString(), Contact.class, true);
+                    .append(" LIMIT ?, ?");
+            Map<String, Object> map = createMapForSearchContact(valueFields);
+            map.put("begin", beginRow);
+            map.put("count", countRow);
+
+            return em.getListEntity(templateQuery.toString(), map,  Contact.class, true);
         } else {
-            LOG.debug(String.format("Search query: SELECT * FROM contact LIMIT %d, %d", beginRow, countRow));
-            return em.getListEntity(String.format("SELECT * FROM contact LIMIT %d, %d", beginRow, countRow), Contact.class, true);
+            //LOG.debug(String.format("Search query: SELECT * FROM contact LIMIT %d, %d", beginRow, countRow));
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("begin", beginRow);
+            map.put("count", countRow);
+            return em.getListEntity("SELECT * FROM contact LIMIT ?, ?", map, Contact.class, true);
         }
     }
 
@@ -80,20 +94,26 @@ public class ContactDaoJDBC implements ContactDao {
     @Override
     public List<Contact> getSearchContact(Map<String, String> valueFields) {
         if (CollectionUtils.isNotEmpty(valueFields.entrySet())) {
-            StringBuilder query = new StringBuilder();
-            query.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ")
+            StringBuilder templateQuery = new StringBuilder();
+
+            templateQuery.append("SELECT contact.* FROM contact LEFT JOIN address ON contact.id=address.contact_id WHERE ")
                     .append(createQuerySectionForSearchContact(valueFields));
-            LOG.debug("Search query: {}", query);
-            return em.getListEntity(query.toString(), Contact.class, true);
+            Map<String, Object> map = createMapForSearchContact(valueFields);
+
+            return em.getListEntity(templateQuery.toString(), map, Contact.class, true);
         } else {
-            LOG.debug("Search query: SELECT * FROM contact");
-            return em.getListEntity("SELECT * FROM contact", Contact.class, true);
+            return em.getListEntity("SELECT * FROM contact", null, Contact.class, true);
         }
     }
 
     @Override
     public Contact getContactById(int id) {
-        return em.getEntity(String.format("SELECT * FROM contact WHERE id=%d", id), Contact.class);
+        String templateQuery = "SELECT * FROM contact WHERE id = ?";
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("id", id);
+
+        return em.getEntity(templateQuery, map, Contact.class);
     }
 
     public List<Contact> getContactById(Integer... idList) {
@@ -119,17 +139,46 @@ public class ContactDaoJDBC implements ContactDao {
 
     private String createQuerySectionForSearchContact(Map<String, String> valueFields) {
         StringBuilder query = new StringBuilder();
-        for (Map.Entry<String, String> entry : valueFields.entrySet()) {
+
+        Iterator<Map.Entry<String, String>> iterator = valueFields.entrySet().iterator();
+
+        while(iterator.hasNext()){
+            Map.Entry<String, String> entry = iterator.next();
             if ("birthdaymore".equals(entry.getKey())) {
-                query.append("birthday >= {d '").append(entry.getValue()).append("'} AND ");
+                query.append("birthday >= ? ");
             } else if ("birthdayless".equals(entry.getKey())) {
-                query.append("birthday <= {d '").append(entry.getValue()).append("'} AND ");
+                query.append("birthday <= ? ");
             } else {
-                query.append(entry.getKey()).append(" LIKE '%").append(entry.getValue()).append("%' AND ");
+                query.append(entry.getKey()).append(" LIKE ? ");
+            }
+            if (iterator.hasNext()){
+                query.append(" AND ");
             }
         }
-        query.delete(query.length() - 5, query.length());
+
         return query.toString();
+    }
+
+    private Map<String, Object> createMapForSearchContact(Map<String, String> valueFields){
+        Map<String, Object> map = new LinkedHashMap<>();
+        for(Map.Entry<String, String> entry : valueFields.entrySet()){
+            if ("birthdaymore".equals(entry.getKey()) || "birthdayless".equals(entry.getKey())) {
+                map.put(entry.getKey(), getDate(entry.getValue()));
+            } else{
+                map.put(entry.getKey(), "%" + entry.getValue() + "%");
+            }
+        }
+        return map;
+    }
+
+    private Date getDate(String value){
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return format.parse(value);
+        } catch (ParseException e) {
+            LOG.debug("Can't parse the date", e);
+            return null;
+        }
     }
 
     public static void main(String[] args) {

@@ -2,6 +2,7 @@ package by.topolev.contacts.servlets.utils;
 
 import by.topolev.contacts.servlets.formdata.Paginator;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,15 @@ public class ServletUtil {
 
     }
 
-    public static <T> T getFileItemParametr(List<FileItem> items, String parameter, Class<T> clazz, T defaultValue){
+    public static String getPostParameter(String nameField, HttpServletRequest req){
+        String value = req.getParameter(nameField);
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        return value;
+    }
+
+    public static <T> T getFileItemParameter(List<FileItem> items, String parameter, Class<T> clazz, T defaultValue){
         Optional<String> first = items.stream()
                 .filter(item -> item.isFormField())
                 .filter(item -> item.getFieldName().equals(parameter))

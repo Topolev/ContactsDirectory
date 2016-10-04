@@ -83,14 +83,7 @@ public class ContactServiceImpl implements ContactService{
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT * FROM contact WHERE DAY(birthday) = ").append(day).append(" AND MONTH(birthday) = ").append(month);
 
-		return contactDao.getContactListAccordingQuery(query.toString());
-	}
-
-	public static void main(String... args) throws ServletException {
-		ContactServiceImpl test =  new ContactServiceImpl();
-
-		test.getContactListWhoTodayCelebrateBirthday();
-
+		return contactDao.getContactListAccordingQuery(query.toString(), null);
 	}
 
 

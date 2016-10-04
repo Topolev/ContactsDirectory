@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
 public class IsDate implements Validator {
     @Override
     public boolean test(String value) {
-        System.out.println("Attention: " + value);
         if (StringUtils.isEmpty(value)) return true;
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
