@@ -14,8 +14,8 @@ import java.io.*;
 /**
  * Created by Vladimir on 18.09.2016.
  */
-public class ShowImageCommand implements Command {
-    private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommand.class);
+public class UploadImageCommand implements Command {
+    private static final Logger LOG = LoggerFactory.getLogger(UploadImageCommand.class);
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {

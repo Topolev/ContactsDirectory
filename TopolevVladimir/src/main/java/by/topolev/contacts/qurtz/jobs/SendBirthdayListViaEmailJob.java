@@ -12,10 +12,17 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import static by.topolev.contacts.config.ConfigUtil.getGmailUsername;
+import static by.topolev.contacts.config.ConfigUtil.getMailAdministrator;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 /**
  * Created by Vladimir on 20.09.2016.
@@ -29,32 +36,26 @@ public class SendBirthdayListViaEmailJob implements Job{
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        LOG.debug("Execute SendBirthdayListViaEmailJob");
-
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("Hello, today is ")
-                .append(dateFormat.format(new Date()))
-                .append( " !\n")
-                .append("List of contacts who're celebraiting today own Birthday.\n");
+        String date = dateFormat.format(new Date());
 
         List<Contact> listContacts = contactService.getContactListWhoTodayCelebrateBirthday();
-        if (CollectionUtils.isEmpty(listContacts)){
-            sb.append("List is empty.");
-        } else{
-            for(Contact contact : listContacts){
-                sb.append(contact.getFirstname()).append(" ")
-                        .append(contact.getLastname()).append(" ")
-                        .append(" birthday: ").append(dateFormat.format(contact.getBirthday())).append("\n");
-            }
-        }
+        String message = getMessage(date, listContacts, isEmpty(listContacts));
 
 
-        LOG.debug(sb.toString());
+        sendEmailService.sendMessage(getGmailUsername(), getMailAdministrator(), "List of persons who celebrate Birthday", message);
 
-        sendEmailService.sendMessage(ConfigUtil.getGmailUsername(), ConfigUtil.getMailAdministrator(), "subject", sb.toString());
+        LOG.debug("Execute SendBirthdayListViaEmailJob. Today is {}. Number of people who are celebrating Birtday today: {}", date, isEmpty(listContacts)? "" : listContacts.size());
 
+    }
+
+    private String getMessage(String date ,List<Contact> contacts, boolean isEmptyList){
+        STGroup group = new STGroupFile("template/template.stg");
+        ST birthday = group.getInstanceOf("birthday");
+        birthday.add("contacts", contacts);
+        birthday.add("date", date);
+        birthday.add("isEmptyList", isEmptyList);
+        return birthday.render();
 
 
     }

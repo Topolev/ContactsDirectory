@@ -1,4 +1,4 @@
-package by.topolev.contacts.servlets.commands;
+package by.topolev.contacts.servlets.commands.message;
 
 import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.entity.Contact;
@@ -8,20 +8,16 @@ import by.topolev.contacts.services.SendEmailService;
 import by.topolev.contacts.services.SendEmailServiceFactory;
 import by.topolev.contacts.servlets.formdata.Error;
 import by.topolev.contacts.servlets.frontcontroller.Command;
-import by.topolev.contacts.servlets.utils.ServletUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,10 +47,10 @@ public class SendMessagesCommand implements Command {
         List<Contact> contacts = contactService.getContactById(convertStringInIntArray(req.getParameter("sendto")));
 
         if (CollectionUtils.isNotEmpty(contacts)) {
-            final String subject = req.getParameter("subject")/*.getBytes("ISO-8859-1"), StandardCharsets.UTF_8)*/;
+            final String subject = req.getParameter("subject");
 
             for (Contact contact : contacts) {
-                ST template = new ST(req.getParameter("message")/*.getBytes("ISO-8859-1"), StandardCharsets.UTF_8)*/, '$', '$');
+                ST template = new ST(req.getParameter("message"), '$', '$');
                 template.add("u", contact);
                 final String text = template.render();
 

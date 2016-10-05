@@ -1,23 +1,60 @@
 package by.topolev.contacts;
 
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Vladimir on 20.09.2016.
  */
 public class Test {
     public static void main(String[] str){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
+        Contact contact1 = new Contact("Topolev", "Vladimir");
+        Contact contact2 = new Contact("Kalenchuk", "Eugeniy");
+        List<Contact> teams = Arrays.asList(contact1, contact2);
 
-        int day = calendar.get(Calendar.DATE);
-        int month = calendar.get(Calendar.MONTH) + 1;
+        STGroup group = new STGroupFile("template/template.stg");
+        ST birthday = group.getInstanceOf("birthday");
+        birthday.add("contacts", teams);
+        birthday.add("date", new Date());
 
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT * FROM contact WHERE DAY(birthday) = ").append(day).append(" AND MONTH(birthday) = ").append(month);
+        System.out.print(birthday.render());
 
-        System.out.print(query.toString());
+        ST s = new ST( "<teams :{team | <team.i> + <team.name> }>");
+        s.add("teams", teams);
+        System.out.println(s.render());
 
+
+    }
+
+}
+class Contact{
+    private String firstname;
+    private String lastname;
+
+    public Contact(String firstname, String lastname){
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 }

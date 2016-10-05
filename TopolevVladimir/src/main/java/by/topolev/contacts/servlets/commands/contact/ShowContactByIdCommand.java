@@ -1,4 +1,4 @@
-package by.topolev.contacts.servlets.commands;
+package by.topolev.contacts.servlets.commands.contact;
 
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.ContactService;
@@ -21,9 +21,9 @@ import static java.lang.Integer.parseInt;
 /**
  * Created by Vladimir on 18.09.2016.
  */
-public class ContactShowCommand implements Command {
+public class ShowContactByIdCommand implements Command {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContactShowCommand.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShowContactByIdCommand.class);
     public static final String ID = "id";
 
     private ContactService contactService = ContactServiceFactory.getContactService();

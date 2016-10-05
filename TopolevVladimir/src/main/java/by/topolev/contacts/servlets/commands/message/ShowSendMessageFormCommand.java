@@ -1,15 +1,10 @@
-package by.topolev.contacts.servlets.commands;
+package by.topolev.contacts.servlets.commands.message;
 
 import by.topolev.contacts.config.ConfigUtil;
 import by.topolev.contacts.entity.Contact;
 import by.topolev.contacts.services.ContactService;
 import by.topolev.contacts.services.ContactServiceFactory;
 import by.topolev.contacts.servlets.frontcontroller.Command;
-import by.topolev.contacts.servlets.utils.ServletUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +12,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -32,7 +26,6 @@ public class ShowSendMessageFormCommand implements Command {
     private static final Logger LOG = LoggerFactory.getLogger(ShowSendMessageFormCommand.class);
 
     private static File pathTemplates;
-    private ObjectMapper map = new ObjectMapper();
 
     private ContactService contactService = ContactServiceFactory.getContactService();
 

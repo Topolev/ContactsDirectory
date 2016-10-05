@@ -2,6 +2,11 @@ package by.topolev.contacts.servlets.frontcontroller;
 
 import by.topolev.contacts.servlets.commands.ChangeLanguageCommand;
 import by.topolev.contacts.servlets.commands.*;
+import by.topolev.contacts.servlets.commands.contact.*;
+import by.topolev.contacts.servlets.commands.message.SendMessagesCommand;
+import by.topolev.contacts.servlets.commands.message.ShowSendMessageFormCommand;
+import by.topolev.contacts.servlets.commands.search.SearchFormEmptyCommand;
+import by.topolev.contacts.servlets.commands.search.SearchFormWithResultsCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +30,14 @@ public class RequestHelper {
         mapResources.put(new MetaRequest("/", GET), new IndexCommand());
         mapResources.put(new MetaRequest("/contactlist", GET), new ContactListCommand());
         mapResources.put(new MetaRequest("/contactdelete", GET), new ContactDeleteCommand());
-        mapResources.put(new MetaRequest("/contact", GET), new ContactShowCommand());
-        mapResources.put(new MetaRequest("/contactnew", GET), new ContactGetFormCommand());
-        mapResources.put(new MetaRequest("/contactnew", POST), new ContactGetFormCommand());
+        mapResources.put(new MetaRequest("/contact", GET), new ShowContactByIdCommand());
+        mapResources.put(new MetaRequest("/contactnew", GET), new ShowContactEmptyCommand());
+        mapResources.put(new MetaRequest("/contactnew", POST), new ShowContactEmptyCommand());
         mapResources.put(new MetaRequest("/contactsave", POST), new ContactCreateUpdateCommand(servletContext));
-        mapResources.put(new MetaRequest("/showimage", GET), new ShowImageCommand());
-        mapResources.put(new MetaRequest("/showsearchform", GET), new SearchFormGetCommand());
-        mapResources.put(new MetaRequest("/searchform", GET), new SearchFormPostCommand());
-        mapResources.put(new MetaRequest("/searchform", POST), new SearchFormPostCommand());
+        mapResources.put(new MetaRequest("/showimage", GET), new UploadImageCommand());
+        mapResources.put(new MetaRequest("/showsearchform", GET), new SearchFormEmptyCommand());
+        mapResources.put(new MetaRequest("/searchform", GET), new SearchFormWithResultsCommand());
+        mapResources.put(new MetaRequest("/searchform", POST), new SearchFormWithResultsCommand());
         mapResources.put(new MetaRequest("/uploadfile", GET), new UploadFileCommand());
         mapResources.put(new MetaRequest("/sendmessage", GET), new ShowSendMessageFormCommand(servletContext));
         mapResources.put(new MetaRequest("/sendmessage", POST), new SendMessagesCommand());

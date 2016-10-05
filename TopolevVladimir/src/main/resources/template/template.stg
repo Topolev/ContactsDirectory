@@ -1,0 +1,9 @@
+birthday(date, contacts, isEmptyList) ::= <<
+Today is <date>. <\n>
+<if (isEmptyList)>
+There are no people who celebrate Birthday today.
+<else>
+List of people who're celebrating today their birthday: <\n>
+<contacts :{contact | <contact.firstname>  <contact.lastname> <\n>}>
+<endif>
+>>

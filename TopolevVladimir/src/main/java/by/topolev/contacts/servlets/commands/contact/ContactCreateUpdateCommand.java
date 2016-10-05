@@ -1,4 +1,4 @@
-package by.topolev.contacts.servlets.commands;
+package by.topolev.contacts.servlets.commands.contact;
 
 import by.topolev.contacts.dao.AttachmentDao;
 import by.topolev.contacts.dao.AttachmentDaoFactory;
