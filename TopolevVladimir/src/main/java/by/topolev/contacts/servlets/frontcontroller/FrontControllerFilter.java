@@ -49,7 +49,7 @@ public class FrontControllerFilter implements Filter {
     }
 
     protected void dispatch(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {
-
+        LOG.debug("Loacal: {}", req.getLocale().getCountry());
         if (req.getRequestURI().endsWith("\\.jsp")){
             chain.doFilter(req, resp);
         } else{
