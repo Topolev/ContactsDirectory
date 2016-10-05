@@ -64,8 +64,8 @@ public class ContactServiceImpl implements ContactService{
 	}
 
 	@Override
-	public void updateContact(Contact contact) {
-		contactDao.updateContact(contact);
+	public Integer updateContact(Contact contact, boolean lazyLoad) {
+		return contactDao.updateContact(contact, lazyLoad);
 		
 	}
 

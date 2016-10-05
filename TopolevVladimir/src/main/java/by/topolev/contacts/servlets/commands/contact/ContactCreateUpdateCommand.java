@@ -92,10 +92,14 @@ public class ContactCreateUpdateCommand implements Command {
                 return "/contact.jsp";
             }
 
+            if (contact.getId() != null) {
+                contact.setId(contactService.updateContact(contact, false));
+            }
+
             updatePhoto(contact, items);
             updateAttachments(contact, items);
 
-            contactService.updateContact(contact);
+            contactService.updateContact(contact, true);
 
             /*Delete phones and attachments*/
             deletePhones(items);
@@ -104,11 +108,8 @@ public class ContactCreateUpdateCommand implements Command {
 
             int count = contactService.getCountContacts();
 
-            if (contact.getId() == null){
-                LOG.debug("Creating of new contact was successful.");
-            } else{
-                LOG.debug("Updating of contact with id={} was successful.", contact.getId());
-            }
+            LOG.debug("Create/update contact was successful.");
+
 
             resp.sendRedirect(req.getContextPath()
                     + "/contactlist?page=" +  getFileItemParameter(items, "page", Integer.class, contact.getId() == null ?(int) (Math.ceil((double) count / 10) - 1) : 0 )
@@ -143,6 +144,11 @@ public class ContactCreateUpdateCommand implements Command {
 
     private void updatePhoto(Contact contact, List<FileItem> items){
         FileItem photoItem = getFileItemByName(UPLOADPHOTO, items);
+
+
+        if (getFieldValue("delete-profile-photo", items) != null){
+            contact.setPhoto(null);
+        }
 
         if (photoItem != null && isNotEmpty(photoItem.getName())) {
             contact.setPhoto(uploadImageService.saveImage(photoItem));

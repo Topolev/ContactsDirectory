@@ -16,7 +16,7 @@ public interface ContactService {
 	Contact getContactById(int id);
 	List<Contact> getContactById(Integer... idList);
 	void deleteContact(Integer...idList);
-	void updateContact(Contact contact);
+	Integer updateContact(Contact contact, boolean lazyLoad);
 	List<Contact> getContactListWhoTodayCelebrateBirthday();
 
 }

@@ -12,7 +12,7 @@ public interface ContactDao {
 	List<Contact> getLimitContactList(int beginRow, int countRow, String sortField, String sortType);
 	List<Contact> getSearchContact(Map<String, String> valueFields);
 	List<Contact> getSearchContact(Map<String, String> valueFields, int beginRow, int countRow);
-	void updateContact(Contact contact);
+	Integer updateContact(Contact contact, boolean lazyLoad);
 	Contact getContactById(int id);
 	List<Contact> getContactById(Integer... idList);
 	int getCountContacts();

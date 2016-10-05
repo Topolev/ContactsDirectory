@@ -7,7 +7,7 @@ import java.util.Map;
  * Created by Vladimir on 25.09.2016.
  */
 public interface EntityManager {
-    <T> void updateEntity(T entity);
+    <T> Integer updateEntity(T entity, boolean lazyLoad);
     <T> List<T> getListEntity(String templateQuery, Map<String, Object> map, Class<T> clazz, boolean lazyLoad);
     <T> T getEntity(String templateQuery, Map<String, Object> map, Class<T> clazz);
 

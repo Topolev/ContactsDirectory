@@ -132,8 +132,8 @@ public class ContactDaoJDBC implements ContactDao {
     }
 
     @Override
-    public void updateContact(Contact contact) {
-        em.updateEntity(contact);
+    public Integer updateContact(Contact contact, boolean lazyLoad) {
+        return em.updateEntity(contact, lazyLoad);
 
     }
 

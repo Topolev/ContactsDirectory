@@ -62,7 +62,7 @@ public class EntityManagerJDBC implements EntityManager {
 
 
     @Override
-    public <T> void updateEntity(T entity) {
+    public <T> Integer updateEntity(T entity, boolean lazyLoad) {
         MetaEntity metaEntity = metaEntityList.get(entity.getClass());
         Integer id = getIdEntity(entity);
         StringBuilder query = new StringBuilder();
@@ -86,23 +86,24 @@ public class EntityManagerJDBC implements EntityManager {
                 Object currentObject = getValueField(entity, entry.getKey());
                 Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
                 setValueField(currentObject, foreignkey, id);
-                updateEntity(currentObject);
+                updateEntity(currentObject, true);
             }
 
-            for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()) {
-                List listOfEntity = (List) getValueField(entity, entry.getKey());
+            if (lazyLoad){
+                for (Map.Entry<Field, OneToMany> entry : metaEntity.getFieldsOneToMany().entrySet()) {
+                    List listOfEntity = (List) getValueField(entity, entry.getKey());
 
-                if (CollectionUtils.isNotEmpty(listOfEntity)) {
-                    for (Object currentObject : listOfEntity) {
-                        Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
-                        setValueField(currentObject, foreignkey, id);
-                        updateEntity(currentObject);
+                    if (CollectionUtils.isNotEmpty(listOfEntity)) {
+                        for (Object currentObject : listOfEntity) {
+                            Field foreignkey = getFieldByName(currentObject, entry.getValue().foreignkey());
+                            setValueField(currentObject, foreignkey, id);
+                            updateEntity(currentObject, true);
+                        }
                     }
                 }
             }
-
         }
-
+        return id;
     }
 
     @Override

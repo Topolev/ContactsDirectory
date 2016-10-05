@@ -35,7 +35,7 @@
 <jsp:include page="header.jsp"/>
 
 <div id="wrap-content" class="user-container">
-	<form method="post"  action="/contactsave" enctype="multipart/form-data">
+	<form method="post"  action="/contactsave" enctype="multipart/form-data" id="form">
 		<input type="hidden" name="page" value="${page}">
 		<input type="hidden" name="countPage" value="${countPage}">
 		<input type="hidden" name="id" value="<c:out value="${contact.id}"/>">
@@ -516,6 +516,14 @@
 
 	document.getElementById("delete-photo-href").onclick = function(){
 		document.getElementById("profile-photo").setAttribute("src", root_for_image + "/no-profile-photo.png");
+
+		var input = document.createElement("input");
+		input.setAttribute("name", "delete-profile-photo");
+		input.setAttribute("value", true);
+		input.setAttribute("type", "hidden");
+
+		document.getElementById("form").appendChild(input);
+		console.log(input)
 
 		return false;
 	}

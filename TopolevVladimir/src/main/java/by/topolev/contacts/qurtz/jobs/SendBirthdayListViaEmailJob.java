@@ -56,7 +56,5 @@ public class SendBirthdayListViaEmailJob implements Job{
         birthday.add("date", date);
         birthday.add("isEmptyList", isEmptyList);
         return birthday.render();
-
-
     }
 }
