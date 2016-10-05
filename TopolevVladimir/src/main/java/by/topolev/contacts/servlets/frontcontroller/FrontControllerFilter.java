@@ -20,6 +20,11 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static by.topolev.contacts.servlets.utils.ServletUtil.getCookieValue;
+import static by.topolev.contacts.servlets.utils.ServletUtil.getRequestParameter;
+import static java.util.ResourceBundle.getBundle;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 /**
  * Created by Vladimir on 18.09.2016.
  */
@@ -49,7 +54,6 @@ public class FrontControllerFilter implements Filter {
     }
 
     protected void dispatch(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {
-        LOG.debug("Loacal: {}", req.getLocale().getCountry());
         if (req.getRequestURI().endsWith("\\.jsp")){
             chain.doFilter(req, resp);
         } else{
@@ -72,28 +76,25 @@ public class FrontControllerFilter implements Filter {
         }
     }
 
-    private ResourceBundle getResourceBundle(HttpServletRequest req){
-        String lan = null;
-        lan = ServletUtil.getRequestParameter(req,"lan",String.class,null);
-        if (lan == null){
-            lan = ServletUtil.getCookieValue(req);
-        }
-
+    private ResourceBundle getResourceBundle(HttpServletRequest req) {
+        String lan = getLanguage(req);
         Locale locale = null;
-        if (lan == null){
-            locale = req.getLocale();
-        } else{
-            lan = lan.trim();
-            if ("ru".equals(lan)){
+        switch (lan) {
+            case "ru":
                 locale = new Locale("ru", "RU");
-            }else if ("en".equals(lan)){
+                break;
+            case "en":
                 locale = new Locale("en", "EN");
-            } else{
+                break;
+            default:
                 locale = new Locale("en", "EN");
-            }
         }
-        ResourceBundle.getBundle("i18n.test",locale);
-        return ResourceBundle.getBundle("i18n.test",locale);
+        return getBundle("i18n.test", locale);
+    }
+
+    private String getLanguage(HttpServletRequest req) {
+        String lan = getRequestParameter(req, "lan", String.class, null);
+        return lan != null ? lan : defaultIfBlank(getCookieValue(req), req.getLocale().getLanguage());
     }
 
 
