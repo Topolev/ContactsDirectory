@@ -37,10 +37,13 @@ function getCheckedId() {
 
 document.getElementById("delete-contact").onclick = function(event) {
     var checkedId = getCheckedId();
-    window.location.replace(rootPath + "/contactdelete?delete="
-        + JSON.stringify(checkedId) + "&page=" + page + "&countRow=" + countRow);
+    if (checkedId.length > 0) {
+        window.location.replace(rootPath + "/contactdelete?delete="
+            + JSON.stringify(checkedId) + "&page=" + page + "&countRow=" + countRow);
+    } else{
+        alert("You have to choose one contact at least.")
+    }
 
-    return false;
 };
 
 document.getElementById("send-messages").onclick = function(){

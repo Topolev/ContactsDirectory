@@ -35,6 +35,7 @@ public class ContactShowCommand implements Command {
 
     private boolean findContactById(HttpServletRequest req, String contactId) {
         try {
+            LOG.debug("Show contact with id = {}.", contactId);
             Contact contact = contactService.getContactById(parseInt(contactId));
             if (contact == null) {
                 LOG.debug("User isn't found with id = {}.", contactId);
@@ -47,6 +48,7 @@ public class ContactShowCommand implements Command {
             populatePageError(req, String.format("Invalid contact id = %s", contactId));
             return false;
         }
+        LOG.debug("User with id = {} is existed.", contactId);
         return true;
     }
 
