@@ -92,7 +92,7 @@ public class ContactCreateUpdateCommand implements Command {
                 return "/contact.jsp";
             }
 
-            if (contact.getId() != null) {
+            if (contact.getId() == null) {
                 contact.setId(contactService.updateContact(contact, false));
             }
 

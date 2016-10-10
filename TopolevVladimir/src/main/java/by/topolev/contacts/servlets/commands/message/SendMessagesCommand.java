@@ -59,7 +59,8 @@ public class SendMessagesCommand implements Command {
                 });
             }
 
-            resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=0");
+            //resp.sendRedirect(req.getContextPath() + "/contactlist?countRow=10&page=0");
+            resp.sendRedirect(req.getContextPath() + "/message_sended.jsp");
             return null;
 
         } else{
